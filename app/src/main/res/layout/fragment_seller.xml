@@ -5,6 +5,16 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:gravity="center">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ADD A LISTING"
+        android:textSize="24sp"
+        android:textColor="@color/black"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"/>
+
     <EditText
         android:id="@+id/titleEditText"
         android:layout_width="match_parent"
@@ -43,11 +53,19 @@
         android:layout_marginBottom="16dp"
         android:inputType="text" />
 
+    <TextView
+        android:id="@+id/photoTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No photo selected"
+        android:textSize="12sp"/>
+
     <Button
         android:id="@+id/uploadPhotoButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Upload Photo"
+        android:gravity="start"
         android:layout_marginBottom="16dp" />
 
     <Button

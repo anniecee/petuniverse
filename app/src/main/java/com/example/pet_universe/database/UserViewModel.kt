@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class UserViewModel(private val repository: UserRepository): ViewModel() {
     val allUsersLiveData: LiveData<List<User>> = repository.allUsers.asLiveData()
@@ -26,6 +28,12 @@ class UserViewModel(private val repository: UserRepository): ViewModel() {
     fun delete(key: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.delete(key)
+        }
+    }
+
+    suspend fun getUserByEmail(email: String): User? {
+        return withContext(IO) {
+            repository.getUserByEmail(email)
         }
     }
 
