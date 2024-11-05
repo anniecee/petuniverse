@@ -7,4 +7,13 @@
     <string name="food_description">All pet food in one place</string>
     <string name="accessories_description">All pet accessories in one place</string>
 
+    <string-array name="category_spinner_entries">
+        <item>Dog</item>
+        <item>Cat</item>
+        <item>Bird</item>
+        <item>PetFood</item>
+        <item>Accessories</item>
+        <item>Other</item>
+    </string-array>
+
 </resources>

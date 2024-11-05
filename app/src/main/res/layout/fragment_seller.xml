@@ -5,30 +5,55 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:gravity="center">
-
-
-    <ImageView
-        android:id="@+id/petImageView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:background="@drawable/circular_shape"
-        android:scaleType="centerCrop"
-        android:layout_marginBottom="16dp"
-        android:contentDescription="Pet Image" />
-
-
     <EditText
-        android:id="@+id/petDescriptionEditText"
+        android:id="@+id/titleEditText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Describe the pet"
+        android:layout_height="48dp"
+        android:hint="Title of Listing"
         android:layout_marginBottom="16dp"
         android:inputType="textMultiLine" />
+    <EditText
+        android:id="@+id/priceEditText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Set price"
+        android:layout_marginBottom="16dp"
+        android:inputType="numberDecimal" />
+    <EditText
+        android:id="@+id/descriptionEditText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Description of Listing"
+        android:layout_marginBottom="16dp"
+        android:inputType="textMultiLine" />
+    <Spinner
+        android:id="@+id/categorySpinner"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginBottom="16dp"
+        android:entries="@array/category_spinner_entries"
+        android:focusable="false" />
 
+    <!--TODO: Meeting location should be map cordinations instead of text -->
+    <EditText
+        android:id="@+id/meetingLocationEditText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Meeting location"
+        android:layout_marginBottom="16dp"
+        android:inputType="text" />
 
     <Button
-        android:id="@+id/uploadButton"
+        android:id="@+id/uploadPhotoButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upload" />
+        android:text="Upload Photo"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/sellButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SELL" />
+
 </LinearLayout>

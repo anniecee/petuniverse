@@ -8,14 +8,29 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pet_universe.R
+import com.example.pet_universe.database.ListingDatabase
+import com.example.pet_universe.database.ListingDatabaseDao
+import com.example.pet_universe.database.Listing
+import com.example.pet_universe.database.ListingRepository
+import com.example.pet_universe.database.ListingViewModel
+import com.example.pet_universe.database.ListingViewModelFactory
 import com.example.pet_universe.databinding.FragmentLivePetsBinding
 import com.example.pet_universe.ui.dialogs.MyDialog
 import com.example.pet_universe.ui.profile.ProfileViewModel
 
 class LivePetsFragment : Fragment() {
+
+    // Initialization for database
+    private lateinit var database: ListingDatabase
+    private lateinit var listingDao: ListingDatabaseDao
+    private lateinit var repository: ListingRepository
+    private lateinit var viewModelFactory: ListingViewModelFactory
+    private lateinit var listingViewModel: ListingViewModel
+    private lateinit var listing: Listing
 
     private var _binding: FragmentLivePetsBinding? = null
     private val binding get() = _binding!!
@@ -36,6 +51,7 @@ class LivePetsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Set up profile icon
         profileViewModel.userInitial.observe(viewLifecycleOwner) { initial ->
             binding.root.findViewById<TextView>(R.id.profileIcon).text = initial
         }
@@ -44,6 +60,15 @@ class LivePetsFragment : Fragment() {
         binding.root.findViewById<TextView>(R.id.profileIcon).setOnClickListener {
             findNavController().navigate(R.id.action_global_to_accountSettings)
         }
+
+        // Set up database
+        database = ListingDatabase.getInstance(requireContext())
+        listingDao = database.listingDao
+        repository = ListingRepository(listingDao)
+        viewModelFactory = ListingViewModelFactory(repository)
+        listingViewModel = ViewModelProvider(this, viewModelFactory).get(ListingViewModel::class.java)
+
+        // TODO: Retrieve data from each Listing in the database instead of from petList
 
         val petList = listOf(
             Pet("Buddy", "Male", "Medium • Labrador • 2 miles away", R.drawable.pet_food_logo),

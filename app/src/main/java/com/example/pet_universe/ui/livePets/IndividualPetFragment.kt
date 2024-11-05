@@ -31,7 +31,7 @@ class IndividualPetFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
+        // Set up profile icon
         profileViewModel.userInitial.observe(viewLifecycleOwner) { initial ->
             binding.root.findViewById<TextView>(R.id.profileIcon).text = initial
         }

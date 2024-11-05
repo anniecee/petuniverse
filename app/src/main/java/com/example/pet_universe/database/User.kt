@@ -7,7 +7,7 @@ import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 
 @Entity(tableName = "user_table")
-@TypeConverters(UserConverters::class)
+@TypeConverters(Converters::class)
 data class User (
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0L,

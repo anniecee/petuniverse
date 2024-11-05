@@ -2,6 +2,7 @@ package com.example.pet_universe.ui.sellerView
 
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -13,9 +14,23 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.pet_universe.database.Listing
+import com.example.pet_universe.database.ListingDatabase
+import com.example.pet_universe.database.ListingDatabaseDao
+import com.example.pet_universe.database.ListingRepository
+import com.example.pet_universe.database.ListingViewModel
+import com.example.pet_universe.database.ListingViewModelFactory
 import com.example.pet_universe.databinding.FragmentSellerBinding
 
 class SellerViewFragment : Fragment() {
+
+    // Initialization for database
+    private lateinit var database: ListingDatabase
+    private lateinit var listingDao: ListingDatabaseDao
+    private lateinit var repository: ListingRepository
+    private lateinit var viewModelFactory: ListingViewModelFactory
+    private lateinit var listingViewModel: ListingViewModel
+    private lateinit var listing: Listing
 
     private var _binding: FragmentSellerBinding? = null
     private val binding get() = _binding!!
@@ -33,33 +48,42 @@ class SellerViewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Observe image URI to display selected image
-        sellerViewModel.imageUri.observe(viewLifecycleOwner) { uri ->
-            binding.petImageView.setImageURI(uri)
+        // Set up database
+        database = ListingDatabase.getInstance(requireContext())
+        listingDao = database.listingDao
+        repository = ListingRepository(listingDao)
+        viewModelFactory = ListingViewModelFactory(repository)
+        listingViewModel = ViewModelProvider(this, viewModelFactory).get(ListingViewModel::class.java)
+
+        // Initialize listing object
+        listing = Listing()
+        
+        // TODO: Set sellerId to listing object
+
+        // TODO: Set click listener for add image button
+
+        // Set click listener for sell button
+        binding.sellButton.setOnClickListener {
+            val title = binding.titleEditText.text.toString()
+            val price = binding.priceEditText.text.toString().toDouble()
+            val description = binding.descriptionEditText.text.toString()
+            val category = binding.categorySpinner.selectedItem.toString()
+
+            // Set listing object
+            listing.title = title
+            listing.price = price
+            listing.description = description
+            listing.category = category
+
+            // Close fragment
+            requireActivity().supportFragmentManager.popBackStack()
         }
 
-        // Observe description and set it in EditText
-        sellerViewModel.description.observe(viewLifecycleOwner) { description ->
-            binding.petDescriptionEditText.setText(description)
-        }
-
-        // Set click listener on ImageView to select an image
-        binding.petImageView.setOnClickListener {
-            openGalleryForImage()
-        }
-
-        // Set click listener for upload button
-        binding.uploadButton.setOnClickListener {
-            val description = binding.petDescriptionEditText.text.toString()
-            if (sellerViewModel.imageUri.value == null || description.isEmpty()) {
-                Toast.makeText(requireContext(), "Please add an image and description", Toast.LENGTH_SHORT).show()
-            } else {
-                sellerViewModel.setDescription(description)
-                // TODO: Handle the upload functionality
-                Toast.makeText(requireContext(), "Pet uploaded successfully", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
+
+//    private fun getSharedPreferences(s: String, i: Int): Any {
+//
+//    }
 
     // Launch gallery to pick an image
     private fun openGalleryForImage() {
