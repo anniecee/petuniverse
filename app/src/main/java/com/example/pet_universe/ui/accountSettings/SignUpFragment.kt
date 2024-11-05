@@ -8,13 +8,27 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.pet_universe.R
+import com.example.pet_universe.database.User
+import com.example.pet_universe.database.UserDao
+import com.example.pet_universe.database.UserDatabase
+import com.example.pet_universe.database.UserRepository
+import com.example.pet_universe.database.UserViewModel
+import com.example.pet_universe.database.UserViewModelFactory
 import com.example.pet_universe.databinding.FragmentSignUpBinding
 
 class SignUpFragment : Fragment() {
 
     private var _binding: FragmentSignUpBinding? = null
     private val binding get() = _binding!!
+
+    // Database
+    private lateinit var database: UserDatabase
+    private lateinit var userDao: UserDao
+    private lateinit var repository: UserRepository
+    private lateinit var viewModelFactory: UserViewModelFactory
+    private lateinit var userViewModel: UserViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,6 +41,16 @@ class SignUpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Set up Room database for user data
+        database = UserDatabase.getInstance(requireContext())
+        userDao = database.userDao
+        repository = UserRepository(userDao)
+        viewModelFactory = UserViewModelFactory(repository)
+        userViewModel = ViewModelProvider(this, viewModelFactory).get(UserViewModel::class.java)
+
+        // Initialize the user data
+        val user = User()
+
         binding.saveButton.setOnClickListener {
             val firstName = binding.firstNameEditText.text.toString()
             val lastName = binding.lastNameEditText.text.toString()
@@ -37,8 +61,13 @@ class SignUpFragment : Fragment() {
             if (password == confirmPassword && email.isNotEmpty() && password.isNotEmpty()) {
                 // Simulate registration process
                 Toast.makeText(requireContext(), "Registration Complete", Toast.LENGTH_SHORT).show()
-                // TODO: Save user data to database in the future
+                // TODO: Save user data to database in the future - Done
                 // This is where you would add the code to save the user data to a database.
+                user.firstName = firstName
+                user.lastName = lastName
+                user.email = email
+                user.password = password
+                userViewModel.insert(user)
 
                 parentFragmentManager.popBackStack()
             } else {
