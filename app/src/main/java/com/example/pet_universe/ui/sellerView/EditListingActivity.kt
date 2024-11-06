@@ -1,0 +1,12 @@
+package com.example.pet_universe.ui.sellerView
+
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import com.example.pet_universe.R
+
+class SellerListingDetailActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_seller_listing_detail)
+    }
+}
