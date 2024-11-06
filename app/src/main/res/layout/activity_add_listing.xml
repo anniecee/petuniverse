@@ -1,0 +1,83 @@
+<!-- res/layout/fragment_seller.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ADD A LISTING"
+        android:textSize="24sp"
+        android:textColor="@color/black"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"/>
+
+    <EditText
+        android:id="@+id/titleEditText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Title of Listing"
+        android:layout_marginBottom="16dp"
+        android:inputType="textMultiLine" />
+    <EditText
+        android:id="@+id/priceEditText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Set price"
+        android:layout_marginBottom="16dp"
+        android:inputType="numberDecimal" />
+    <EditText
+        android:id="@+id/descriptionEditText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Description of Listing"
+        android:layout_marginBottom="16dp"
+        android:inputType="textMultiLine" />
+    <EditText
+        android:id="@+id/meetingLocationEditText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Meeting location"
+        android:layout_marginBottom="16dp"
+        android:inputType="textPostalAddress" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Category"
+        android:textSize="17sp"
+        android:layout_marginBottom="0dp"/>
+
+    <Spinner
+        android:id="@+id/categorySpinner"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginBottom="16dp"
+        android:entries="@array/category_spinner_entries"
+        android:focusable="false" />
+
+    <TextView
+        android:id="@+id/photoTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No photo selected"
+        android:textSize="12sp"/>
+
+    <Button
+        android:id="@+id/uploadPhotoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Upload Photo"
+        android:gravity="start"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/sellButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SELL" />
+
+</LinearLayout>

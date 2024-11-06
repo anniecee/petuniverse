@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp"
     android:gravity="center">
@@ -9,75 +10,37 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ADD A LISTING"
-        android:textSize="24sp"
-        android:textColor="@color/black"
-        android:layout_marginBottom="16dp"
+        android:text="YOUR ACTIVE LISTINGS"
+        android:textSize="25dp"
+        android:textStyle="bold"
         android:gravity="center"/>
 
-    <EditText
-        android:id="@+id/titleEditText"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Title of Listing"
-        android:layout_marginBottom="16dp"
-        android:inputType="textMultiLine" />
-    <EditText
-        android:id="@+id/priceEditText"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Set price"
-        android:layout_marginBottom="16dp"
-        android:inputType="numberDecimal" />
-    <EditText
-        android:id="@+id/descriptionEditText"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Description of Listing"
-        android:layout_marginBottom="16dp"
-        android:inputType="textMultiLine" />
-    <EditText
-        android:id="@+id/meetingLocationEditText"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Meeting location"
-        android:layout_marginBottom="16dp"
-        android:inputType="textPostalAddress" />
-
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/sellerRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Category"
-        android:textSize="17sp"
-        android:layout_marginBottom="0dp"/>
+        android:layout_weight="1"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:padding="10dp"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        android:scrollbars="vertical"/>
 
-    <Spinner
-        android:id="@+id/categorySpinner"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginBottom="16dp"
-        android:entries="@array/category_spinner_entries"
-        android:focusable="false" />
-
-    <TextView
-        android:id="@+id/photoTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="No photo selected"
-        android:textSize="12sp"/>
-
-    <Button
-        android:id="@+id/uploadPhotoButton"
+    <!-- Floating action button to add new listing -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addListingButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upload Photo"
-        android:gravity="start"
-        android:layout_marginBottom="16dp" />
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="50dp"
+        android:backgroundTint="@color/purple_200"
+        android:contentDescription="Add Listing"
+        app:srcCompat="@drawable/ic_baseline_add_24"
+        android:tint="@color/white" />
 
-    <Button
-        android:id="@+id/sellButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SELL" />
+
 
 </LinearLayout>
