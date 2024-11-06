@@ -37,6 +37,7 @@ class SellerViewFragment : Fragment() {
 
     // Recycler View
     private lateinit var recyclerView : RecyclerView
+    private lateinit var recyclerAdapter: SellerListingsAdapter
     private var sellerListings = mutableListOf<Listing>()
 
     private var _binding: FragmentSellerBinding? = null
@@ -68,6 +69,8 @@ class SellerViewFragment : Fragment() {
         // Set up Recycler View
         recyclerView = binding.sellerRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerAdapter = SellerListingsAdapter(sellerListings)
+        recyclerView.adapter = recyclerAdapter
 
         // Find the user's listings & observe data
         val userId = sharedPref.getLong("userId", -1)
@@ -76,8 +79,9 @@ class SellerViewFragment : Fragment() {
                 // Update sellerListings
                 sellerListings.clear()
                 sellerListings.addAll(listings)
-                val recyclerAdapter = SellerListingsAdapter(sellerListings)
-                recyclerView.adapter = recyclerAdapter
+                recyclerAdapter.notifyDataSetChanged()
+
+                // Print sellerListings to debug
                 println("Seller Listings: $sellerListings")
             }
         }
@@ -89,6 +93,7 @@ class SellerViewFragment : Fragment() {
         }
 
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
