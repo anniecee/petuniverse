@@ -32,10 +32,10 @@
             android:layout_marginRight="20dp"/>
 
         <TextView
-            android:id="@+id/petGenderTextView"
+            android:id="@+id/petPriceTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Gender" />
+            android:text="Price" />
     </LinearLayout>
 
     <TextView

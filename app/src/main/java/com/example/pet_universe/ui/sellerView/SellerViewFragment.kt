@@ -76,15 +76,11 @@ class SellerViewFragment : Fragment() {
                 // Update sellerListings
                 sellerListings.clear()
                 sellerListings.addAll(listings)
-                recyclerView.adapter = SellerListingsAdapter(sellerListings)
+                val recyclerAdapter = SellerListingsAdapter(sellerListings)
+                recyclerView.adapter = recyclerAdapter
                 println("Seller Listings: $sellerListings")
             }
         }
-
-        // Update recycler view
-        val recyclerAdapter = SellerListingsAdapter(sellerListings)
-        recyclerView.adapter = recyclerAdapter
-        println("Seller Listings 2: $sellerListings")
 
         // Set click listener for add listing button
         binding.addListingButton.setOnClickListener {
