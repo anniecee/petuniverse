@@ -43,7 +43,7 @@ class IndividualPetFragment : Fragment() {
 
         livePetsViewModel.selectedPet.observe(viewLifecycleOwner) { pet ->
             binding.petNameTextView.text = pet.name
-            binding.petGenderTextView.text = pet.gender
+            binding.petPriceTextView.text = pet.price.toString()
             binding.petDescriptionTextView.text = pet.description
             binding.petImageView.setImageResource(pet.imageResId)
         }

@@ -30,7 +30,6 @@ class LivePetsFragment : Fragment() {
     private lateinit var repository: ListingRepository
     private lateinit var viewModelFactory: ListingViewModelFactory
     private lateinit var listingViewModel: ListingViewModel
-    private lateinit var listing: Listing
 
     private var _binding: FragmentLivePetsBinding? = null
     private val binding get() = _binding!!
@@ -61,25 +60,32 @@ class LivePetsFragment : Fragment() {
             findNavController().navigate(R.id.action_global_to_accountSettings)
         }
 
-        // Set up database
+        // Set up database and ViewModel
         database = ListingDatabase.getInstance(requireContext())
         listingDao = database.listingDao
         repository = ListingRepository(listingDao)
         viewModelFactory = ListingViewModelFactory(repository)
         listingViewModel = ViewModelProvider(this, viewModelFactory).get(ListingViewModel::class.java)
 
-        // TODO: Retrieve data from each Listing in the database instead of from petList
-
-        val petList = listOf(
-            Pet("Buddy", "Male", "Medium • Labrador • 2 miles away", R.drawable.pet_food_logo),
-            Pet("Lucy", "Female", "Small • Beagle • 5 miles away", R.drawable.live_pets_logo),
-            Pet("Max", "Male", "Large • German Shepherd • 3 miles away", R.drawable.pet_food_logo)
-        )
-
+        // Initialize RecyclerView with an empty list initially
         binding.petRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.petRecyclerView.adapter = PetAdapter(petList) { pet ->
+        val petAdapter = PetAdapter(listOf()) { pet ->
             livePetsViewModel.selectPet(pet)
             findNavController().navigate(R.id.action_livePetsFragment_to_individualPetFragment)
+        }
+        binding.petRecyclerView.adapter = petAdapter
+
+        // Observe listings from ViewModel and update adapter
+        listingViewModel.allListingsLiveData.observe(viewLifecycleOwner) { listings ->
+            val pets = listings.map { listing ->
+                Pet(
+                    name = listing.title,
+                    price = listing.price,
+                    description = listing.description,
+                    imageResId = 0 // PLACEHOLDER VALUE, REQUIRES CHANGE
+                )
+            }
+            petAdapter.updatePets(pets)
         }
 
         binding.petFilterButton.setOnClickListener {
@@ -89,7 +95,6 @@ class LivePetsFragment : Fragment() {
         binding.ageFilterButton.setOnClickListener {
             showAgeFilterDialog()
         }
-
 
         livePetsViewModel.selectedPetType.observe(viewLifecycleOwner) { petType ->
             binding.petFilterButton.text = petType
