@@ -2,13 +2,18 @@ package com.example.pet_universe.database
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ListingDatabaseDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(listing: Listing)
+
+    // Bulk insert for multiple listings
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(listings: List<Listing>)
 
     @Query("SELECT * FROM listing_table")
     fun getAll(): Flow<List<Listing>>

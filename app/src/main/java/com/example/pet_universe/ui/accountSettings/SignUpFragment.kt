@@ -189,7 +189,7 @@ class SignUpFragment : Fragment() {
             firstName = firstName,
             lastName = lastName,
             email = email,
-            password = password // Consider encrypting passwords in a real app
+            password = password // TODO encrypting passwords in a real app
         )
 
         userViewModel.insert(user)

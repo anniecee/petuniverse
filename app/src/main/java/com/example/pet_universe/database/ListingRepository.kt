@@ -15,6 +15,13 @@ class ListingRepository(private val listingDatabaseDao: ListingDatabaseDao) {
         }
     }
 
+    // Insert multiple listings (bulk insert)
+    fun insertListings(listings: List<Listing>) {
+        CoroutineScope(IO).launch {
+            listingDatabaseDao.insertAll(listings)
+        }
+    }
+
     fun deleteAll() {
         CoroutineScope(IO).launch {
             listingDatabaseDao.deleteAll()
