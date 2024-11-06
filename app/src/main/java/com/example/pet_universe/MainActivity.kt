@@ -25,11 +25,13 @@ import com.example.pet_universe.database.UserViewModel
 import com.example.pet_universe.database.UserViewModelFactory
 import com.example.pet_universe.databinding.ActivityMainBinding
 import com.example.pet_universe.ui.accountSettings.SignUpFragment
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var auth: FirebaseAuth
 
     // Database
     private lateinit var database: UserDatabase
@@ -51,6 +53,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
+
+        // Initialize Firebase Auth
+        auth = FirebaseAuth.getInstance()
 
         // Set up Room database for user data
         database = UserDatabase.getInstance(this)
@@ -75,7 +80,8 @@ class MainActivity : AppCompatActivity() {
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 // Launch a coroutine to call the suspend function
                 lifecycleScope.launch {
-                    handleLogin(email, password)
+                   // handleLogin(email, password)
+                    handleFirebaseLogin(email, password)
                 }
             } else {
                 emailEditText.error = if (email.isEmpty()) "Email required" else null
@@ -116,6 +122,38 @@ class MainActivity : AppCompatActivity() {
                 passwordEditText.error = "Incorrect password"
             }
         }
+    }
+
+    private fun handleFirebaseLogin(email: String, password: String) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Firebase sign-in success
+                    val user = auth.currentUser
+                    if (user != null) {
+                        lifecycleScope.launch {
+                            // Sync user data from Room
+                            val localUser = userViewModel.getUserByEmail(email)
+                            if (localUser != null) {
+                                // Store user data in SharedPreferences
+                                sharedPref = getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+                                with(sharedPref.edit()) {
+                                    putLong("userId", localUser.id)
+                                    putString("email", localUser.email)
+                                    apply()
+                                }
+                                // Switch to main layout after login
+                                loadMainLayout()
+                            } else {
+                                Toast.makeText(baseContext, "Local user data not found.", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                } else {
+                    // Sign-in failed
+                    Toast.makeText(baseContext, "Authentication failed.", Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 
     private fun loadMainLayout() {
