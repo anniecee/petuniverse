@@ -36,6 +36,21 @@
         android:hint="Description of Listing"
         android:layout_marginBottom="16dp"
         android:inputType="textMultiLine" />
+    <EditText
+        android:id="@+id/meetingLocationEditText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Meeting location"
+        android:layout_marginBottom="16dp"
+        android:inputType="textPostalAddress" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Category"
+        android:textSize="17sp"
+        android:layout_marginBottom="0dp"/>
+
     <Spinner
         android:id="@+id/categorySpinner"
         android:layout_width="match_parent"
@@ -43,15 +58,6 @@
         android:layout_marginBottom="16dp"
         android:entries="@array/category_spinner_entries"
         android:focusable="false" />
-
-    <!--TODO: Meeting location should be map cordinations instead of text -->
-    <EditText
-        android:id="@+id/meetingLocationEditText"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Meeting location"
-        android:layout_marginBottom="16dp"
-        android:inputType="text" />
 
     <TextView
         android:id="@+id/photoTextView"

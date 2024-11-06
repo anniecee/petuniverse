@@ -24,7 +24,7 @@ data class Listing(
     @ColumnInfo(name = "category")
     var category: String = "",
 
-    @ColumnInfo(name = "photo")
+    @ColumnInfo(name = "photo", typeAffinity = ColumnInfo.BLOB)
     var photo: ByteArray = byteArrayOf(),
 
     // Save user id of seller when listing is created
@@ -37,7 +37,7 @@ data class Listing(
 
     // TODO: Need to check & use appropriate datatype
     @ColumnInfo(name = "meeting_location")
-    var meetingLocation: Map<String, Double> = mapOf("latitude" to 0.0, "longitude" to 0.0),
+    var meetingLocation: String = "",
 
     // Save date and time of meeting when listing is sold
     @ColumnInfo(name = "meeting_date_time")

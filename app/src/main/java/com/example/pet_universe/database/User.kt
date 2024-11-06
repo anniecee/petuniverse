@@ -24,7 +24,7 @@ data class User (
     @ColumnInfo(name = "password")
     var password: String = "",
 
-    @ColumnInfo(name = "profile_photo")
+    @ColumnInfo(name = "profile_photo", typeAffinity = ColumnInfo.BLOB)
     var profilePhoto: ByteArray = byteArrayOf(),
 
     @ColumnInfo(name = "buy_listing_id_list")

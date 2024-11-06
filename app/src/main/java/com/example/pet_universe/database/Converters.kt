@@ -28,16 +28,16 @@ class Converters {
         return calendar.timeInMillis
     }
 
-    @TypeConverter
-    fun fromMap(map: Map<String, Double>): String {
-        return map.entries.joinToString(",") { "${it.key}:${it.value}" }
-    }
-
-    @TypeConverter
-    fun toMap(data: String): Map<String, Double> {
-        return data.split(",").map {
-            val (key, value) = it.split(":")
-            key to value.toDouble()
-        }.toMap()
-    }
+//    @TypeConverter
+//    fun fromMap(map: Map<String, Double>): String {
+//        return map.entries.joinToString(",") { "${it.key}:${it.value}" }
+//    }
+//
+//    @TypeConverter
+//    fun toMap(data: String): Map<String, Double> {
+//        return data.split(",").map {
+//            val (key, value) = it.split(":")
+//            key to value.toDouble()
+//        }.toMap()
+//    }
 }

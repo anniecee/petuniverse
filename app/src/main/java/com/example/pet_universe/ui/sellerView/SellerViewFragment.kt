@@ -4,6 +4,7 @@ package com.example.pet_universe.ui.sellerView
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -21,6 +22,7 @@ import com.example.pet_universe.database.ListingRepository
 import com.example.pet_universe.database.ListingViewModel
 import com.example.pet_universe.database.ListingViewModelFactory
 import com.example.pet_universe.databinding.FragmentSellerBinding
+import java.io.File
 
 class SellerViewFragment : Fragment() {
 
@@ -31,6 +33,12 @@ class SellerViewFragment : Fragment() {
     private lateinit var viewModelFactory: ListingViewModelFactory
     private lateinit var listingViewModel: ListingViewModel
     private lateinit var listing: Listing
+
+    // Shared preferences
+    private lateinit var sharedPref: SharedPreferences
+
+    // Image
+    private var imageUri: Uri? = null
 
     private var _binding: FragmentSellerBinding? = null
     private val binding get() = _binding!!
@@ -48,6 +56,9 @@ class SellerViewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Set up shared preferences
+        sharedPref = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+
         // Set up database
         database = ListingDatabase.getInstance(requireContext())
         listingDao = database.listingDao
@@ -58,9 +69,13 @@ class SellerViewFragment : Fragment() {
         // Initialize listing object
         listing = Listing()
         
-        // TODO: Set sellerId to listing object
+        // Set sellerId from shared preferences
+        listing.sellerId = sharedPref.getLong("userId", -1)
 
-        // TODO: Set click listener for add image button
+        // Set click listener for upload photo button
+        binding.uploadPhotoButton.setOnClickListener {
+            openGalleryForImage()
+        }
 
         // Set click listener for sell button
         binding.sellButton.setOnClickListener {
@@ -68,22 +83,32 @@ class SellerViewFragment : Fragment() {
             val price = binding.priceEditText.text.toString().toDouble()
             val description = binding.descriptionEditText.text.toString()
             val category = binding.categorySpinner.selectedItem.toString()
+            val location = binding.meetingLocationEditText.text.toString()
 
             // Set listing object
             listing.title = title
             listing.price = price
             listing.description = description
             listing.category = category
+            listing.meetingLocation = location
+
+            // Save uploaded photo to room database
+            if (imageUri != null) {
+                // Open input stream to read image
+                val inputStream = requireContext().contentResolver.openInputStream(imageUri!!)
+                if (inputStream != null) {
+                    listing.photo = inputStream.readBytes()
+                }
+                inputStream?.close()
+            }
+
+            println("Listing: $listing")
 
             // Close fragment
             requireActivity().supportFragmentManager.popBackStack()
         }
 
     }
-
-//    private fun getSharedPreferences(s: String, i: Int): Any {
-//
-//    }
 
     // Launch gallery to pick an image
     private fun openGalleryForImage() {
@@ -95,9 +120,14 @@ class SellerViewFragment : Fragment() {
     private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent? = result.data
-            val imageUri: Uri? = data?.data
-            if (imageUri != null) {
-                sellerViewModel.setImageUri(imageUri)
+            imageUri = data?.data
+            val uri = imageUri // This to prevent null pointer exception
+            if (uri != null) {
+                sellerViewModel.setImageUri(uri)
+
+                val fileName = uri.pathSegments.last()
+                binding.photoTextView.text = fileName.toString() + ".jpg"
+                Toast.makeText(requireContext(), "Image uploaded", Toast.LENGTH_SHORT).show()
             }
         }
     }
