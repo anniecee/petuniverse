@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Pet_Universe</string>
-    <string name="title_home">Home</string>
-    <string name="title_seller_view">Seller View</string>
-    <string name="title_accounts">Accounts</string>
+    <string name="title_home">Buy</string>
+    <string name="title_seller_view">Sell</string>
+    <string name="title_accounts">Account</string>
     <string name="live_pets_description">All pets in one place</string>
     <string name="food_description">All pet food in one place</string>
     <string name="accessories_description">All pet accessories in one place</string>
