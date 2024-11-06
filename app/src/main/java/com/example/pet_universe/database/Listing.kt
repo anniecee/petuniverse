@@ -41,7 +41,7 @@ data class Listing(
 
     // Save date and time of meeting when listing is sold
     @ColumnInfo(name = "meeting_date_time")
-    var meetingDateTime: Calendar? = null,
+    var meetingDateTime: Calendar = Calendar.getInstance(),
 
     @ColumnInfo(name = "is_sold")
     var isSold: Boolean = false

@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:layout_marginBottom="8dp"
+    android:background="@android:color/white"
+    android:layout_marginHorizontal="16dp"
+    android:elevation="2dp">
+
+    <ImageView
+        android:id="@+id/listingPhoto"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:src="@drawable/pet_accessories_logo"
+        android:scaleType="centerCrop"
+        android:contentDescription="Pet Image" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/listingTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Title"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginRight="20dp"/>
+
+        <TextView
+            android:id="@+id/listingPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$Price" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/listingDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Size of pet • Breed • Location • Distance"
+        android:paddingHorizontal="8dp"
+        android:paddingBottom="8dp"
+        android:textColor="@android:color/darker_gray" />
+</LinearLayout>

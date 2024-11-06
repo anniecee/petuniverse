@@ -18,4 +18,10 @@ interface ListingDatabaseDao {
 
     @Query("DELETE FROM listing_table WHERE id = :key")
     suspend fun delete(key: Long)
+
+    @Query("SELECT * FROM listing_table WHERE seller_id = :userId")
+    fun getListingsBySellerId(userId: Long): Flow<List<Listing>>
+
+    @Query("SELECT * FROM listing_table WHERE seller_id = :userId AND is_sold = 0")
+    fun getActiveListingsBySellerId(userId: Long): Flow<List<Listing>>
 }

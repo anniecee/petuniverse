@@ -1,20 +1,19 @@
 package com.example.pet_universe.ui.sellerView
 
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.pet_universe.database.Listing
 import com.example.pet_universe.database.ListingDatabase
 import com.example.pet_universe.database.ListingDatabaseDao
@@ -22,23 +21,23 @@ import com.example.pet_universe.database.ListingRepository
 import com.example.pet_universe.database.ListingViewModel
 import com.example.pet_universe.database.ListingViewModelFactory
 import com.example.pet_universe.databinding.FragmentSellerBinding
-import java.io.File
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class SellerViewFragment : Fragment() {
-
-    // Initialization for database
+    // Database
     private lateinit var database: ListingDatabase
     private lateinit var listingDao: ListingDatabaseDao
     private lateinit var repository: ListingRepository
     private lateinit var viewModelFactory: ListingViewModelFactory
     private lateinit var listingViewModel: ListingViewModel
-    private lateinit var listing: Listing
 
     // Shared preferences
     private lateinit var sharedPref: SharedPreferences
 
-    // Image
-    private var imageUri: Uri? = null
+    // Recycler View
+    private lateinit var recyclerView : RecyclerView
+    private var sellerListings = mutableListOf<Listing>()
 
     private var _binding: FragmentSellerBinding? = null
     private val binding get() = _binding!!
@@ -66,70 +65,33 @@ class SellerViewFragment : Fragment() {
         viewModelFactory = ListingViewModelFactory(repository)
         listingViewModel = ViewModelProvider(this, viewModelFactory).get(ListingViewModel::class.java)
 
-        // Initialize listing object
-        listing = Listing()
-        
-        // Set sellerId from shared preferences
-        listing.sellerId = sharedPref.getLong("userId", -1)
+        // Set up Recycler View
+        recyclerView = binding.sellerRecyclerView
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // Set click listener for upload photo button
-        binding.uploadPhotoButton.setOnClickListener {
-            openGalleryForImage()
-        }
-
-        // Set click listener for sell button
-        binding.sellButton.setOnClickListener {
-            val title = binding.titleEditText.text.toString()
-            val price = binding.priceEditText.text.toString().toDouble()
-            val description = binding.descriptionEditText.text.toString()
-            val category = binding.categorySpinner.selectedItem.toString()
-            val location = binding.meetingLocationEditText.text.toString()
-
-            // Set listing object
-            listing.title = title
-            listing.price = price
-            listing.description = description
-            listing.category = category
-            listing.meetingLocation = location
-
-            // Save uploaded photo to room database
-            if (imageUri != null) {
-                // Open input stream to read image
-                val inputStream = requireContext().contentResolver.openInputStream(imageUri!!)
-                if (inputStream != null) {
-                    listing.photo = inputStream.readBytes()
-                }
-                inputStream?.close()
-            }
-
-            println("Listing: $listing")
-
-            // Close fragment
-            requireActivity().supportFragmentManager.popBackStack()
-        }
-
-    }
-
-    // Launch gallery to pick an image
-    private fun openGalleryForImage() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        resultLauncher.launch(intent)
-    }
-
-    // Handle image result
-    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val data: Intent? = result.data
-            imageUri = data?.data
-            val uri = imageUri // This to prevent null pointer exception
-            if (uri != null) {
-                sellerViewModel.setImageUri(uri)
-
-                val fileName = uri.pathSegments.last()
-                binding.photoTextView.text = fileName.toString() + ".jpg"
-                Toast.makeText(requireContext(), "Image uploaded", Toast.LENGTH_SHORT).show()
+        // Find the user's listings & observe data
+        val userId = sharedPref.getLong("userId", -1)
+        lifecycleScope.launch {
+            listingViewModel.getActiveListingsBySellerId(userId).observe(viewLifecycleOwner) { listings ->
+                // Update sellerListings
+                sellerListings.clear()
+                sellerListings.addAll(listings)
+                recyclerView.adapter = SellerListingsAdapter(sellerListings)
+                println("Seller Listings: $sellerListings")
             }
         }
+
+        // Update recycler view
+        val recyclerAdapter = SellerListingsAdapter(sellerListings)
+        recyclerView.adapter = recyclerAdapter
+        println("Seller Listings 2: $sellerListings")
+
+        // Set click listener for add listing button
+        binding.addListingButton.setOnClickListener {
+            val intent = Intent(requireContext(), AddListingActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     override fun onDestroyView() {

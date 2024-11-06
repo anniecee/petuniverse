@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ListingViewModel(private val repository: ListingRepository): ViewModel() {
     val allListingsLiveData: LiveData<List<Listing>> = repository.allListings.asLiveData()
@@ -26,6 +28,18 @@ class ListingViewModel(private val repository: ListingRepository): ViewModel() {
     fun delete(id: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.delete(id)
+        }
+    }
+
+    suspend fun getListingsBySellerId(userId: Long): LiveData<List<Listing>> {
+        return withContext(Dispatchers.IO) {
+            repository.getListingsBySellerId(userId).asLiveData()
+        }
+    }
+
+    suspend fun getActiveListingsBySellerId(userId: Long): LiveData<List<Listing>> {
+        return withContext(Dispatchers.IO) {
+            repository.getActiveListingsBySellerId(userId).asLiveData()
         }
     }
 }
