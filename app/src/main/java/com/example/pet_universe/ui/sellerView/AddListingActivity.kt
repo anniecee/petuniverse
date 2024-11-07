@@ -16,14 +16,18 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.pet_universe.R
+import com.example.pet_universe.database.Converters
 import com.example.pet_universe.database.Listing
 import com.example.pet_universe.database.ListingDatabase
 import com.example.pet_universe.database.ListingDatabaseDao
 import com.example.pet_universe.database.ListingRepository
 import com.example.pet_universe.database.ListingViewModel
 import com.example.pet_universe.database.ListingViewModelFactory
+import com.google.firebase.firestore.FirebaseFirestore
 
 class AddListingActivity : AppCompatActivity() {
+
+    private lateinit var firestore: FirebaseFirestore
 
     // Initialization for database
     private lateinit var database: ListingDatabase
@@ -52,6 +56,8 @@ class AddListingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_listing)
+
+        firestore = FirebaseFirestore.getInstance()
 
         // Set up shared preferences
         sharedPref = this.getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
@@ -115,9 +121,24 @@ class AddListingActivity : AppCompatActivity() {
             // Save listing to database
             listingViewModel.insert(listing)
 
+            //save lisitng to the firebase database
+            saveListingToFirebase(listing)
+
             // Close activity
             finish()
         }
+    }
+
+    private fun saveListingToFirebase(listing: Listing) {
+        val converters = Converters()
+
+        // Convert ByteArray photo to List<Int> for Firebase
+        listing.firebasePhoto = converters.fromByteArray(listing.photo)
+
+        firestore.collection("listings")
+            .add(listing)
+            .addOnSuccessListener { Toast.makeText(this, "Listing added", Toast.LENGTH_SHORT).show() }
+            .addOnFailureListener { e -> Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show() }
     }
 
     // Launch gallery to pick an image

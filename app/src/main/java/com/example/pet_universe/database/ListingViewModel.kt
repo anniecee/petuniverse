@@ -22,6 +22,12 @@ class ListingViewModel(private val repository: ListingRepository): ViewModel() {
         }
     }
 
+    fun insertListings(listings: List<Listing>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.insertListings(listings)
+        }
+    }
+
     // Fetch listings from Firebase and save to Room
     fun fetchListingsFromFirebase() {
         firestore.collection("listings")
@@ -62,11 +68,13 @@ class ListingViewModel(private val repository: ListingRepository): ViewModel() {
         }
     }
 
-    suspend fun getActiveListingsBySellerId(userId: Long): LiveData<List<Listing>> {
-        return withContext(Dispatchers.IO) {
-            repository.getActiveListingsBySellerId(userId).asLiveData()
-        }
+    fun getActiveListingsBySellerId(userId: Long): LiveData<List<Listing>> {
+
+            return repository.getActiveListingsBySellerId(userId).asLiveData()
+
     }
+
+
 }
 
 class ListingViewModelFactory(private val repository: ListingRepository): ViewModelProvider.Factory {

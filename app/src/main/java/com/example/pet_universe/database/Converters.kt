@@ -28,6 +28,16 @@ class Converters {
         return calendar.timeInMillis
     }
 
+    @TypeConverter
+    fun fromByteArray(byteArray: ByteArray): List<Int> {
+        return byteArray.toList().map { it.toInt() }
+    }
+
+    @TypeConverter
+    fun toByteArray(intList: List<Int>): ByteArray {
+        return intList.map { it.toByte() }.toByteArray()
+    }
+
 //    @TypeConverter
 //    fun fromMap(map: Map<String, Double>): String {
 //        return map.entries.joinToString(",") { "${it.key}:${it.value}" }
