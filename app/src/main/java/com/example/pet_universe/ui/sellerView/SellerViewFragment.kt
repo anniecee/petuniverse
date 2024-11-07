@@ -8,11 +8,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.pet_universe.database.Converters
 import com.example.pet_universe.database.Listing
 import com.example.pet_universe.database.ListingDatabase
 import com.example.pet_universe.database.ListingDatabaseDao
@@ -20,9 +22,14 @@ import com.example.pet_universe.database.ListingRepository
 import com.example.pet_universe.database.ListingViewModel
 import com.example.pet_universe.database.ListingViewModelFactory
 import com.example.pet_universe.databinding.FragmentSellerBinding
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class SellerViewFragment : Fragment() {
+
+    private lateinit var firestore: FirebaseFirestore
+
     // Database
     private lateinit var database: ListingDatabase
     private lateinit var listingDao: ListingDatabaseDao
@@ -54,6 +61,8 @@ class SellerViewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        firestore = FirebaseFirestore.getInstance()
+
         // Set up shared preferences
         sharedPref = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
 
@@ -70,19 +79,27 @@ class SellerViewFragment : Fragment() {
         recyclerAdapter = SellerListingsAdapter(requireContext(), sellerListings)
         recyclerView.adapter = recyclerAdapter
 
+        //new code
         // Find the user's listings & observe data
         val userId = sharedPref.getLong("userId", -1)
-        lifecycleScope.launch {
-            listingViewModel.getActiveListingsBySellerId(userId).observe(viewLifecycleOwner) { listings ->
-                // Update sellerListings
-                sellerListings.clear()
-                sellerListings.addAll(listings)
-                recyclerAdapter.notifyDataSetChanged()
+        fetchSellerListingsFromFirebase(userId)
 
-                // Print sellerListings to debug
-                println("Seller Listings: $sellerListings")
-            }
-        }
+        // Observe Room database for updates
+        observeListingsFromRoom(userId)
+
+
+        //older code
+//        lifecycleScope.launch {
+//            listingViewModel.getActiveListingsBySellerId(userId).observe(viewLifecycleOwner) { listings ->
+//                // Update sellerListings
+//                sellerListings.clear()
+//                sellerListings.addAll(listings)
+//                recyclerAdapter.notifyDataSetChanged()
+//
+//                // Print sellerListings to debug
+//                println("Seller Listings: $sellerListings")
+//            }
+//        }
 
         // Switch to detail page on item click
         // Learned how to do this from https://www.youtube.com/watch?v=WqrpcWXBz14
@@ -100,6 +117,39 @@ class SellerViewFragment : Fragment() {
 
     }
 
+
+
+    private fun fetchSellerListingsFromFirebase(userId: Long) {
+        val converters = Converters()
+        firestore.collection("listings")
+            .whereEqualTo("sellerId", userId)
+            .get()
+            .addOnSuccessListener { result ->
+                val listings = result.map { document ->
+                    val listing = document.toObject(Listing::class.java)
+
+                    // Convert firebasePhoto (List<Int>) to photo (ByteArray)
+                    listing.photo = converters.toByteArray(listing.firebasePhoto)
+                    listing
+                }
+                saveListingsToLocalDatabase(listings)
+            }
+            .addOnFailureListener { e -> }
+    }
+
+    private fun saveListingsToLocalDatabase(listings: List<Listing>) {
+        lifecycleScope.launch {
+            listingViewModel.insertListings(listings)
+        }
+    }
+
+    private fun observeListingsFromRoom(userId: Long) {
+        listingViewModel.getActiveListingsBySellerId(userId).observe(viewLifecycleOwner) { listings ->
+            sellerListings.clear()
+            sellerListings.addAll(listings)
+            recyclerAdapter.notifyDataSetChanged()
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

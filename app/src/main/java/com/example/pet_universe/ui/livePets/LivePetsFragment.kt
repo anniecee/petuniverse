@@ -21,8 +21,12 @@ import com.example.pet_universe.database.ListingViewModelFactory
 import com.example.pet_universe.databinding.FragmentLivePetsBinding
 import com.example.pet_universe.ui.dialogs.MyDialog
 import com.example.pet_universe.ui.profile.ProfileViewModel
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LivePetsFragment : Fragment() {
+
+    //Firestore database
+    private lateinit var firestore: FirebaseFirestore
 
     // Initialization for database
     private lateinit var database: ListingDatabase
@@ -50,6 +54,9 @@ class LivePetsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Initialize Firestore
+        firestore = FirebaseFirestore.getInstance()
+
         // Set up profile icon
         profileViewModel.userInitial.observe(viewLifecycleOwner) { initial ->
             binding.root.findViewById<TextView>(R.id.profileIcon).text = initial
@@ -75,6 +82,9 @@ class LivePetsFragment : Fragment() {
         }
         binding.petRecyclerView.adapter = petAdapter
 
+        // Observe listings from Firebase and update adapter
+        listingViewModel.fetchListingsFromFirebase()
+
         // Observe listings from ViewModel and update adapter
         listingViewModel.allListingsLiveData.observe(viewLifecycleOwner) { listings ->
             val pets = listings.map { listing ->
@@ -82,7 +92,7 @@ class LivePetsFragment : Fragment() {
                     name = listing.title,
                     price = listing.price,
                     description = listing.description,
-                    imageResId = 0 // PLACEHOLDER VALUE, REQUIRES CHANGE
+                    imageResId = 0 // PLACEHOLDER VALUE, for future image support
                 )
             }
             petAdapter.updatePets(pets)

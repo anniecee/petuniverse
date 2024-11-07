@@ -15,6 +15,13 @@ class ListingRepository(private val listingDatabaseDao: ListingDatabaseDao) {
         }
     }
 
+    // Insert multiple listings (bulk insert)
+    fun insertListings(listings: List<Listing>) {
+        CoroutineScope(IO).launch {
+            listingDatabaseDao.insertAll(listings)
+        }
+    }
+
     fun deleteAll() {
         CoroutineScope(IO).launch {
             listingDatabaseDao.deleteAll()
@@ -33,10 +40,9 @@ class ListingRepository(private val listingDatabaseDao: ListingDatabaseDao) {
         }
     }
 
-    suspend fun getActiveListingsBySellerId(userId: Long): Flow<List<Listing>>  {
-        return withContext(IO) {
-            listingDatabaseDao.getActiveListingsBySellerId(userId)
-        }
+    fun getActiveListingsBySellerId(userId: Long): Flow<List<Listing>>  {
+        return listingDatabaseDao.getActiveListingsBySellerId(userId)
+
     }
 
     suspend fun getListingById(listingId: Long): Listing {
