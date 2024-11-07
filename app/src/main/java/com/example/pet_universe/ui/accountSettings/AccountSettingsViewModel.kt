@@ -10,7 +10,7 @@ class AccountsViewModel : ViewModel() {
     private val _isSignedIn = MutableLiveData<Boolean>().apply {
         value = false // Assume the user is initially signed out
     }
-    val isSignedIn: LiveData<Boolean> = _isSignedIn
+    var isSignedIn: LiveData<Boolean> = _isSignedIn
 
     // Function to toggle sign-in state
     fun toggleSignInState() {

@@ -32,6 +32,10 @@
             android:exported="true"
             android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
+        <activity android:name=".ui.accountSettings.SignInActivity"
+            android:exported="true"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+        </activity>
     </application>
 
 </manifest>

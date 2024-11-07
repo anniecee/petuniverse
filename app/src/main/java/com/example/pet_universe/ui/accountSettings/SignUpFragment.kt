@@ -132,19 +132,19 @@ class SignUpFragment : Fragment() {
         var isValid = true
 
         if (password != confirmPassword) {
-            binding.confirmPasswordEditText.error = "Passwords do not match"
+            binding.confirmPasswordEditText.error = "The passwords you entered do not match. Please check again."
             isValid = false
         }
         if (email.isEmpty()) {
-            binding.emailEditTextSignUp.error = "Email required"
+            binding.emailEditTextSignUp.error = "Please enter your email address."
             isValid = false
         }
         if (password.isEmpty()) {
-            binding.passwordEditTextSignUp.error = "Password required"
+            binding.passwordEditTextSignUp.error = "Please enter a password."
             isValid = false
         }
         if (firstName.isEmpty() || lastName.isEmpty()) {
-            Toast.makeText(context, "Name fields cannot be empty", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Please enter your first and last name.", Toast.LENGTH_SHORT).show()
             isValid = false
         }
         return isValid
@@ -161,9 +161,9 @@ class SignUpFragment : Fragment() {
                 } else {
                     // Handle error if email already exists
                     if (task.exception is FirebaseAuthUserCollisionException) {
-                        Toast.makeText(context, "Email is already registered. Use a different email.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "An account with this email already exists. Did you mean to log in?", Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(context, "Registration failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Something went wrong: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -216,13 +216,13 @@ class SignUpFragment : Fragment() {
         // Add user data to Firestore
         firestore.collection("users").document(userId).set(userMap)
             .addOnSuccessListener {
-                Toast.makeText(context, "User registered successfully!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Your account has been successfully created!", Toast.LENGTH_SHORT).show()
                 // Save user to Room database without storing the password in plain text
                 saveUserToLocalDatabase(firstName, lastName, email, encryptedPassword)
                 parentFragmentManager.popBackStack() // Navigate back
             }
             .addOnFailureListener { e ->
-                Toast.makeText(context, "Failed to save user data: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Something went wrong: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -232,7 +232,7 @@ class SignUpFragment : Fragment() {
             firstName = firstName,
             lastName = lastName,
             email = email,
-            password = password // TODO encrypting passwords in a real app
+            password = password
         )
 
         userViewModel.insert(user)
