@@ -27,6 +27,11 @@
             android:exported="true"
             android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
+        <activity
+            android:name=".ui.sellerView.EditListingActivity"
+            android:exported="true"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+        </activity>
     </application>
 
 </manifest>

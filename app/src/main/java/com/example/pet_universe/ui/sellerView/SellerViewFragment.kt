@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,7 +20,6 @@ import com.example.pet_universe.database.ListingRepository
 import com.example.pet_universe.database.ListingViewModel
 import com.example.pet_universe.database.ListingViewModelFactory
 import com.example.pet_universe.databinding.FragmentSellerBinding
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class SellerViewFragment : Fragment() {
@@ -84,6 +82,14 @@ class SellerViewFragment : Fragment() {
                 // Print sellerListings to debug
                 println("Seller Listings: $sellerListings")
             }
+        }
+
+        // Switch to detail page on item click
+        // Learned how to do this from https://www.youtube.com/watch?v=WqrpcWXBz14
+        recyclerAdapter.onItemClick = {
+            val intent = Intent(requireContext(), EditListingActivity::class.java)
+            intent.putExtra("listingId", it.id)
+            startActivity(intent)
         }
 
         // Set click listener for add listing button

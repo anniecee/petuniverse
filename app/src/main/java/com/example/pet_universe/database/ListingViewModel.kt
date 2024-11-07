@@ -42,6 +42,25 @@ class ListingViewModel(private val repository: ListingRepository): ViewModel() {
             repository.getActiveListingsBySellerId(userId).asLiveData()
         }
     }
+
+    suspend fun getListingById(listingId: Long): Listing {
+        return withContext(Dispatchers.IO) {
+            repository.getListingById(listingId)
+        }
+    }
+
+    fun updateListing(listing: Listing) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val id = listing.id
+            val title = listing.title
+            val price = listing.price
+            val description = listing.description
+            val category = listing.category
+            val photo = listing.photo
+
+            repository.updateListing(id, title, price, description, category, photo)
+        }
+    }
 }
 
 class ListingViewModelFactory(private val repository: ListingRepository): ViewModelProvider.Factory {

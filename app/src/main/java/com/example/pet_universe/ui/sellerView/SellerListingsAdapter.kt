@@ -11,6 +11,7 @@ import com.example.pet_universe.database.Listing
 
 class SellerListingsAdapter(private val sellerListings : MutableList<Listing>) :
     RecyclerView.Adapter<SellerListingsAdapter.ViewHolder>() {
+        var onItemClick: ((Listing) -> Unit)? = null
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val listingTitle: TextView = itemView.findViewById(R.id.listingTitle)
@@ -44,6 +45,10 @@ class SellerListingsAdapter(private val sellerListings : MutableList<Listing>) :
 
         // Set image of listing
         holder.bindData(sellerListings[position])
+
+        holder.itemView.setOnClickListener {
+            onItemClick?.invoke(sellerListings[position])
+        }
     }
 
 }
