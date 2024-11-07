@@ -1,5 +1,6 @@
 package com.example.pet_universe.ui.sellerView
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.view.View
@@ -69,9 +70,23 @@ class SellerListingsAdapter(private val context: Context, private val sellerList
         }
 
         holder.deleteButton.setOnClickListener {
-            removeListing(position)
-            sellerListings.removeAt(position)
-            notifyItemRemoved(position)
+            val listingTitle = sellerListings[position].title
+
+            // Show confirmation dialog
+            AlertDialog.Builder(context)
+                .setTitle("Delete $listingTitle")
+                .setMessage("Are you sure you want to delete this listing?")
+                .setPositiveButton("Yes") { _, _ ->
+                    // User confirmed deletion
+                    removeListing(position)
+                    sellerListings.removeAt(position)
+                    notifyItemRemoved(position)
+                }
+                .setNegativeButton("No") { dialog, _ ->
+                    // User canceled deletion
+                    dialog.dismiss()
+                }
+                .show()
         }
     }
 

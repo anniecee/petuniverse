@@ -4,13 +4,16 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
+import com.google.firebase.firestore.Exclude
 import java.util.Calendar
 
 @Entity(tableName = "listing_table")
 @TypeConverters(Converters::class)
 data class Listing(
+
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0L,
+
 
     @ColumnInfo(name = "title")
     var title: String = "",
@@ -24,12 +27,17 @@ data class Listing(
     @ColumnInfo(name = "category")
     var category: String = "",
 
+    @Exclude
     @ColumnInfo(name = "photo", typeAffinity = ColumnInfo.BLOB)
     var photo: ByteArray = byteArrayOf(),
 
+
+    @Transient
+    var firebasePhoto: List<Int> = emptyList(),  // Firebase-specific storage
+
     // Save user id of seller when listing is created
     @ColumnInfo(name = "seller_id")
-    var sellerId: Long = 0L,
+    var sellerId: String? = "",
 
     // Save user id of buyer when listing is sold
     @ColumnInfo(name = "buyer_id")
@@ -45,4 +53,6 @@ data class Listing(
 
     @ColumnInfo(name = "is_sold")
     var isSold: Boolean = false
+
 )
+
