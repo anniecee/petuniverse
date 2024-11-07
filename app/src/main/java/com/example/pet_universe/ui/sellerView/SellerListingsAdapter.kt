@@ -1,20 +1,48 @@
 package com.example.pet_universe.ui.sellerView
 
+import android.content.Context
+import android.graphics.BitmapFactory
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pet_universe.R
 import com.example.pet_universe.database.Listing
+import com.example.pet_universe.database.ListingDatabase
+import com.example.pet_universe.database.ListingDatabaseDao
+import com.example.pet_universe.database.ListingRepository
+import com.example.pet_universe.database.ListingViewModel
+import com.example.pet_universe.database.ListingViewModelFactory
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class SellerListingsAdapter(private val sellerListings : MutableList<Listing>) :
+class SellerListingsAdapter(private val context: Context, private val sellerListings: MutableList<Listing>) :
     RecyclerView.Adapter<SellerListingsAdapter.ViewHolder>() {
+    // Database
+    private lateinit var database: ListingDatabase
+    private lateinit var listingDao: ListingDatabaseDao
+    private lateinit var repository: ListingRepository
+    private lateinit var viewModelFactory: ListingViewModelFactory
+    private lateinit var listingViewModel: ListingViewModel
+
+    var onItemClick: ((Listing) -> Unit)? = null
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // TODO: Add more fields as needed
         val listingTitle: TextView = itemView.findViewById(R.id.listingTitle)
         val listingPrice: TextView = itemView.findViewById(R.id.listingPrice)
         val listingDescription: TextView = itemView.findViewById(R.id.listingDescription)
+        val listingCategory: TextView = itemView.findViewById(R.id.listingCategory)
+        val listingPhoto: ImageView = itemView.findViewById(R.id.listingPhoto)
+        val deleteButton: FloatingActionButton = itemView.findViewById(R.id.deleteButton)
+
+        // This function is called to set the image of the listing
+        fun bindData(listing: Listing) {
+            val bitmap = BitmapFactory.decodeByteArray(listing.photo, 0, listing.photo.size)
+            listingPhoto.setImageBitmap(bitmap)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -28,10 +56,35 @@ class SellerListingsAdapter(private val sellerListings : MutableList<Listing>) :
 
     // This function is called when the RecyclerView needs to display data at a certain position
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        // TODO: Add more fields as needed
         holder.listingTitle.text = sellerListings[position].title
         holder.listingPrice.text = "$" + sellerListings[position].price.toString()
         holder.listingDescription.text = sellerListings[position].description
+        holder.listingCategory.text = "Category: " + sellerListings[position].category
+
+        // Set image of listing
+        holder.bindData(sellerListings[position])
+
+        holder.itemView.setOnClickListener {
+            onItemClick?.invoke(sellerListings[position])
+        }
+
+        holder.deleteButton.setOnClickListener {
+            removeListing(position)
+            sellerListings.removeAt(position)
+            notifyItemRemoved(position)
+        }
+    }
+
+    private fun removeListing(position: Int) {
+        // Set up database
+        database = ListingDatabase.getInstance(context)
+        listingDao = database.listingDao
+        repository = ListingRepository(listingDao)
+        viewModelFactory = ListingViewModelFactory(repository)
+        listingViewModel = ViewModelProvider(context as ViewModelStoreOwner, viewModelFactory).get(ListingViewModel::class.java)
+
+        // Remove the listing from the database
+        listingViewModel.delete(sellerListings[position].id)
     }
 
 }

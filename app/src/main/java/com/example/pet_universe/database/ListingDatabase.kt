@@ -14,13 +14,14 @@ abstract class ListingDatabase: RoomDatabase() {
         private var INSTANCE: ListingDatabase? = null
 
         fun getInstance(context: Context): ListingDatabase {
-            synchronized(this) {
-                var instance = INSTANCE
-                if (instance == null) {
-                    instance = Room.databaseBuilder(context, ListingDatabase::class.java, "listing_database").build()
-                    INSTANCE = instance
-                }
-                return instance
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    ListingDatabase::class.java,
+                    "listing_database"
+                ).build()
+                INSTANCE = instance
+                instance
             }
         }
     }

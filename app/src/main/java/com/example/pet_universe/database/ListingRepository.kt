@@ -39,4 +39,17 @@ class ListingRepository(private val listingDatabaseDao: ListingDatabaseDao) {
         }
     }
 
+    suspend fun getListingById(listingId: Long): Listing {
+        return withContext(IO) {
+            listingDatabaseDao.getListingById(listingId)
+        }
+
+    }
+
+    fun updateListing(id: Long, title: String, price: Double, description: String, category: String, photo: ByteArray) {
+        CoroutineScope(IO).launch {
+            listingDatabaseDao.update(id, title, price, description, category, photo)
+        }
+    }
+
 }
