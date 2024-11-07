@@ -44,6 +44,8 @@ android {
 dependencies {
 
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.auth.ktx)
+
     // Room components
     val room_version = "2.6.0"
     val lifecycle_version = "2.6.2"

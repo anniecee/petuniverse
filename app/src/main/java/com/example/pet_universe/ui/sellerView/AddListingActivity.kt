@@ -164,6 +164,5 @@ class AddListingActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        database.close()
     }
 }
