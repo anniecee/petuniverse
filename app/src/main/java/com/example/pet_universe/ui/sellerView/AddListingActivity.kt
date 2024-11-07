@@ -73,7 +73,7 @@ class AddListingActivity : AppCompatActivity() {
         listing = Listing()
 
         // Set sellerId from shared preferences
-        listing.sellerId = sharedPref.getLong("userId", -1)
+        listing.sellerId = sharedPref.getString("userId", null)
 
         // Set click listener for upload photo button
         uploadPhotoButton = findViewById(R.id.uploadPhotoButton)
@@ -122,7 +122,7 @@ class AddListingActivity : AppCompatActivity() {
             listingViewModel.insert(listing)
 
             //save lisitng to the firebase database
-            saveListingToFirebase(listing)
+//            saveListingToFirebase(listing)
 
             // Close activity
             finish()
@@ -130,15 +130,15 @@ class AddListingActivity : AppCompatActivity() {
     }
 
     private fun saveListingToFirebase(listing: Listing) {
-        val converters = Converters()
-
-        // Convert ByteArray photo to List<Int> for Firebase
-        listing.firebasePhoto = converters.fromByteArray(listing.photo)
-
-        firestore.collection("listings")
-            .add(listing)
-            .addOnSuccessListener { Toast.makeText(this, "Listing added", Toast.LENGTH_SHORT).show() }
-            .addOnFailureListener { e -> Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show() }
+//        val converters = Converters()
+//
+//        // Convert ByteArray photo to List<Int> for Firebase
+//        listing.firebasePhoto = converters.fromByteArray(listing.photo)
+//
+//        firestore.collection("listings")
+//            .add(listing)
+//            .addOnSuccessListener { Toast.makeText(this, "Listing added", Toast.LENGTH_SHORT).show() }
+//            .addOnFailureListener { e -> Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show() }
     }
 
     // Launch gallery to pick an image

@@ -37,7 +37,7 @@ data class Listing(
 
     // Save user id of seller when listing is created
     @ColumnInfo(name = "seller_id")
-    var sellerId: Long = 0L,
+    var sellerId: String? = "",
 
     // Save user id of buyer when listing is sold
     @ColumnInfo(name = "buyer_id")

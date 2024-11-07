@@ -28,7 +28,7 @@ interface ListingDatabaseDao {
     fun getListingsBySellerId(userId: Long): Flow<List<Listing>>
 
     @Query("SELECT * FROM listing_table WHERE seller_id = :userId AND is_sold = 0")
-    fun getActiveListingsBySellerId(userId: Long): Flow<List<Listing>>
+    fun getActiveListingsBySellerId(userId: String): Flow<List<Listing>>
 
     @Query("SELECT * FROM listing_table WHERE id = :listingId")
     fun getListingById(listingId: Long): Listing

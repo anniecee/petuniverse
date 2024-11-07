@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
 
-    // Database
+    // Database and ViewModel setup
     private lateinit var database: UserDatabase
     private lateinit var userDao: UserDao
     private lateinit var repository: UserRepository
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var loginButton: Button
     private lateinit var signUpTextView: TextView
 
-    // Shared preferences
+    // Shared preferences for user data (without password)
     private lateinit var sharedPref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 
-        // Set up Room database for user data
+        // Initialize Room database and ViewModel
         database = UserDatabase.getInstance(this)
         userDao = database.userDao
         repository = UserRepository(userDao)
@@ -71,18 +71,14 @@ class MainActivity : AppCompatActivity() {
         loginButton = findViewById(R.id.loginButton)
         signUpTextView = findViewById(R.id.signUpTextView)
 
-        // Set up listeners for buttons
+        // Set up listeners for login button
         loginButton.setOnClickListener {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
 
-            // Check if email and password are not empty
             if (email.isNotEmpty() && password.isNotEmpty()) {
-                // Launch a coroutine to call the suspend function
-                lifecycleScope.launch {
-                   // handleLogin(email, password)
-                    handleFirebaseLogin(email, password)
-                }
+                // Use Firebase to handle login
+                handleFirebaseLogin(email, password)
             } else {
                 emailEditText.error = if (email.isEmpty()) "Email required" else null
                 passwordEditText.error = if (password.isEmpty()) "Password required" else null
@@ -99,55 +95,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun handleLogin(email: String, password: String) {
-        // Check if user exists in database
-        if (userViewModel.getUserByEmail(email) == null) {
-            emailEditText.error = "User not found"
-            return
-        } else {
-            // Check if password matches the user's password
-            val user = userViewModel.getUserByEmail(email)
-            if (user?.password == password) {
-                // Save user data to shared preferences
-                sharedPref = getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
-                with(sharedPref.edit()) {
-                    putLong("userId", user.id)
-                    putString("email", user.email)
-                    apply()
-                }
-
-                // Switch to main layout after login
-                loadMainLayout()
-            } else {
-                passwordEditText.error = "Incorrect password"
-            }
-        }
-    }
-
     private fun handleFirebaseLogin(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Firebase sign-in success
+                    // Firebase sign-in successful
                     val user = auth.currentUser
                     if (user != null) {
-                        lifecycleScope.launch {
-                            // Sync user data from Room
-                            val localUser = userViewModel.getUserByEmail(email)
-                            if (localUser != null) {
-                                // Store user data in SharedPreferences
-                                sharedPref = getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
-                                with(sharedPref.edit()) {
-                                    putLong("userId", localUser.id)
-                                    putString("email", localUser.email)
-                                    apply()
-                                }
-                                // Switch to main layout after login
-                                loadMainLayout()
-                            } else {
-                                Toast.makeText(baseContext, "Local user data not found.", Toast.LENGTH_SHORT).show()
-                            }
+                        // Store user info in SharedPreferences if needed
+                        sharedPref = getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+                        with(sharedPref.edit()) {
+                            putString("userId", user.uid)
+                            putString("email", user.email)
+                            apply()
                         }
+                        // Switch to main layout
+                        loadMainLayout()
                     }
                 } else {
                     // Sign-in failed
@@ -157,7 +120,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadMainLayout() {
-        // Inflate the main activity layout with bottom navigation
+        // Ensure binding is set up at the class level
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -190,8 +153,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        // Use NavController to handle navigation back to previous fragment
         return findNavController(R.id.nav_host_fragment_activity_main).navigateUp() || super.onSupportNavigateUp()
     }
-
 }
+

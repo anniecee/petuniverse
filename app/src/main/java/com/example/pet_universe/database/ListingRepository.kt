@@ -40,7 +40,7 @@ class ListingRepository(private val listingDatabaseDao: ListingDatabaseDao) {
         }
     }
 
-    fun getActiveListingsBySellerId(userId: Long): Flow<List<Listing>>  {
+    suspend fun getActiveListingsBySellerId(userId: String): Flow<List<Listing>>  {
         return listingDatabaseDao.getActiveListingsBySellerId(userId)
 
     }

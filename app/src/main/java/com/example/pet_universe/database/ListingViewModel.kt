@@ -7,7 +7,6 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -68,7 +67,7 @@ class ListingViewModel(private val repository: ListingRepository): ViewModel() {
         }
     }
 
-    suspend fun getActiveListingsBySellerId(userId: Long): LiveData<List<Listing>> {
+    suspend fun getActiveListingsBySellerId(userId: String): LiveData<List<Listing>> {
         return withContext(Dispatchers.IO) {
             repository.getActiveListingsBySellerId(userId).asLiveData()
         }
