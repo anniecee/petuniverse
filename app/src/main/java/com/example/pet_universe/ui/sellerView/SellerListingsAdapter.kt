@@ -1,17 +1,34 @@
 package com.example.pet_universe.ui.sellerView
 
+import android.content.Context
 import android.graphics.BitmapFactory
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pet_universe.R
 import com.example.pet_universe.database.Listing
+import com.example.pet_universe.database.ListingDatabase
+import com.example.pet_universe.database.ListingDatabaseDao
+import com.example.pet_universe.database.ListingRepository
+import com.example.pet_universe.database.ListingViewModel
+import com.example.pet_universe.database.ListingViewModelFactory
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class SellerListingsAdapter(private val sellerListings : MutableList<Listing>) :
+class SellerListingsAdapter(private val context: Context, private val sellerListings: MutableList<Listing>) :
     RecyclerView.Adapter<SellerListingsAdapter.ViewHolder>() {
-        var onItemClick: ((Listing) -> Unit)? = null
+    // Database
+    private lateinit var database: ListingDatabase
+    private lateinit var listingDao: ListingDatabaseDao
+    private lateinit var repository: ListingRepository
+    private lateinit var viewModelFactory: ListingViewModelFactory
+    private lateinit var listingViewModel: ListingViewModel
+
+    var onItemClick: ((Listing) -> Unit)? = null
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val listingTitle: TextView = itemView.findViewById(R.id.listingTitle)
@@ -19,6 +36,7 @@ class SellerListingsAdapter(private val sellerListings : MutableList<Listing>) :
         val listingDescription: TextView = itemView.findViewById(R.id.listingDescription)
         val listingCategory: TextView = itemView.findViewById(R.id.listingCategory)
         val listingPhoto: ImageView = itemView.findViewById(R.id.listingPhoto)
+        val deleteButton: FloatingActionButton = itemView.findViewById(R.id.deleteButton)
 
         // This function is called to set the image of the listing
         fun bindData(listing: Listing) {
@@ -49,6 +67,24 @@ class SellerListingsAdapter(private val sellerListings : MutableList<Listing>) :
         holder.itemView.setOnClickListener {
             onItemClick?.invoke(sellerListings[position])
         }
+
+        holder.deleteButton.setOnClickListener {
+            removeListing(position)
+            sellerListings.removeAt(position)
+            notifyItemRemoved(position)
+        }
+    }
+
+    private fun removeListing(position: Int) {
+        // Set up database
+        database = ListingDatabase.getInstance(context)
+        listingDao = database.listingDao
+        repository = ListingRepository(listingDao)
+        viewModelFactory = ListingViewModelFactory(repository)
+        listingViewModel = ViewModelProvider(context as ViewModelStoreOwner, viewModelFactory).get(ListingViewModel::class.java)
+
+        // Remove the listing from the database
+        listingViewModel.delete(sellerListings[position].id)
     }
 
 }

@@ -67,7 +67,7 @@ class SellerViewFragment : Fragment() {
         // Set up Recycler View
         recyclerView = binding.sellerRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerAdapter = SellerListingsAdapter(sellerListings)
+        recyclerAdapter = SellerListingsAdapter(requireContext(), sellerListings)
         recyclerView.adapter = recyclerAdapter
 
         // Find the user's listings & observe data

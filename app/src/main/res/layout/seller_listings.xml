@@ -1,6 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="8dp"
     android:layout_marginBottom="8dp"
@@ -8,13 +9,32 @@
     android:layout_marginHorizontal="16dp"
     android:elevation="2dp">
 
-    <ImageView
-        android:id="@+id/listingPhoto"
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:src="@drawable/pet_accessories_logo"
-        android:scaleType="centerCrop"
-        android:contentDescription="Pet Image" />
+    <RelativeLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <ImageView
+            android:id="@+id/listingPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:src="@drawable/pet_accessories_logo"
+            android:scaleType="centerCrop"
+            android:contentDescription="Pet Image" />
+
+        <!-- Floating action button to delete listing -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="10dp"
+            android:backgroundTint="@android:color/holo_red_dark"
+            android:contentDescription="Delete listing"
+            app:srcCompat="@drawable/ic_baseline_horizontal_rule_24"
+            app:tint="@color/white"/>
+
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

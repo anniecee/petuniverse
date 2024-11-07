@@ -170,6 +170,5 @@ class EditListingActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        database.close()
     }
 }
