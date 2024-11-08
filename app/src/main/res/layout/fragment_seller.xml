@@ -1,0 +1,45 @@
+<!-- res/layout/fragment_seller.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="YOUR ACTIVE LISTINGS"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/sellerRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:padding="10dp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"/>
+
+    <!-- Floating action button to add new listing -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addListingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="50dp"
+        android:backgroundTint="@color/purple_500"
+        android:contentDescription="Add Listing"
+        app:srcCompat="@drawable/ic_baseline_add_24"
+        app:tint="@color/white"/>
+
+
+
+</LinearLayout>

@@ -1,0 +1,92 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/livePetsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Live Pets"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true" />
+
+        <include
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            layout="@layout/layout_profile_icon"
+            android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/petImageView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/live_pets_logo"
+        android:scaleType="centerCrop"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="Image of pet" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/petNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/petPriceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Price"
+        android:layout_marginTop="10dp"/>
+    <!--
+    <TextView
+        android:id="@+id/sizeOfPetTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" />
+    <TextView
+        android:id="@+id/breedTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" />
+    <TextView
+        android:id="@+id/ageTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" />
+        -->
+    <TextView
+        android:id="@+id/locationTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Location"
+        android:layout_marginTop="10dp" />
+    <TextView
+        android:id="@+id/petDescriptionTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Description of the pet"
+        android:layout_marginTop="10dp" />
+
+</LinearLayout>
