@@ -2,11 +2,13 @@ package com.example.pet_universe.ui.sellerView
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.BitmapFactory
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
@@ -19,8 +21,11 @@ import com.example.pet_universe.database.ListingRepository
 import com.example.pet_universe.database.ListingViewModel
 import com.example.pet_universe.database.ListingViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.firestore.FirebaseFirestore
 
-class SellerListingsAdapter(private val context: Context, private val sellerListings: MutableList<Listing>) :
+class SellerListingsAdapter(private val context: Context, private val sellerListings: MutableList<Listing>, private val firestore: FirebaseFirestore,
+                            private val sharedPref: SharedPreferences
+) :
     RecyclerView.Adapter<SellerListingsAdapter.ViewHolder>() {
     // Database
     private lateinit var database: ListingDatabase
@@ -101,5 +106,31 @@ class SellerListingsAdapter(private val context: Context, private val sellerList
         // Remove the listing from the database
         listingViewModel.delete(sellerListings[position].id)
     }
+
+//    private fun removeListing(position: Int) {
+//        database = ListingDatabase.getInstance(context)
+//        listingDao = database.listingDao
+//        repository = ListingRepository(listingDao)
+//        viewModelFactory = ListingViewModelFactory(repository)
+//        listingViewModel = ViewModelProvider(context as ViewModelStoreOwner, viewModelFactory).get(ListingViewModel::class.java)
+//        val listingId = sellerListings[position].id
+//        sellerListings.removeAt(position)
+//        notifyItemRemoved(position)
+//        deleteListingFromFirebase(listingId)  // Remove from Firebase
+//        listingViewModel.delete(listingId)  // Remove from Room database
+//    }
+//
+//    private fun deleteListingFromFirebase(listingId: Long) {
+//        val userId = sharedPref.getString("userId", null) ?: return
+//        firestore.collection("users/$userId/listings")
+//            .document(listingId.toString())
+//            .delete()
+//            .addOnSuccessListener {
+//                Toast.makeText(context, "Listing deleted", Toast.LENGTH_SHORT).show()
+//            }
+//            .addOnFailureListener { e ->
+//                Toast.makeText(context, "Failed to delete listing: ${e.message}", Toast.LENGTH_SHORT).show()
+//            }
+//    }
 
 }

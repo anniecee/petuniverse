@@ -130,6 +130,7 @@ class EditListingActivity : AppCompatActivity() {
         listing.category = category
         listing.meetingLocation = location
 
+
         // Save uploaded photo to room database
         if (imageUri != null) {
             val inputStream = contentResolver.openInputStream(imageUri!!)
