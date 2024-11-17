@@ -123,6 +123,7 @@ class SellerViewFragment : Fragment() {
         firestore.collection("users/$userId/listings")
             .get()
             .addOnSuccessListener { result ->
+                sellerListings.clear() // Clear the list before adding new listings
                 val listings = result.mapNotNull { document ->
                     val listing = document.toObject(Listing::class.java)
                     val imageUrl = (document["imageUrls"] as? List<String>)?.firstOrNull() // Get first URL or null

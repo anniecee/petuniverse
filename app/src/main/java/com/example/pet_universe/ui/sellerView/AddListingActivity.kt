@@ -173,7 +173,10 @@ class AddListingActivity : AppCompatActivity() {
 
         // Set click listeners
         uploadPhotoButton.setOnClickListener { openGalleryForImage() }
-        sellButton.setOnClickListener { saveListing() }
+        sellButton.setOnClickListener {
+            saveListing()
+            finish()
+        }
     }
 
     //   private fun saveListingToFirebase(listing: Listing) {

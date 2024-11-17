@@ -14,7 +14,6 @@ data class Listing(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0L,
 
-
     @ColumnInfo(name = "title")
     var title: String = "",
 
@@ -27,14 +26,12 @@ data class Listing(
     @ColumnInfo(name = "category")
     var category: String = "",
 
-
     @ColumnInfo(name = "meeting_location")
     var meetingLocation: String = "",
 
     @Exclude
     @ColumnInfo(name = "photo", typeAffinity = ColumnInfo.BLOB)
     var photo: ByteArray = byteArrayOf(),
-
 
     @Transient
     var firebasePhoto: List<Int> = emptyList(),  // Firebase-specific storage
