@@ -14,6 +14,8 @@
         android:background="@drawable/circular_shape"
         android:clipToOutline="true"
         android:scaleType="centerCrop"
+        android:backgroundTint="@color/purple_700"
+        app:tint="@color/white"
         android:layout_marginBottom="50dp"/>
 
     <EditText
