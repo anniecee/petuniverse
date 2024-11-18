@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.pet_universe.R
 import com.example.pet_universe.database.Converters
 import com.example.pet_universe.database.Listing
@@ -29,6 +30,8 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.InputStream
 import java.util.UUID
 
@@ -155,11 +158,14 @@ class AddListingActivity : AppCompatActivity() {
         saveListingToFirestore(listing, imagesByteArray) { success ->
             if (success) {
                 listing.imageUrls = imageUrls // Set imageUrls of listing to the Firestore URLs
-                listingViewModel.insert(listing) // Save to Room on success
-                println("Listing saved to Room successfully!")
-                println("Listing in Room: $listing")
-                Toast.makeText(this, "Listing saved successfully!", Toast.LENGTH_SHORT).show()
-                finish()
+                lifecycleScope.launch {
+                    listingViewModel.insert(listing) // Save to Room on success
+                    println("Listing saved to Room successfully!")
+                    println("Listing in Room: $listing")
+                    Toast.makeText(this@AddListingActivity, "Listing saved successfully!", Toast.LENGTH_SHORT).show()
+                    delay(3000) // Delay for 3 seconds to allow Firestore to save before finishing activity
+                    finish()
+                }
             } else {
                 println("Failed to save listing to Room.")
                 Toast.makeText(this, "Failed to save listing.", Toast.LENGTH_SHORT).show()

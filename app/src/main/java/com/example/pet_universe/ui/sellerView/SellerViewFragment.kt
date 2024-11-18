@@ -155,6 +155,7 @@ class SellerViewFragment : Fragment() {
         val userId = sharedPref.getString("userId", null)
         userId?.let {
             fetchSellerListingsFromFirebase(it)
+            observeListingsFromRoom(it)
         }
     }
     override fun onDestroyView() {
