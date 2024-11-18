@@ -68,8 +68,14 @@ class EditListingActivity : AppCompatActivity() {
         // Get the listing from the database
         val listingId = intent.getLongExtra("listingId", -1)
         lifecycleScope.launch {
-            listing = listingViewModel.getListingById(listingId)
-            setListingValues()
+            listingViewModel.getListingById(listingId)?.let {
+                listing = it
+                setListingValues()
+            } ?: run {
+                // Handle the case where the listing is not found
+                Toast.makeText(this@EditListingActivity, "Listing not found", Toast.LENGTH_SHORT).show()
+                finish()
+            }
         }
 
         // Set on click listener for the change photo button

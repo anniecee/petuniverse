@@ -74,7 +74,7 @@ class ListingViewModel(private val repository: ListingRepository): ViewModel() {
         }
     }
 
-    suspend fun getListingById(listingId: Long): Listing {
+    suspend fun getListingById(listingId: Long): Listing? {
         return withContext(Dispatchers.IO) {
             repository.getListingById(listingId)
         }

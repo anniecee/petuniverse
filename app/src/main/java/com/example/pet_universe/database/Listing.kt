@@ -11,7 +11,7 @@ import java.util.Calendar
 @TypeConverters(Converters::class)
 data class Listing(
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     var id: Long = 0L,
 
     @ColumnInfo(name = "title")

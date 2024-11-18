@@ -52,7 +52,7 @@ class ListingRepository(private val listingDatabaseDao: ListingDatabaseDao) {
 
     }
 
-    suspend fun getListingById(listingId: Long): Listing {
+    suspend fun getListingById(listingId: Long): Listing? {
         return withContext(IO) {
             listingDatabaseDao.getListingById(listingId)
         }

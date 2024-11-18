@@ -117,13 +117,11 @@ class SellerViewFragment : Fragment() {
     }
 
 
-
     private fun fetchSellerListingsFromFirebase(userId: String) {
         val converters = Converters()
         firestore.collection("users/$userId/listings")
             .get()
             .addOnSuccessListener { result ->
-                sellerListings.clear() // Clear the list before adding new listings
                 val listings = result.mapNotNull { document ->
                     val listing = document.toObject(Listing::class.java)
                     val imageUrl = (document["imageUrls"] as? List<String>)?.firstOrNull() // Get first URL or null
@@ -131,8 +129,16 @@ class SellerViewFragment : Fragment() {
                         // Fetch image as ByteArray if URL is present, else null
                         listing.photo = converters.toByteArray(listing.firebasePhoto)
                     }
-                    val existing = sellerListings.any { it.id == listing.id }
-                    if (!existing) listing else null
+                    // Print id of listing & id of each listing in sellerListings to debug
+                    println("Listing ID: ${listing.id}")
+                    println("Seller Listings: ${sellerListings.map { it.id }}")
+                    // Check if any listing in sellerListings has the same id as the current listing,
+                    // if not, add the listing to sellerListings
+                    if (sellerListings.none { it.id == listing.id }) {
+                        listing
+                    } else {
+                        null
+                    }
                 }
                 saveListingsToLocalDatabase(listings)
             }
@@ -143,7 +149,7 @@ class SellerViewFragment : Fragment() {
         lifecycleScope.launch {
             listings.forEach { listing ->
                 val existingListing = listingViewModel.getListingById(listing.id) // Check if listing exists
-                if (existingListing == null) { // Only insert if it doesn't exist
+                if (existingListing == null) {
                     listingViewModel.insert(listing)
                 }
             }

@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.storage.ktx)
+    implementation(libs.firebase.appcheck.debug)
 
     // Room components
     val room_version = "2.6.0"
@@ -82,6 +83,9 @@ dependencies {
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
+    implementation ("com.google.firebase:firebase-firestore")
+    implementation ("com.google.firebase:firebase-storage")
 
-
+    // App Check dependencies
+    implementation ("com.google.firebase:firebase-appcheck-playintegrity:16.1.1")
 }

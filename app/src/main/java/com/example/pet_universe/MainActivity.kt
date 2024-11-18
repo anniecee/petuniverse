@@ -15,6 +15,9 @@ import com.example.pet_universe.database.UserViewModel
 import com.example.pet_universe.database.UserViewModelFactory
 import com.example.pet_universe.databinding.ActivityMainBinding
 import com.example.pet_universe.ui.accountSettings.SignInActivity
+import com.google.firebase.FirebaseApp
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
