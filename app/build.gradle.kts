@@ -88,4 +88,8 @@ dependencies {
 
     // App Check dependencies
     implementation ("com.google.firebase:firebase-appcheck-playintegrity:16.1.1")
+
+    // Coil for image loading
+    implementation("io.coil-kt:coil:2.4.0")
+
 }

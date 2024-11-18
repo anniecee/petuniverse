@@ -53,6 +53,7 @@ class AddListingActivity : AppCompatActivity() {
     private var imageUri: Uri? = null
     // if the user decides to upload multiple images
     private var imageUris: MutableList<Uri> = mutableListOf()
+    private var imageUrls = mutableListOf<String>()
 
     // Elements
     private lateinit var titleEditText : EditText
@@ -148,12 +149,12 @@ class AddListingActivity : AppCompatActivity() {
             description = descriptionEditText.text.toString(),
             category = categorySpinner.selectedItem.toString(),
             meetingLocation = locationEditText.text.toString(),
-            photo = imagesByteArray.firstOrNull() ?: ByteArray(0),
             sellerId = auth.currentUser?.uid
         )
 
         saveListingToFirestore(listing, imagesByteArray) { success ->
             if (success) {
+                listing.imageUrls = imageUrls // Set imageUrls of listing to the Firestore URLs
                 listingViewModel.insert(listing) // Save to Room on success
                 println("Listing saved to Room successfully!")
                 println("Listing in Room: $listing")
@@ -215,7 +216,6 @@ class AddListingActivity : AppCompatActivity() {
     private fun uploadImagesToFirebaseStorage(imagesByteArray: List<ByteArray>, listingId: String, onSuccess: (List<String>) -> Unit) {
         val userId = auth.currentUser?.uid ?: return
         val storageRef = storage.reference
-        val imageUrls = mutableListOf<String>()
 
         imagesByteArray.forEachIndexed { index, imageByteArray ->
             //val imageRef = storageRef.child("images/$userId/$listingId/image_$index.jpg")

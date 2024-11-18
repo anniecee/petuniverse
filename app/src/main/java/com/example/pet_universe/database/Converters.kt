@@ -38,6 +38,16 @@ class Converters {
         return intList.map { it.toByte() }.toByteArray()
     }
 
+    @TypeConverter
+    fun fromStringList(list: List<String>): String {
+        return list.joinToString(",")
+    }
+
+    @TypeConverter
+    fun toStringList(data: String): List<String> {
+        return data.split(",")
+    }
+
 //    @TypeConverter
 //    fun fromMap(map: Map<String, Double>): String {
 //        return map.entries.joinToString(",") { "${it.key}:${it.value}" }

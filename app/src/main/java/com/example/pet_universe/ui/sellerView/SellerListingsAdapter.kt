@@ -22,6 +22,7 @@ import com.example.pet_universe.database.ListingViewModel
 import com.example.pet_universe.database.ListingViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
+import coil.load
 
 class SellerListingsAdapter(private val context: Context, private val sellerListings: MutableList<Listing>, private val firestore: FirebaseFirestore,
                             private val sharedPref: SharedPreferences
@@ -44,10 +45,19 @@ class SellerListingsAdapter(private val context: Context, private val sellerList
         val listingPhoto: ImageView = itemView.findViewById(R.id.listingPhoto)
         val deleteButton: FloatingActionButton = itemView.findViewById(R.id.deleteButton)
 
-        // This function is called to set the image of the listing
+        //        // This function is called to set the image of the listing
+//        fun bindData(listing: Listing) {
+//            val bitmap = BitmapFactory.decodeByteArray(listing.photo, 0, listing.photo.size)
+//            listingPhoto.setImageBitmap(bitmap)
+//        }
+        // Function to set image for the listing from the first image URL
         fun bindData(listing: Listing) {
-            val bitmap = BitmapFactory.decodeByteArray(listing.photo, 0, listing.photo.size)
-            listingPhoto.setImageBitmap(bitmap)
+            if (listing.imageUrls.isNotEmpty()) {
+                val image = listing.imageUrls[0]
+                listingPhoto.load(image) {
+                    crossfade(true)
+                }
+            }
         }
     }
 
@@ -101,7 +111,10 @@ class SellerListingsAdapter(private val context: Context, private val sellerList
         listingDao = database.listingDao
         repository = ListingRepository(listingDao)
         viewModelFactory = ListingViewModelFactory(repository)
-        listingViewModel = ViewModelProvider(context as ViewModelStoreOwner, viewModelFactory).get(ListingViewModel::class.java)
+        listingViewModel =
+            ViewModelProvider(context as ViewModelStoreOwner, viewModelFactory).get(
+                ListingViewModel::class.java
+            )
 
         // Remove the listing from the database
         listingViewModel.delete(sellerListings[position].id)

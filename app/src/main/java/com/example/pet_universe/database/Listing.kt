@@ -29,12 +29,8 @@ data class Listing(
     @ColumnInfo(name = "meeting_location")
     var meetingLocation: String = "",
 
-    @Exclude
-    @ColumnInfo(name = "photo", typeAffinity = ColumnInfo.BLOB)
-    var photo: ByteArray = byteArrayOf(),
-
-    @Transient
-    var firebasePhoto: List<Int> = emptyList(),  // Firebase-specific storage
+    @ColumnInfo(name = "imageUrls")
+    var imageUrls: List<String> = emptyList(),
 
     // Save user id of seller when listing is created
     @ColumnInfo(name = "seller_id")
@@ -43,7 +39,6 @@ data class Listing(
     // Save user id of buyer when listing is sold
     @ColumnInfo(name = "buyer_id")
     var buyerId: Long = 0L,
-
 
     // Save date and time of meeting when listing is sold
     @ColumnInfo(name = "meeting_date_time")

@@ -9,11 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.pet_universe.database.Converters
 import com.example.pet_universe.database.Listing
 import com.example.pet_universe.database.ListingDatabase
 import com.example.pet_universe.database.ListingDatabaseDao
@@ -86,20 +86,6 @@ class SellerViewFragment : Fragment() {
             observeListingsFromRoom(it)
         }
 
-
-        //older code
-//        lifecycleScope.launch {
-//            listingViewModel.getActiveListingsBySellerId(userId).observe(viewLifecycleOwner) { listings ->
-//                // Update sellerListings
-//                sellerListings.clear()
-//                sellerListings.addAll(listings)
-//                recyclerAdapter.notifyDataSetChanged()
-//
-//                // Print sellerListings to debug
-//                println("Seller Listings: $sellerListings")
-//            }
-//        }
-
         // Switch to detail page on item click
         // Learned how to do this from https://www.youtube.com/watch?v=WqrpcWXBz14
         recyclerAdapter.onItemClick = {
@@ -116,19 +102,12 @@ class SellerViewFragment : Fragment() {
 
     }
 
-
     private fun fetchSellerListingsFromFirebase(userId: String) {
-        val converters = Converters()
         firestore.collection("users/$userId/listings")
             .get()
             .addOnSuccessListener { result ->
                 val listings = result.mapNotNull { document ->
                     val listing = document.toObject(Listing::class.java)
-                    val imageUrl = (document["imageUrls"] as? List<String>)?.firstOrNull() // Get first URL or null
-                    if (imageUrl != null) {
-                        // Fetch image as ByteArray if URL is present, else null
-                        listing.photo = converters.toByteArray(listing.firebasePhoto)
-                    }
                     // Print id of listing & id of each listing in sellerListings to debug
                     println("Listing ID: ${listing.id}")
                     println("Seller Listings: ${sellerListings.map { it.id }}")
@@ -140,9 +119,11 @@ class SellerViewFragment : Fragment() {
                         null
                     }
                 }
+
                 saveListingsToLocalDatabase(listings)
+                println("Fetched Listings from Firebase: ${listings.map { it.id }}")
             }
-            .addOnFailureListener { e -> }
+            .addOnFailureListener { e -> println("Error getting documents: $e") }
     }
 
     private fun saveListingsToLocalDatabase(listings: List<Listing>) {
@@ -151,6 +132,7 @@ class SellerViewFragment : Fragment() {
                 val existingListing = listingViewModel.getListingById(listing.id) // Check if listing exists
                 if (existingListing == null) {
                     listingViewModel.insert(listing)
+                    sellerListings.add(listing) // Add new listing here to display in recycler view
                 }
             }
         }
@@ -158,15 +140,23 @@ class SellerViewFragment : Fragment() {
 
     private fun observeListingsFromRoom(userId: String) {
         lifecycleScope.launch {
-            listingViewModel.getActiveListingsBySellerId(userId)
-                .observe(viewLifecycleOwner) { listings ->
-                    sellerListings.clear()
-                    sellerListings.addAll(listings)
-                    recyclerAdapter.notifyDataSetChanged()
-                }
+            listingViewModel.getActiveListingsBySellerId(userId).observe(viewLifecycleOwner) { listings ->
+                sellerListings.clear()
+                sellerListings.addAll(listings)
+                recyclerAdapter.notifyDataSetChanged()
+            }
+            println("Debug: Seller Listings: $sellerListings")
         }
+
     }
 
+    override fun onResume() {
+        super.onResume()
+        val userId = sharedPref.getString("userId", null)
+        userId?.let {
+            fetchSellerListingsFromFirebase(it)
+        }
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null // Avoid memory leaks

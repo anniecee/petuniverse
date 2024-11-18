@@ -33,6 +33,6 @@ interface ListingDatabaseDao {
     @Query("SELECT * FROM listing_table WHERE id = :listingId LIMIT 1")
     fun getListingById(listingId: Long): Listing?
 
-    @Query("UPDATE listing_table SET title = :title, price = :price, description = :description, meeting_location = :meetingLocation, category = :category, photo = :photo WHERE id = :id")
-    fun update(id: Long, title: String, price: Double, description: String, meetingLocation: String, category: String, photo: ByteArray?)
+    @Query("UPDATE listing_table SET title = :title, price = :price, description = :description, meeting_location = :meetingLocation, category = :category, imageUrls = :imageUrls WHERE id = :id")
+    fun update(id: Long, title: String, price: Double, description: String, meetingLocation: String, category: String, imageUrls: List<String>)
 }

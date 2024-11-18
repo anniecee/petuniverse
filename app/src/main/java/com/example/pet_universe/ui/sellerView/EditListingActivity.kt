@@ -138,13 +138,14 @@ class EditListingActivity : AppCompatActivity() {
 
 
         // Save uploaded photo to room database
-        if (imageUri != null) {
-            val inputStream = contentResolver.openInputStream(imageUri!!)
-            val photo = inputStream?.readBytes()
-            if (photo != null) {
-                listing.photo = photo
-            }
-        }
+        // TODO: Save photo to Firebase Storage and save URL to room database
+//        if (imageUri != null) {
+//            val inputStream = contentResolver.openInputStream(imageUri!!)
+//            val photo = inputStream?.readBytes()
+//            if (photo != null) {
+//                listing.photo = photo
+//            }
+//        }
 
         // Update the listing in the database
         lifecycleScope.launch {
