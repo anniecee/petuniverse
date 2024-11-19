@@ -66,6 +66,7 @@ class AddListingActivity : AppCompatActivity() {
     private lateinit var locationEditText : EditText
     private lateinit var uploadPhotoButton : Button
     private lateinit var sellButton : Button
+    private lateinit var cancelButton : Button
     private lateinit var photoTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,6 +102,10 @@ class AddListingActivity : AppCompatActivity() {
         uploadPhotoButton.setOnClickListener { openGalleryForImage() }
         sellButton.setOnClickListener {
             saveListing()
+            finish()
+        }
+        cancelButton = findViewById(R.id.cancelButton)
+        cancelButton.setOnClickListener {
             finish()
         }
     }
