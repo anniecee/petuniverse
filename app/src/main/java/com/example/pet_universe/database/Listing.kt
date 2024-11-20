@@ -21,10 +21,13 @@ data class Listing(
     var description: String = "",
 
     @ColumnInfo(name = "price")
-    var price: Double = 0.0,
+    var price: Int = 0,
 
     @ColumnInfo(name = "category")
     var category: String = "",
+
+    @ColumnInfo(name = "type")
+    var type: String = "",
 
     @ColumnInfo(name = "meeting_location")
     var meetingLocation: String = "",

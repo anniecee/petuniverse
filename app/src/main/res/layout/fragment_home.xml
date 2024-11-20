@@ -1,96 +1,171 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingBottom="56dp"> <!-- Compensating for navigation bar height -->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_gravity="center_vertical"
         android:gravity="center"
+        android:orientation="vertical"
         android:padding="16dp">
 
-        <RelativeLayout
+        <!-- Profile Icon Section (Stickied to top-right) -->
+<!--        <RelativeLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content">-->
+
+<!--            <include-->
+<!--                layout="@layout/layout_profile_icon"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_alignParentTop="true"-->
+<!--                android:layout_alignParentEnd="true" />-->
+<!--        </RelativeLayout>-->
+
+        <!-- Row 1: Live Pets and Pet Food -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:gravity="center"
+            android:orientation="horizontal">
 
-            <include
+            <!-- Live Pets -->
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                layout="@layout/layout_profile_icon"
-                android:layout_alignParentEnd="true" />
-        </RelativeLayout>
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
 
-        <!-- First Image and Title -->
-        <ImageView
-            android:id="@+id/livePetsImageView"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:background="@drawable/circular_shape"
-            android:scaleType="centerCrop"
-            android:clipToOutline="true"
-            android:layout_marginBottom="8dp"
-            android:src="@drawable/live_pets_logo"
-            android:backgroundTint="@color/purple_700"
-            app:tint="@color/white"
-            android:contentDescription="@string/live_pets_description" />
+                <ImageView
+                    android:id="@+id/livePetsImageView"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/circular_shape"
+                    android:backgroundTint="@color/purple_700"
+                    android:clipToOutline="true"
+                    android:contentDescription="@string/live_pets_description"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/live_pets_logo"
+                    app:tint="@color/white" />
 
-        <TextView
-            android:id="@+id/livePetsTitle"
-            android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/livePetsTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="Live Pets"
+                    android:textAlignment="center"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Pet Food -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/foodImageView"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/circular_shape"
+                    android:backgroundTint="@color/purple_700"
+                    android:clipToOutline="true"
+                    android:contentDescription="@string/food_description"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/pet_food_logo"
+                    app:tint="@color/white" />
+
+                <TextView
+                    android:id="@+id/foodTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="Pet Food"
+                    android:textAlignment="center"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Row 2: Pet Accessories -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Live Pets"
-            android:textSize="16sp"
-            android:textAlignment="center"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="24dp"
+            android:gravity="center"
+            android:orientation="horizontal">
 
-        <!-- Second Image and Title -->
-        <ImageView
-            android:id="@+id/foodImageView"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:background="@drawable/circular_shape"
-            android:scaleType="centerCrop"
-            android:clipToOutline="true"
-            android:layout_marginBottom="8dp"
-            android:src="@drawable/pet_food_logo"
-            android:backgroundTint="@color/purple_700"
-            app:tint="@color/white"
-            android:contentDescription="@string/food_description" />
+            <!-- Pet Accessories -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/foodTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pet Food"
-            android:textSize="16sp"
-            android:textAlignment="center"
-            android:layout_marginBottom="24dp" />
+                <ImageView
+                    android:id="@+id/accessoriesImageView"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/circular_shape"
+                    android:backgroundTint="@color/purple_700"
+                    android:clipToOutline="true"
+                    android:contentDescription="@string/accessories_description"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/pet_accessories_logo"
+                    app:tint="@color/white" />
 
-        <!-- Third Image and Title -->
-        <ImageView
-            android:id="@+id/accessoriesImageView"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:background="@drawable/circular_shape"
-            android:scaleType="centerCrop"
-            android:clipToOutline="true"
-            android:layout_marginBottom="8dp"
-            android:src="@drawable/pet_accessories_logo"
-            android:backgroundTint="@color/purple_700"
-            app:tint="@color/white"
-            android:contentDescription="@string/accessories_description" />
+                <TextView
+                    android:id="@+id/accessoriesTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="Pet Accessories"
+                    android:textAlignment="center"
+                    android:textSize="16sp" />
+            </LinearLayout>
 
-        <TextView
-            android:id="@+id/accessoriesTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pet Accessories"
-            android:textSize="16sp"
-            android:textAlignment="center"
-            android:layout_marginBottom="24dp" />
+            <!-- Additional Section (Other) -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/otherImageView"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/circular_shape"
+                    android:backgroundTint="@color/purple_700"
+                    android:clipToOutline="true"
+                    android:contentDescription="@string/other_description"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/other_logo"
+                    app:tint="@color/white" />
+
+                <TextView
+                    android:id="@+id/otherTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="Other"
+                    android:textAlignment="center"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
-
 </ScrollView>

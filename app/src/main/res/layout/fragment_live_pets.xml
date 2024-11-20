@@ -3,65 +3,159 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:layout_marginBottom="20dp">
+    android:paddingBottom="56dp">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="16dp"
-        android:orientation="horizontal">
+    <!-- Header Section -->
+    <!--    <RelativeLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:paddingBottom="16dp">-->
 
-        <TextView
-            android:id="@+id/livePetsTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Live Pets"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_centerHorizontal="true" />
-        <include
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            layout="@layout/layout_profile_icon"
-            android:layout_alignParentEnd="true" />
+    <!-- Profile Icon -->
+    <!--        <include-->
+    <!--            layout="@layout/layout_profile_icon"-->
+    <!--            android:layout_width="50dp"-->
+    <!--            android:layout_height="50dp"-->
+    <!--            android:layout_alignParentEnd="true"-->
+    <!--            android:layout_centerVertical="true" />-->
 
-    </RelativeLayout>
+    <!-- Title -->
+    <!--        <TextView-->
+    <!--            android:id="@+id/livePetsTitle"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_centerHorizontal="true"-->
+    <!--            android:text="Live Pets"-->
+    <!--            android:textSize="24sp" />-->
+    <!--    </RelativeLayout>-->
 
+    <!-- Search Bar -->
     <EditText
         android:id="@+id/searchEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_edittext"
         android:hint="Search"
-        android:padding="8dp"
-        android:layout_marginBottom="16dp" />
+        android:padding="12dp" />
 
-
-    <LinearLayout
+    <!-- Filter Buttons -->
+    <android.widget.HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
         android:layout_marginBottom="16dp">
 
-        <Button
-            android:id="@+id/petFilterButton"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pet Filter" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/ageFilterButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Select Age"
-            android:layout_marginStart="8dp" />
-    </LinearLayout>
+            <!-- Type Filter Title and Spinner -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Type: "
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
+                <Spinner
+                    android:id="@+id/typeFilterSpinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/live_pets_pet_filter_spinner_entries"
+                    android:focusable="false" />
+            </LinearLayout>
+
+            <!-- Age Filter Title and Spinner -->
+<!--            <LinearLayout-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="Age: "-->
+<!--                    android:textColor="@android:color/black"-->
+<!--                    android:textSize="14sp" />-->
+
+<!--                <Spinner-->
+<!--                    android:id="@+id/ageFilterButton"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:entries="@array/live_pets_age_filter_spinner_entries"-->
+<!--                    android:focusable="false" />-->
+<!--            </LinearLayout>-->
+
+            <!-- Price Filter Title and Spinner -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Price: "
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
+                <Spinner
+                    android:id="@+id/priceFilterSpinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/live_pets_price_filter_spinner_entries"
+                    android:focusable="false" />
+            </LinearLayout>
+
+            <!-- Location Filter Title and Spinner -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Location: "
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
+                <Spinner
+                    android:id="@+id/locationFilterSpinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/live_pets_location_filter_spinner_entries"
+                    android:focusable="false" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </android.widget.HorizontalScrollView>
+
+
+    <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/petRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@android:color/white"
+        android:clipToPadding="false"
         android:scrollbars="vertical" />
-
 
 </LinearLayout>

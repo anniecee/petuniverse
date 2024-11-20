@@ -2,7 +2,6 @@ package com.example.pet_universe.database
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
@@ -59,7 +58,7 @@ class ListingRepository(private val listingDatabaseDao: ListingDatabaseDao) {
 
     }
 
-    fun updateListing(id: Long, title: String, price: Double, description: String, meetingLocation: String, category: String, imageUrls: List<String>) {
+    fun updateListing(id: Long, title: String, price: Int, description: String, meetingLocation: String, category: String, imageUrls: List<String>) {
         CoroutineScope(IO).launch {
             listingDatabaseDao.update(id, title, price, description, meetingLocation, category, imageUrls)
         }
