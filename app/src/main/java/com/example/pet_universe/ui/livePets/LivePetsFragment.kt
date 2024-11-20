@@ -1,13 +1,16 @@
 package com.example.pet_universe.ui.livePets
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.AdapterView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pet_universe.R
@@ -17,9 +20,9 @@ import com.example.pet_universe.database.ListingRepository
 import com.example.pet_universe.database.ListingViewModel
 import com.example.pet_universe.database.ListingViewModelFactory
 import com.example.pet_universe.databinding.FragmentLivePetsBinding
-import com.example.pet_universe.ui.dialogs.MyDialog
 import com.example.pet_universe.ui.profile.ProfileViewModel
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
 
 class LivePetsFragment : Fragment() {
 
@@ -38,9 +41,6 @@ class LivePetsFragment : Fragment() {
     private val livePetsViewModel: LivePetsViewModel by activityViewModels()
     private val profileViewModel: ProfileViewModel by activityViewModels()
 
-    private val petTypes = listOf("All", "Dogs", "Cats", "Birds", "Snakes", "Others")
-    private val ageRange = listOf("All", "Puppy/Kitten", "Young", "Adult", "Senior")
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,21 +56,77 @@ class LivePetsFragment : Fragment() {
         firestore = FirebaseFirestore.getInstance()
 
         // Set up profile icon
-        profileViewModel.userInitial.observe(viewLifecycleOwner) { initial ->
-            binding.root.findViewById<TextView>(R.id.profileIcon).text = initial ?: ""
-        }
+//        profileViewModel.userInitial.observe(viewLifecycleOwner) { initial ->
+//            binding.root.findViewById<TextView>(R.id.profileIcon).text = initial ?: ""
+//        }
 
         // Navigate to AccountSettingsFragment on profileIcon click
-        binding.root.findViewById<TextView>(R.id.profileIcon).setOnClickListener {
-            findNavController().navigate(R.id.action_global_to_accountSettings)
-        }
+//        binding.root.findViewById<TextView>(R.id.profileIcon).setOnClickListener {
+//            findNavController().navigate(R.id.action_global_to_accountSettings)
+//        }
 
         // Set up database and ViewModel
         database = ListingDatabase.getInstance(requireContext())
         listingDao = database.listingDao
         repository = ListingRepository(listingDao)
         viewModelFactory = ListingViewModelFactory(repository)
-        listingViewModel = ViewModelProvider(this, viewModelFactory).get(ListingViewModel::class.java)
+        listingViewModel =
+            ViewModelProvider(this, viewModelFactory).get(ListingViewModel::class.java)
+
+        // Set up search functionality
+        binding.searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                livePetsViewModel.setSearchQuery(s?.toString() ?: "")
+            }
+        })
+
+        // Set up spinner listeners
+        binding.typeFilterSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    val selectedType = parent?.getItemAtPosition(position).toString()
+                    livePetsViewModel.setSelectedPetType(selectedType)
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+            }
+
+        binding.priceFilterSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    val selectedPrice = parent?.getItemAtPosition(position).toString()
+                    livePetsViewModel.setSelectedPriceRange(selectedPrice)
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+            }
+
+        binding.locationFilterSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    val selectedLocation = parent?.getItemAtPosition(position).toString()
+                    livePetsViewModel.setSelectedLocation(selectedLocation)
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+            }
 
         // Initialize RecyclerView with an empty list initially
         binding.petRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -82,50 +138,56 @@ class LivePetsFragment : Fragment() {
 
         // Observe listings from Firebase and update adapter
         listingViewModel.fetchListingsFromFirebase()
+        observeListingsFromRoom()
 
-        // Observe listings from ViewModel and update adapter
+        // Observe filtered pets instead of direct listings
+        livePetsViewModel.filteredPets.observe(viewLifecycleOwner) { filteredPets ->
+            petAdapter.updatePets(filteredPets)
+        }
+
+        // Update the existing listings observer
         listingViewModel.allListingsLiveData.observe(viewLifecycleOwner) { listings ->
             val pets = listings.map { listing ->
                 Pet(
                     name = listing.title,
                     price = listing.price,
+                    type = listing.type,
                     description = listing.description,
-                    imageResId = 0, // PLACEHOLDER VALUE, for future image support
+                    imageUrls = listing.imageUrls,
                     petLocation = listing.meetingLocation
                 )
             }
-            petAdapter.updatePets(pets)
-        }
-
-        binding.petFilterButton.setOnClickListener {
-            showPetFilterDialog()
-        }
-
-        binding.ageFilterButton.setOnClickListener {
-            showAgeFilterDialog()
-        }
-
-        livePetsViewModel.selectedPetType.observe(viewLifecycleOwner) { petType ->
-            binding.petFilterButton.text = petType
-        }
-
-        livePetsViewModel.selectedAgeRange.observe(viewLifecycleOwner) { ageRange ->
-            binding.ageFilterButton.text = ageRange
+            livePetsViewModel.updatePets(pets)  // This will trigger filtering
+            saveListingsToLocalDatabase(pets) // TODO
         }
     }
 
-    private fun showPetFilterDialog() {
-        val dialog = MyDialog(requireContext(), "Select Pet Type", petTypes) { selectedPetType ->
-            livePetsViewModel.setSelectedPetType(selectedPetType)
+    private fun observeListingsFromRoom() {
+        listingViewModel.allListingsLiveData.observe(viewLifecycleOwner) { listings ->
+            val pets = listings.map { listing ->
+                Pet(
+                    name = listing.title,
+                    price = listing.price,
+                    type = listing.type,
+                    description = listing.description,
+                    imageUrls = listing.imageUrls,
+                    petLocation = listing.meetingLocation
+                )
+            }
+            (binding.petRecyclerView.adapter as PetAdapter).updatePets(pets)
         }
-        dialog.show()
     }
 
-    private fun showAgeFilterDialog() {
-        val dialog = MyDialog(requireContext(), "Select Age Range", ageRange) { selectedAgeRange ->
-            livePetsViewModel.setSelectedAgeRange(selectedAgeRange)
+
+    private fun saveListingsToLocalDatabase(listings: List<Pet>) {
+        lifecycleScope.launch {
+            listings.forEach { listing ->
+//                val existingListing = listingViewModel.getListingById(listing.id)
+//                if (existingListing == null) {
+//                    listingViewModel.insert(listing)
+//                }
+            }
         }
-        dialog.show()
     }
 
     override fun onDestroyView() {

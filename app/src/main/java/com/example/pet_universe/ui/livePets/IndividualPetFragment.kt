@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import coil.load
 import com.example.pet_universe.R
 import com.example.pet_universe.databinding.FragmentIndividualPetBinding
 import com.example.pet_universe.ui.profile.ProfileViewModel
@@ -43,10 +43,20 @@ class IndividualPetFragment : Fragment() {
 
         livePetsViewModel.selectedPet.observe(viewLifecycleOwner) { pet ->
             binding.petNameTextView.text = pet.name
-            binding.petPriceTextView.text = pet.price.toString()
+            binding.petPriceTextView.text = "$${pet.price}" // Format price with dollar sign
+            binding.petTypeTextView.text = pet.type
             binding.petDescriptionTextView.text = pet.description
             binding.locationTextView.text = pet.petLocation
-            binding.petImageView.setImageResource(pet.imageResId)
+
+            // Load the first image from the imageUrls list using Coil
+            if (pet.imageUrls.isNotEmpty()) {
+                val imageUrl = pet.imageUrls[0]
+                binding.petImageView.load(imageUrl) {
+                    crossfade(true)
+                    placeholder(R.drawable.pet_accessories_logo)
+                    error(R.drawable.pet_accessories_logo)
+                }
+            }
         }
     }
 

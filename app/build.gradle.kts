@@ -92,4 +92,8 @@ dependencies {
     // Coil for image loading
     implementation("io.coil-kt:coil:2.4.0")
 
+    // Glide (implementation changed, check if can remove later)
+    implementation ("com.github.bumptech.glide:glide:4.15.1")
+    kapt("com.github.bumptech.glide:compiler:4.15.1")
+
 }

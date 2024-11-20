@@ -6,10 +6,17 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.example.pet_universe.R
-import com.example.pet_universe.database.Listing
 
-data class Pet(val name: String, val price: Double, val description: String, val imageResId: Int, val petLocation: String)
+data class Pet(
+    val name: String,
+    val price: Int,
+    val type: String,
+    val description: String,
+    val imageUrls: List<String>,
+    val petLocation: String
+)
 
 class PetAdapter(
     private var petList: List<Pet>,
@@ -20,28 +27,51 @@ class PetAdapter(
         val petImageView: ImageView = itemView.findViewById(R.id.petImageView)
         val petNameTextView: TextView = itemView.findViewById(R.id.petNameTextView)
         val petPriceTextView: TextView = itemView.findViewById(R.id.petPriceTextView)
+        val petTypeTextView: TextView = itemView.findViewById(R.id.petTypeTextView)
         val petDescriptionTextView: TextView = itemView.findViewById(R.id.petDescriptionTextView)
-        val petLocationTextView: TextView = itemView.findViewById(R.id.locationTextView)
+//        val petLocationTextView: TextView = itemView.findViewById(R.id.locationTextView)
 
         init {
             itemView.setOnClickListener {
                 onItemClick(petList[adapterPosition]) // Trigger the click listener with the clicked pet
             }
         }
+
+        fun bindData(listing: Pet) {
+            if (listing.imageUrls.isNotEmpty()) {
+                val imageUrl = listing.imageUrls[0]
+                petImageView.load(imageUrl) {
+                    crossfade(true)
+                    placeholder(R.drawable.pet_accessories_logo)
+                    error(R.drawable.pet_accessories_logo)
+                }
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PetViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_pet_in_list, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_pet_in_list, parent, false)
         return PetViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: PetViewHolder, position: Int) {
         val pet = petList[position]
-        holder.petImageView.setImageResource(pet.imageResId)
+        holder.bindData(pet)
         holder.petNameTextView.text = pet.name
-        holder.petPriceTextView.text = pet.price.toString()
-        //holder.petDescriptionTextView.text = pet.description
-        holder.petLocationTextView.text = pet.petLocation
+        holder.petPriceTextView.text = "$${pet.price}" // Format price
+        holder.petTypeTextView.text = pet.type
+
+        val maxLength = 80
+        val cleanedDescription = pet.description.replace("\n", " ") // Replace newlines with spaces
+        val truncatedDescription = if (cleanedDescription.length > maxLength) {
+            cleanedDescription.take(maxLength) + "..."
+        } else {
+            cleanedDescription
+        }
+        holder.petDescriptionTextView.text = truncatedDescription
+
+//        holder.petLocationTextView.text = pet.petLocation
     }
 
     override fun getItemCount(): Int = petList.size

@@ -151,7 +151,7 @@
                     android:background="@drawable/circular_shape"
                     android:backgroundTint="@color/purple_700"
                     android:clipToOutline="true"
-                    android:contentDescription="More categories coming soon!"
+                    android:contentDescription="@string/other_description"
                     android:scaleType="centerCrop"
                     android:src="@drawable/other_logo"
                     app:tint="@color/white" />
@@ -161,7 +161,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:text="And More Soon!"
+                    android:text="Other"
                     android:textAlignment="center"
                     android:textSize="16sp" />
             </LinearLayout>

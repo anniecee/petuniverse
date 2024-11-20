@@ -44,6 +44,7 @@ class EditListingActivity : AppCompatActivity() {
     private lateinit var priceEditText : EditText
     private lateinit var descriptionEditText : EditText
     private lateinit var categorySpinner : Spinner
+    private lateinit var typeSpinner: Spinner
     private lateinit var locationEditText : EditText
     private lateinit var changePhotoButton : Button
     private lateinit var photoTextView: TextView
@@ -104,6 +105,7 @@ class EditListingActivity : AppCompatActivity() {
         priceEditText = findViewById(R.id.priceEditText)
         descriptionEditText = findViewById(R.id.descriptionEditText)
         categorySpinner = findViewById(R.id.categorySpinner)
+        typeSpinner = findViewById(R.id.typeSpinner)
         locationEditText = findViewById(R.id.meetingLocationEditText)
 
         titleEditText.setText(listing.title)
@@ -124,9 +126,10 @@ class EditListingActivity : AppCompatActivity() {
     private fun saveListing() {
         // Get input values
         val title = titleEditText.text.toString()
-        val price = priceEditText.text.toString().toDouble()
+        val price = priceEditText.text.toString().toInt()
         val description = descriptionEditText.text.toString()
         val category = categorySpinner.selectedItem.toString()
+        val type = typeSpinner.selectedItem.toString()
         val location = locationEditText.text.toString()
 
         // Set values for listing
@@ -134,6 +137,7 @@ class EditListingActivity : AppCompatActivity() {
         listing.price = price
         listing.description = description
         listing.category = category
+        listing.type = type
         listing.meetingLocation = location
 
 

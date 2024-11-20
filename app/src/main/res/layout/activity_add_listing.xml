@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="32dp">
+        android:padding="16dp">
 
         <!-- Title Text -->
         <TextView
@@ -16,9 +16,40 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:gravity="center"
-            android:paddingBottom="32dp"
             android:text="Create Listing"
             android:textSize="24sp" />
+
+        <!-- Category Spinner -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Category:"
+            android:textSize="17sp" />
+
+        <Spinner
+            android:id="@+id/categorySpinner"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="16dp"
+            android:entries="@array/seller_category_spinner_entries"
+            android:focusable="false" />
+
+        <!-- Type of Live Pet Spinner -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Type:"
+            android:textSize="17sp" />
+
+        <Spinner
+            android:id="@+id/typeSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="16dp"
+            android:entries="@array/seller_type_spinner_entries"
+            android:focusable="false" />
 
         <!-- Input Fields -->
         <EditText
@@ -39,8 +70,18 @@
             android:layout_marginBottom="16dp"
             android:background="@drawable/rounded_edittext"
             android:hint="Price *"
-            android:inputType="numberDecimal"
+            android:inputType="number"
             android:padding="12dp" />
+
+<!--        <EditText-->
+<!--            android:id="@+id/livePetsAgeEditText"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginBottom="16dp"-->
+<!--            android:background="@drawable/rounded_edittext"-->
+<!--            android:hint="Age *"-->
+<!--            android:inputType="numberDecimal"-->
+<!--            android:padding="12dp" />-->
 
         <EditText
             android:id="@+id/descriptionEditText"
@@ -62,22 +103,6 @@
             android:hint="Meeting Location *"
             android:inputType="textPostalAddress"
             android:padding="12dp" />
-
-        <!-- Category Spinner -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="Category:"
-            android:textSize="17sp" />
-
-        <Spinner
-            android:id="@+id/categorySpinner"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginBottom="16dp"
-            android:entries="@array/category_spinner_entries"
-            android:focusable="false" />
 
         <!-- Photo Upload Section -->
         <TextView
