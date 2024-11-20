@@ -106,15 +106,6 @@ class SignUpFragment : Fragment() {
 //                }
 //            }
 
-            if (firstName.isNotEmpty()) {
-                // Save the first letter of the first name in SharedPreferences to be used to display as a profile icon in the livePetsFragment
-                val initial = firstName[0].toString().uppercase()
-                val sharedPref = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
-                with(sharedPref.edit()) {
-                    putString("user_initial", initial)
-                    apply()
-                }
-            }
         }
 
         binding.cancelButton.setOnClickListener {
@@ -158,6 +149,11 @@ class SignUpFragment : Fragment() {
                     // Firebase registration success
                     val userId = auth.currentUser?.uid ?: ""
                     saveUserToFirestoreAndRoom(userId, firstName, lastName, email, password)
+                    // Save first initial in SharedPreferences for immediate use
+                    if (firstName.isNotEmpty()) {
+                        val initial = firstName[0].toString().uppercase()
+                        saveInitialToSharedPreferences(initial)
+                    }
                 } else {
                     // Handle error if email already exists
                     if (task.exception is FirebaseAuthUserCollisionException) {
@@ -238,6 +234,13 @@ class SignUpFragment : Fragment() {
         userViewModel.insert(user)
     }
 
+    private fun saveInitialToSharedPreferences(initial: String) {
+        val sharedPref = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putString("user_initial", initial)
+            apply()
+        }
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

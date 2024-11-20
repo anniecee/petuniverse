@@ -33,4 +33,16 @@ class UserRepository(private val userDao: UserDao) {
         }
     }
 
+    suspend fun getFirstName(firstName: String): User? {
+        return withContext(IO) {
+            userDao.getFirstName(firstName)
+        }
+    }
+
+    suspend fun getLastName(lastName: String): User? {
+        return withContext(IO) {
+            userDao.getLastName(lastName)
+        }
+    }
+
 }

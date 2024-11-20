@@ -11,9 +11,8 @@ import java.util.Calendar
 @TypeConverters(Converters::class)
 data class Listing(
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     var id: Long = 0L,
-
 
     @ColumnInfo(name = "title")
     var title: String = "",
@@ -27,13 +26,11 @@ data class Listing(
     @ColumnInfo(name = "category")
     var category: String = "",
 
-    @Exclude
-    @ColumnInfo(name = "photo", typeAffinity = ColumnInfo.BLOB)
-    var photo: ByteArray = byteArrayOf(),
+    @ColumnInfo(name = "meeting_location")
+    var meetingLocation: String = "",
 
-
-    @Transient
-    var firebasePhoto: List<Int> = emptyList(),  // Firebase-specific storage
+    @ColumnInfo(name = "imageUrls")
+    var imageUrls: List<String> = emptyList(),
 
     // Save user id of seller when listing is created
     @ColumnInfo(name = "seller_id")
@@ -42,10 +39,6 @@ data class Listing(
     // Save user id of buyer when listing is sold
     @ColumnInfo(name = "buyer_id")
     var buyerId: Long = 0L,
-
-    // TODO: Need to check & use appropriate datatype
-    @ColumnInfo(name = "meeting_location")
-    var meetingLocation: String = "",
 
     // Save date and time of meeting when listing is sold
     @ColumnInfo(name = "meeting_date_time")

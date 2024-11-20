@@ -7,14 +7,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pet_universe.R
 import com.example.pet_universe.database.ListingDatabase
 import com.example.pet_universe.database.ListingDatabaseDao
-import com.example.pet_universe.database.Listing
 import com.example.pet_universe.database.ListingRepository
 import com.example.pet_universe.database.ListingViewModel
 import com.example.pet_universe.database.ListingViewModelFactory
@@ -40,8 +38,8 @@ class LivePetsFragment : Fragment() {
     private val livePetsViewModel: LivePetsViewModel by activityViewModels()
     private val profileViewModel: ProfileViewModel by activityViewModels()
 
-    private val petTypes = listOf("Dogs", "Cats", "Birds", "Snakes", "Others")
-    private val ageRanges = listOf("Puppy/Kitten", "Young", "Adult", "Senior")
+    private val petTypes = listOf("All", "Dogs", "Cats", "Birds", "Snakes", "Others")
+    private val ageRange = listOf("All", "Puppy/Kitten", "Young", "Adult", "Senior")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,7 +57,7 @@ class LivePetsFragment : Fragment() {
 
         // Set up profile icon
         profileViewModel.userInitial.observe(viewLifecycleOwner) { initial ->
-            binding.root.findViewById<TextView>(R.id.profileIcon).text = initial
+            binding.root.findViewById<TextView>(R.id.profileIcon).text = initial ?: ""
         }
 
         // Navigate to AccountSettingsFragment on profileIcon click
@@ -92,7 +90,8 @@ class LivePetsFragment : Fragment() {
                     name = listing.title,
                     price = listing.price,
                     description = listing.description,
-                    imageResId = 0 // PLACEHOLDER VALUE, for future image support
+                    imageResId = 0, // PLACEHOLDER VALUE, for future image support
+                    petLocation = listing.meetingLocation
                 )
             }
             petAdapter.updatePets(pets)
@@ -123,7 +122,7 @@ class LivePetsFragment : Fragment() {
     }
 
     private fun showAgeFilterDialog() {
-        val dialog = MyDialog(requireContext(), "Select Age Range", ageRanges) { selectedAgeRange ->
+        val dialog = MyDialog(requireContext(), "Select Age Range", ageRange) { selectedAgeRange ->
             livePetsViewModel.setSelectedAgeRange(selectedAgeRange)
         }
         dialog.show()

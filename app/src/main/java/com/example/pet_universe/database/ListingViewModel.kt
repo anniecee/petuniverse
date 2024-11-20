@@ -38,7 +38,7 @@ class ListingViewModel(private val repository: ListingRepository): ViewModel() {
                 saveListingsToLocalDatabase(listings)
             }
             .addOnFailureListener { e ->
-                // Handle errors if needed
+                 println("got the error in the fetchListingsFromFirebase function in ListingViewModel. $e")
             }
     }
 
@@ -48,6 +48,7 @@ class ListingViewModel(private val repository: ListingRepository): ViewModel() {
             repository.insertListings(listings)
         }
     }
+
 
     fun deleteAll() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -73,7 +74,7 @@ class ListingViewModel(private val repository: ListingRepository): ViewModel() {
         }
     }
 
-    suspend fun getListingById(listingId: Long): Listing {
+    suspend fun getListingById(listingId: Long): Listing? {
         return withContext(Dispatchers.IO) {
             repository.getListingById(listingId)
         }
@@ -86,11 +87,13 @@ class ListingViewModel(private val repository: ListingRepository): ViewModel() {
             val price = listing.price
             val description = listing.description
             val category = listing.category
-            val photo = listing.photo
+            val photo = listing.imageUrls
+            val meetingLocation = listing.meetingLocation
 
-            repository.updateListing(id, title, price, description, category, photo)
+            repository.updateListing(id, title, price, description, meetingLocation, category, photo)
         }
     }
+
 
 
 }

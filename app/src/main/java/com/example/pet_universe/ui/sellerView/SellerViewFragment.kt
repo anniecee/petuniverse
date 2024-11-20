@@ -9,11 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.pet_universe.database.Converters
 import com.example.pet_universe.database.Listing
 import com.example.pet_universe.database.ListingDatabase
 import com.example.pet_universe.database.ListingDatabaseDao
@@ -74,7 +74,7 @@ class SellerViewFragment : Fragment() {
         // Set up Recycler View
         recyclerView = binding.sellerRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerAdapter = SellerListingsAdapter(requireContext(), sellerListings)
+        recyclerAdapter = SellerListingsAdapter(requireContext(), sellerListings, firestore, sharedPref)
         recyclerView.adapter = recyclerAdapter
 
         //new code
@@ -85,20 +85,6 @@ class SellerViewFragment : Fragment() {
             fetchSellerListingsFromFirebase(it)
             observeListingsFromRoom(it)
         }
-
-
-        //older code
-//        lifecycleScope.launch {
-//            listingViewModel.getActiveListingsBySellerId(userId).observe(viewLifecycleOwner) { listings ->
-//                // Update sellerListings
-//                sellerListings.clear()
-//                sellerListings.addAll(listings)
-//                recyclerAdapter.notifyDataSetChanged()
-//
-//                // Print sellerListings to debug
-//                println("Seller Listings: $sellerListings")
-//            }
-//        }
 
         // Switch to detail page on item click
         // Learned how to do this from https://www.youtube.com/watch?v=WqrpcWXBz14
@@ -116,41 +102,62 @@ class SellerViewFragment : Fragment() {
 
     }
 
-
-
     private fun fetchSellerListingsFromFirebase(userId: String) {
-        val converters = Converters()
-        firestore.collection("listings")
-            .whereEqualTo("sellerId", userId)
+        firestore.collection("users/$userId/listings")
             .get()
             .addOnSuccessListener { result ->
-                val listings = result.map { document ->
+                val listings = result.mapNotNull { document ->
                     val listing = document.toObject(Listing::class.java)
-                    listing.photo = converters.toByteArray(listing.firebasePhoto)
-                    listing
+                    // Print id of listing & id of each listing in sellerListings to debug
+                    println("Listing ID: ${listing.id}")
+                    println("Seller Listings: ${sellerListings.map { it.id }}")
+                    // Check if any listing in sellerListings has the same id as the current listing,
+                    // if not, add the listing to sellerListings
+                    if (sellerListings.none { it.id == listing.id }) {
+                        listing
+                    } else {
+                        null
+                    }
                 }
+
                 saveListingsToLocalDatabase(listings)
+                println("Fetched Listings from Firebase: ${listings.map { it.id }}")
             }
-            .addOnFailureListener { e -> }
+            .addOnFailureListener { e -> println("Error getting documents: $e") }
     }
 
     private fun saveListingsToLocalDatabase(listings: List<Listing>) {
         lifecycleScope.launch {
-            listingViewModel.insertListings(listings)
+            listings.forEach { listing ->
+                val existingListing = listingViewModel.getListingById(listing.id) // Check if listing exists
+                if (existingListing == null) {
+                    listingViewModel.insert(listing)
+                    sellerListings.add(listing) // Add new listing here to display in recycler view
+                }
+            }
         }
     }
 
     private fun observeListingsFromRoom(userId: String) {
         lifecycleScope.launch {
-            listingViewModel.getActiveListingsBySellerId(userId)
-                .observe(viewLifecycleOwner) { listings ->
-                    sellerListings.clear()
-                    sellerListings.addAll(listings)
-                    recyclerAdapter.notifyDataSetChanged()
-                }
+            listingViewModel.getActiveListingsBySellerId(userId).observe(viewLifecycleOwner) { listings ->
+                sellerListings.clear()
+                sellerListings.addAll(listings)
+                recyclerAdapter.notifyDataSetChanged()
+            }
+            println("Debug: Seller Listings: $sellerListings")
         }
+
     }
 
+    override fun onResume() {
+        super.onResume()
+        val userId = sharedPref.getString("userId", null)
+        userId?.let {
+            fetchSellerListingsFromFirebase(it)
+            observeListingsFromRoom(it)
+        }
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null // Avoid memory leaks

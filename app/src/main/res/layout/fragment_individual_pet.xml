@@ -59,24 +59,23 @@
         android:layout_height="wrap_content"
         android:text="Price"
         android:layout_marginTop="10dp"/>
+    <!--
     <TextView
         android:id="@+id/sizeOfPetTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Size of pet"
         android:layout_marginTop="10dp" />
     <TextView
         android:id="@+id/breedTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Breed"
         android:layout_marginTop="10dp" />
     <TextView
         android:id="@+id/ageTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Age"
         android:layout_marginTop="10dp" />
+        -->
     <TextView
         android:id="@+id/locationTextView"
         android:layout_width="match_parent"

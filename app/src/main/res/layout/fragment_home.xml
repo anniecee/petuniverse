@@ -25,8 +25,8 @@
         <!-- First Image and Title -->
         <ImageView
             android:id="@+id/livePetsImageView"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:background="@drawable/circular_shape"
             android:scaleType="centerCrop"
             android:clipToOutline="true"
@@ -48,8 +48,8 @@
         <!-- Second Image and Title -->
         <ImageView
             android:id="@+id/foodImageView"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:background="@drawable/circular_shape"
             android:scaleType="centerCrop"
             android:clipToOutline="true"
@@ -71,8 +71,8 @@
         <!-- Third Image and Title -->
         <ImageView
             android:id="@+id/accessoriesImageView"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:background="@drawable/circular_shape"
             android:scaleType="centerCrop"
             android:clipToOutline="true"

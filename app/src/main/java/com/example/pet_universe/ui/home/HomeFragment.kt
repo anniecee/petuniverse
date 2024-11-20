@@ -34,7 +34,7 @@ class HomeFragment : Fragment() {
 
         // Observe user initial from ProfileViewModel and set it in the profile icon
         profileViewModel.userInitial.observe(viewLifecycleOwner) { initial ->
-            binding.root.findViewById<TextView>(R.id.profileIcon).text = initial
+            binding.root.findViewById<TextView>(R.id.profileIcon).text = initial ?: ""
         }
 
         // Navigate to AccountSettingsFragment on profileIcon click

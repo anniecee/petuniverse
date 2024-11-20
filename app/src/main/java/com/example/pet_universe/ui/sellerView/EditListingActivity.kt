@@ -68,8 +68,14 @@ class EditListingActivity : AppCompatActivity() {
         // Get the listing from the database
         val listingId = intent.getLongExtra("listingId", -1)
         lifecycleScope.launch {
-            listing = listingViewModel.getListingById(listingId)
-            setListingValues()
+            listingViewModel.getListingById(listingId)?.let {
+                listing = it
+                setListingValues()
+            } ?: run {
+                // Handle the case where the listing is not found
+                Toast.makeText(this@EditListingActivity, "Listing not found", Toast.LENGTH_SHORT).show()
+                finish()
+            }
         }
 
         // Set on click listener for the change photo button
@@ -130,14 +136,16 @@ class EditListingActivity : AppCompatActivity() {
         listing.category = category
         listing.meetingLocation = location
 
+
         // Save uploaded photo to room database
-        if (imageUri != null) {
-            val inputStream = contentResolver.openInputStream(imageUri!!)
-            val photo = inputStream?.readBytes()
-            if (photo != null) {
-                listing.photo = photo
-            }
-        }
+        // TODO: Save photo to Firebase Storage and save URL to room database
+//        if (imageUri != null) {
+//            val inputStream = contentResolver.openInputStream(imageUri!!)
+//            val photo = inputStream?.readBytes()
+//            if (photo != null) {
+//                listing.photo = photo
+//            }
+//        }
 
         // Update the listing in the database
         lifecycleScope.launch {

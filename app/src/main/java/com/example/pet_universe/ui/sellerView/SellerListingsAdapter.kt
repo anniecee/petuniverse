@@ -2,11 +2,13 @@ package com.example.pet_universe.ui.sellerView
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.BitmapFactory
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
@@ -19,8 +21,12 @@ import com.example.pet_universe.database.ListingRepository
 import com.example.pet_universe.database.ListingViewModel
 import com.example.pet_universe.database.ListingViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.firestore.FirebaseFirestore
+import coil.load
 
-class SellerListingsAdapter(private val context: Context, private val sellerListings: MutableList<Listing>) :
+class SellerListingsAdapter(private val context: Context, private val sellerListings: MutableList<Listing>, private val firestore: FirebaseFirestore,
+                            private val sharedPref: SharedPreferences
+) :
     RecyclerView.Adapter<SellerListingsAdapter.ViewHolder>() {
     // Database
     private lateinit var database: ListingDatabase
@@ -39,10 +45,19 @@ class SellerListingsAdapter(private val context: Context, private val sellerList
         val listingPhoto: ImageView = itemView.findViewById(R.id.listingPhoto)
         val deleteButton: FloatingActionButton = itemView.findViewById(R.id.deleteButton)
 
-        // This function is called to set the image of the listing
+        //        // This function is called to set the image of the listing
+//        fun bindData(listing: Listing) {
+//            val bitmap = BitmapFactory.decodeByteArray(listing.photo, 0, listing.photo.size)
+//            listingPhoto.setImageBitmap(bitmap)
+//        }
+        // Function to set image for the listing from the first image URL
         fun bindData(listing: Listing) {
-            val bitmap = BitmapFactory.decodeByteArray(listing.photo, 0, listing.photo.size)
-            listingPhoto.setImageBitmap(bitmap)
+            if (listing.imageUrls.isNotEmpty()) {
+                val image = listing.imageUrls[0]
+                listingPhoto.load(image) {
+                    crossfade(true)
+                }
+            }
         }
     }
 
@@ -96,10 +111,39 @@ class SellerListingsAdapter(private val context: Context, private val sellerList
         listingDao = database.listingDao
         repository = ListingRepository(listingDao)
         viewModelFactory = ListingViewModelFactory(repository)
-        listingViewModel = ViewModelProvider(context as ViewModelStoreOwner, viewModelFactory).get(ListingViewModel::class.java)
+        listingViewModel =
+            ViewModelProvider(context as ViewModelStoreOwner, viewModelFactory).get(
+                ListingViewModel::class.java
+            )
 
         // Remove the listing from the database
         listingViewModel.delete(sellerListings[position].id)
     }
+
+//    private fun removeListing(position: Int) {
+//        database = ListingDatabase.getInstance(context)
+//        listingDao = database.listingDao
+//        repository = ListingRepository(listingDao)
+//        viewModelFactory = ListingViewModelFactory(repository)
+//        listingViewModel = ViewModelProvider(context as ViewModelStoreOwner, viewModelFactory).get(ListingViewModel::class.java)
+//        val listingId = sellerListings[position].id
+//        sellerListings.removeAt(position)
+//        notifyItemRemoved(position)
+//        deleteListingFromFirebase(listingId)  // Remove from Firebase
+//        listingViewModel.delete(listingId)  // Remove from Room database
+//    }
+//
+//    private fun deleteListingFromFirebase(listingId: Long) {
+//        val userId = sharedPref.getString("userId", null) ?: return
+//        firestore.collection("users/$userId/listings")
+//            .document(listingId.toString())
+//            .delete()
+//            .addOnSuccessListener {
+//                Toast.makeText(context, "Listing deleted", Toast.LENGTH_SHORT).show()
+//            }
+//            .addOnFailureListener { e ->
+//                Toast.makeText(context, "Failed to delete listing: ${e.message}", Toast.LENGTH_SHORT).show()
+//            }
+//    }
 
 }

@@ -21,4 +21,10 @@ interface UserDao {
 
     @Query("SELECT * FROM user_table WHERE email = :email")
     suspend fun getUserByEmail(email: String): User?
+
+    @Query("SELECT * FROM user_table WHERE first_name = :firstName")
+    suspend fun getFirstName(firstName: String): User?
+
+    @Query("SELECT * FROM user_table WHERE last_name = :lastName")
+    suspend fun getLastName(lastName: String): User?
 }

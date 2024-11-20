@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pet_universe.R
 import com.example.pet_universe.database.Listing
 
-data class Pet(val name: String, val price: Double, val description: String, val imageResId: Int)
+data class Pet(val name: String, val price: Double, val description: String, val imageResId: Int, val petLocation: String)
 
 class PetAdapter(
     private var petList: List<Pet>,
@@ -21,7 +21,7 @@ class PetAdapter(
         val petNameTextView: TextView = itemView.findViewById(R.id.petNameTextView)
         val petPriceTextView: TextView = itemView.findViewById(R.id.petPriceTextView)
         val petDescriptionTextView: TextView = itemView.findViewById(R.id.petDescriptionTextView)
-
+        val petLocationTextView: TextView = itemView.findViewById(R.id.locationTextView)
 
         init {
             itemView.setOnClickListener {
@@ -40,7 +40,8 @@ class PetAdapter(
         holder.petImageView.setImageResource(pet.imageResId)
         holder.petNameTextView.text = pet.name
         holder.petPriceTextView.text = pet.price.toString()
-        holder.petDescriptionTextView.text = pet.description
+        //holder.petDescriptionTextView.text = pet.description
+        holder.petLocationTextView.text = pet.petLocation
     }
 
     override fun getItemCount(): Int = petList.size

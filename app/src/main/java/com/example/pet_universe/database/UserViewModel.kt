@@ -37,6 +37,18 @@ class UserViewModel(private val repository: UserRepository): ViewModel() {
         }
     }
 
+    suspend fun getFirstName(firstName: String): User? {
+        return withContext(IO) {
+            repository.getFirstName(firstName)
+        }
+    }
+
+    suspend fun getLastName(lastName: String): User? {
+        return withContext(IO) {
+            repository.getLastName(lastName)
+        }
+    }
+
 }
 
 class UserViewModelFactory(private val repository: UserRepository) : ViewModelProvider.Factory {

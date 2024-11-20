@@ -33,7 +33,7 @@ class IndividualPetFragment : Fragment() {
 
         // Set up profile icon
         profileViewModel.userInitial.observe(viewLifecycleOwner) { initial ->
-            binding.root.findViewById<TextView>(R.id.profileIcon).text = initial
+            binding.root.findViewById<TextView>(R.id.profileIcon).text = initial ?: ""
         }
 
         // Navigate to AccountSettingsFragment on profileIcon click
@@ -45,6 +45,7 @@ class IndividualPetFragment : Fragment() {
             binding.petNameTextView.text = pet.name
             binding.petPriceTextView.text = pet.price.toString()
             binding.petDescriptionTextView.text = pet.description
+            binding.locationTextView.text = pet.petLocation
             binding.petImageView.setImageResource(pet.imageResId)
         }
     }
