@@ -118,32 +118,22 @@ class SellerListingsAdapter(private val context: Context, private val sellerList
 
         // Remove the listing from the database
         listingViewModel.delete(sellerListings[position].id)
+
+        // Remove the listing from Firebase
+        deleteListingFromFirebase(sellerListings[position].id)
     }
 
-//    private fun removeListing(position: Int) {
-//        database = ListingDatabase.getInstance(context)
-//        listingDao = database.listingDao
-//        repository = ListingRepository(listingDao)
-//        viewModelFactory = ListingViewModelFactory(repository)
-//        listingViewModel = ViewModelProvider(context as ViewModelStoreOwner, viewModelFactory).get(ListingViewModel::class.java)
-//        val listingId = sellerListings[position].id
-//        sellerListings.removeAt(position)
-//        notifyItemRemoved(position)
-//        deleteListingFromFirebase(listingId)  // Remove from Firebase
-//        listingViewModel.delete(listingId)  // Remove from Room database
-//    }
-//
-//    private fun deleteListingFromFirebase(listingId: Long) {
-//        val userId = sharedPref.getString("userId", null) ?: return
-//        firestore.collection("users/$userId/listings")
-//            .document(listingId.toString())
-//            .delete()
-//            .addOnSuccessListener {
-//                Toast.makeText(context, "Listing deleted", Toast.LENGTH_SHORT).show()
-//            }
-//            .addOnFailureListener { e ->
-//                Toast.makeText(context, "Failed to delete listing: ${e.message}", Toast.LENGTH_SHORT).show()
-//            }
-//    }
+    private fun deleteListingFromFirebase(listingId: Long) {
+        val userId = sharedPref.getString("userId", null) ?: return
+        firestore.collection("users/$userId/listings")
+            .document(listingId.toString())
+            .delete()
+            .addOnSuccessListener {
+                Toast.makeText(context, "Listing deleted", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(context, "Failed to delete listing: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
 
 }

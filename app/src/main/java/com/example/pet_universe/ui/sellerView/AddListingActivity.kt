@@ -141,7 +141,6 @@ class AddListingActivity : AppCompatActivity() {
         }
 
     //new code implementation for firebase and firestore
-
     private fun saveListing() {
         if (titleEditText.text.isNullOrEmpty() || priceEditText.text.isNullOrEmpty()) {
             Toast.makeText(this, "Please fill in all required fields.", Toast.LENGTH_SHORT).show()
@@ -167,18 +166,15 @@ class AddListingActivity : AppCompatActivity() {
         saveListingToFirestore(listing, imagesByteArray) { success ->
             if (success) {
                 listing.imageUrls = imageUrls // Set imageUrls of listing to the Firestore URLs
-                lifecycleScope.launch {
-                    listingViewModel.insert(listing) // Save to Room on success
-                    println("Listing saved to Room successfully!")
-                    println("Listing in Room: $listing")
-                    Toast.makeText(
-                        this@AddListingActivity,
-                        "Listing saved successfully!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    delay(3000) // Delay for 3 seconds to allow Firestore to save before finishing activity
-                    finish()
-                }
+                listingViewModel.insert(listing) // Save to Room on success
+                println("Listing saved to Room successfully!")
+                println("Listing in Room: $listing")
+                Toast.makeText(
+                    this@AddListingActivity,
+                    "Listing saved successfully!",
+                    Toast.LENGTH_SHORT
+                ).show()
+                finish()
             } else {
                 println("Failed to save listing to Room.")
                 Toast.makeText(this, "Failed to save listing.", Toast.LENGTH_SHORT).show()
