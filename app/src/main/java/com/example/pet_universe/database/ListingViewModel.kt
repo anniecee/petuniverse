@@ -10,8 +10,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ListingViewModel(private val repository: ListingRepository): ViewModel() {
+class ListingViewModel(private val repository: ListingRepository) : ViewModel() {
     val allListingsLiveData: LiveData<List<Listing>> = repository.allListings.asLiveData()
+
     // Firebase Firestore instance
     private val firestore = FirebaseFirestore.getInstance()
 
@@ -28,17 +29,67 @@ class ListingViewModel(private val repository: ListingRepository): ViewModel() {
     }
 
     // Fetch listings from Firebase and save to Room
-    fun fetchListingsFromFirebase() {
-        firestore.collection("listings")
-            .get()
+
+    // This is for all listings regardless of category
+//    fun fetchListingsFromFirebase() {
+//        firestore.collection("listings")
+//            .get()
+//            .addOnSuccessListener { result ->
+//                val listings = result.map { document ->
+//                    document.toObject(Listing::class.java)
+//                }
+//                saveListingsToLocalDatabase(listings)
+//            }
+//            .addOnFailureListener { e ->
+//                 println("got the error in the fetchListingsFromFirebase function in ListingViewModel. $e")
+//            }
+//    }
+
+    fun fetchPetListingsFromFirebase() {
+        firestore.collection("listings").whereEqualTo("category", "Live Pets").get()
             .addOnSuccessListener { result ->
                 val listings = result.map { document ->
                     document.toObject(Listing::class.java)
                 }
                 saveListingsToLocalDatabase(listings)
+            }.addOnFailureListener { e ->
+                println("Got the error in the fetchListingsFromFirebase function in ListingViewModel. $e")
             }
-            .addOnFailureListener { e ->
-                 println("got the error in the fetchListingsFromFirebase function in ListingViewModel. $e")
+    }
+
+    fun fetchFoodListingsFromFirebase() {
+        firestore.collection("listings").whereEqualTo("category", "Pet Food").get()
+            .addOnSuccessListener { result ->
+                val listings = result.map { document ->
+                    document.toObject(Listing::class.java)
+                }
+                saveListingsToLocalDatabase(listings)
+            }.addOnFailureListener { e ->
+                println("Got the error in the fetchListingsFromFirebase function in ListingViewModel. $e")
+            }
+    }
+
+    fun fetchAccessoryListingsFromFirebase() {
+        firestore.collection("listings").whereEqualTo("category", "Pet Accessories").get()
+            .addOnSuccessListener { result ->
+                val listings = result.map { document ->
+                    document.toObject(Listing::class.java)
+                }
+                saveListingsToLocalDatabase(listings)
+            }.addOnFailureListener { e ->
+                println("Got the error in the fetchListingsFromFirebase function in ListingViewModel. $e")
+            }
+    }
+
+    fun fetchOtherListingsFromFirebase() {
+        firestore.collection("listings").whereEqualTo("category", "Other").get()
+            .addOnSuccessListener { result ->
+                val listings = result.map { document ->
+                    document.toObject(Listing::class.java)
+                }
+                saveListingsToLocalDatabase(listings)
+            }.addOnFailureListener { e ->
+                println("Got the error in the fetchListingsFromFirebase function in ListingViewModel. $e")
             }
     }
 
@@ -48,7 +99,6 @@ class ListingViewModel(private val repository: ListingRepository): ViewModel() {
             repository.insertListings(listings)
         }
     }
-
 
     fun deleteAll() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -91,19 +141,20 @@ class ListingViewModel(private val repository: ListingRepository): ViewModel() {
             val photo = listing.imageUrls
             val meetingLocation = listing.meetingLocation
 
-            repository.updateListing(id, title, price, description, meetingLocation, category, photo)
+            repository.updateListing(
+                id, title, price, description, meetingLocation, category, photo
+            )
         }
     }
 
 
-
 }
 
-class ListingViewModelFactory(private val repository: ListingRepository): ViewModelProvider.Factory {
+class ListingViewModelFactory(private val repository: ListingRepository) :
+    ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ListingViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return ListingViewModel(repository) as T
+            @Suppress("UNCHECKED_CAST") return ListingViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

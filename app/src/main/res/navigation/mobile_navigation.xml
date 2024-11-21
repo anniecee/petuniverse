@@ -7,29 +7,29 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.pet_universe.ui.home.HomeFragment"
+        android:name="com.example.pet_universe.ui.buyView.BuyFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home">
     <action
-        android:id="@+id/action_navigation_home_to_livePetsFragment"
-        app:destination="@id/livePetsFragment" />
+        android:id="@+id/action_navigation_home_to_listingsFragment"
+        app:destination="@id/listingsFragment" />
         </fragment>
 
         <fragment
-        android:id="@+id/livePetsFragment"
-        android:name="com.example.pet_universe.ui.livePets.LivePetsFragment"
+        android:id="@+id/listingsFragment"
+        android:name="com.example.pet_universe.ui.buyView.ListingsFragment"
         android:label="Live Pets"
-        tools:layout="@layout/fragment_live_pets" >
+        tools:layout="@layout/fragment_listings" >
             <action
-                android:id="@+id/action_livePetsFragment_to_individualPetFragment"
+                android:id="@+id/action_listingsFragment_to_individualListingFragment"
                 app:destination="@id/individualPetFragment" />
         </fragment>
 
     <fragment
         android:id="@+id/individualPetFragment"
-        android:name="com.example.pet_universe.ui.livePets.IndividualPetFragment"
+        android:name="com.example.pet_universe.ui.buyView.IndividualListingFragment"
         android:label="Individual Pet"
-        tools:layout="@layout/fragment_individual_pet" />
+        tools:layout="@layout/fragment_individual_listing" />
 
     <fragment
         android:id="@+id/navigation_seller"

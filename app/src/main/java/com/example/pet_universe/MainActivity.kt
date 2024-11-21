@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration = AppBarConfiguration(setOf(R.id.navigation_home, R.id.navigation_seller, R.id.navigation_accounts))
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        // Set up action to ensure HomeFragment is loaded as default
+        // Set up action to ensure BuyFragment is loaded as default
         binding.navView.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.navigation_home -> {
