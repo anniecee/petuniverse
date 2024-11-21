@@ -88,10 +88,10 @@ class ListingViewModel(private val repository: ListingRepository): ViewModel() {
             val description = listing.description
             val category = listing.category
             val type = listing.type
-            val photo = listing.imageUrls
+            val imageUrls = listing.imageUrls
             val meetingLocation = listing.meetingLocation
 
-            repository.updateListing(id, title, price, description, meetingLocation, category, photo)
+            repository.updateListing(id, title, price, description, meetingLocation, category, imageUrls, type)
         }
     }
 
