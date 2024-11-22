@@ -45,12 +45,7 @@ class SellerListingsAdapter(private val context: Context, private val sellerList
         val listingPhoto: ImageView = itemView.findViewById(R.id.listingPhoto)
         val deleteButton: FloatingActionButton = itemView.findViewById(R.id.deleteButton)
 
-        //        // This function is called to set the image of the listing
-//        fun bindData(listing: Listing) {
-//            val bitmap = BitmapFactory.decodeByteArray(listing.photo, 0, listing.photo.size)
-//            listingPhoto.setImageBitmap(bitmap)
-//        }
-        // Function to set image for the listing from the first image URL
+        // Function to set image for the listing
         fun bindData(listing: Listing) {
             if (listing.imageUrl != null) {
                 val image = listing.imageUrl
@@ -125,6 +120,7 @@ class SellerListingsAdapter(private val context: Context, private val sellerList
         Toast.makeText(context, "Listing deleted", Toast.LENGTH_SHORT).show()
     }
 
+    // Remove listing from Firebase in both the user's collection and the global collection
     private fun deleteListingFromFirebase(listingId: Long) {
         val userId = sharedPref.getString("userId", null) ?: return
         val userListingRef = firestore.collection("users").document(userId).collection("listings")
@@ -138,6 +134,7 @@ class SellerListingsAdapter(private val context: Context, private val sellerList
             .addOnFailureListener { e ->
                 println("Failed to delete listing: ${e.message}")
             }
+
         globalListingRef.delete()
             .addOnSuccessListener {
                 println("Listing deleted in global collection")

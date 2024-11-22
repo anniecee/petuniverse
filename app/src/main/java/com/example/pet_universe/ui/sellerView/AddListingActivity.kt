@@ -30,7 +30,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.InputStream
 import java.util.UUID
@@ -48,16 +47,9 @@ class AddListingActivity : AppCompatActivity() {
     private lateinit var repository: ListingRepository
     private lateinit var viewModelFactory: ListingViewModelFactory
     private lateinit var listingViewModel: ListingViewModel
-    private lateinit var listing: Listing
-
-    // Shared preferences
-    private lateinit var sharedPref: SharedPreferences
 
     // Image
     private var imageUri: Uri? = null
-
-    // if the user decides to upload multiple images
-    private var imageUris: MutableList<Uri> = mutableListOf()
     private var imageUrl : String = ""
 
     // Elements
@@ -138,7 +130,7 @@ class AddListingActivity : AppCompatActivity() {
         }
     }
 
-    //new code implementation for firebase and firestore
+    // Save listing to Firestore and Room
     private suspend fun saveListing() {
         if (titleEditText.text.isNullOrEmpty() || priceEditText.text.isNullOrEmpty()) {
             Toast.makeText(this, "Please fill in all required fields.", Toast.LENGTH_SHORT).show()
@@ -161,14 +153,14 @@ class AddListingActivity : AppCompatActivity() {
         val success = saveListingToFirestore(listing, imageByteArray)
         if (success) {
             listing.imageUrl = imageUrl
-            println("Debug: Listing before saving to Room: $listing")
-            listingViewModel.insert(listing)
+            listingViewModel.insert(listing) // Save listing to Room
             Toast.makeText(this@AddListingActivity, "Listing saved successfully!", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "Failed to save listing.", Toast.LENGTH_SHORT).show()
         }
     }
 
+    // Save listing to Firestore: both user's collection and global collection
     private suspend fun saveListingToFirestore(
         listing: Listing,
         imageByteArray: ByteArray
@@ -194,6 +186,7 @@ class AddListingActivity : AppCompatActivity() {
         }
     }
 
+    // Save listing document to Firestore
     private fun saveListingDocument(
         firestoreRef: DocumentReference,
         listing: Listing,
@@ -213,7 +206,7 @@ class AddListingActivity : AppCompatActivity() {
         return firestoreRef.set(listingMap)
     }
 
-
+    // Upload image to Firebase Storage
     private fun uploadImagesToFirebaseStorage(
         imageByteArray: ByteArray,
         listingId: String

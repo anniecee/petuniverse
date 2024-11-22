@@ -28,10 +28,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import java.io.InputStream
 import java.util.UUID
-import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.tasks.await
 
 class EditListingActivity : AppCompatActivity() {
@@ -84,7 +81,7 @@ class EditListingActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         // Enable Firestore logging
-        // FirebaseFirestore.setLoggingEnabled(true)
+        FirebaseFirestore.setLoggingEnabled(true)
 
         // Set up Room database
         database = ListingDatabase.getInstance(this)
@@ -176,17 +173,13 @@ class EditListingActivity : AppCompatActivity() {
             // Upload image if one is selected
             if (imageUri != null) {
                 imageUrl = uploadImageToFirebaseStorage(imageUri!!)
-                println("Debug: Successfully uploaded image, URL: $imageUrl")
                 listing.imageUrl = imageUrl!! // Save the uploaded image URL
             } else {
                 println("Debug: No image to upload, imageUri is null")
             }
 
-            // Update listing in Room database
-            println("Debug: Listing before update: $listing")
+            // Update listing in Room database & Firebase database
             listingViewModel.updateListing(listing)
-
-            // Update listing in Firebase
             updateListingInFirebase(listing)
 
             Toast.makeText(this@EditListingActivity, "Listing updated", Toast.LENGTH_SHORT).show()
@@ -221,6 +214,7 @@ class EditListingActivity : AppCompatActivity() {
             }
     }
 
+    // Upload image to Firebase Storage
     private suspend fun uploadImageToFirebaseStorage(imageUri: Uri): String? {
         val storageRef = storage.reference
         val fileNameWithExtension = getFileName(applicationContext, imageUri)
