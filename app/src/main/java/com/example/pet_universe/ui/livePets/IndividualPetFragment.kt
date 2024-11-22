@@ -49,8 +49,8 @@ class IndividualPetFragment : Fragment() {
             binding.locationTextView.text = pet.petLocation
 
             // Load the first image from the imageUrls list using Coil
-            if (pet.imageUrls.isNotEmpty()) {
-                val imageUrl = pet.imageUrls[0]
+            if (pet.imageUrl != null) {
+                val imageUrl = pet.imageUrl
                 binding.petImageView.load(imageUrl) {
                     crossfade(true)
                     placeholder(R.drawable.pet_accessories_logo)

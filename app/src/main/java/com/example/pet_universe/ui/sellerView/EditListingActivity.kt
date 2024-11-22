@@ -32,6 +32,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.InputStream
 import java.util.UUID
 import kotlin.coroutines.resumeWithException
+import kotlinx.coroutines.tasks.await
 
 class EditListingActivity : AppCompatActivity() {
     private lateinit var backButton : Button
@@ -62,7 +63,7 @@ class EditListingActivity : AppCompatActivity() {
     private lateinit var locationEditText : EditText
     private lateinit var changePhotoButton : Button
     private lateinit var photoTextView: TextView
-    private var imageUrls = mutableListOf<String>()
+    private var imageUrl : String? = ""
 
     // Image
     private var imageUri: Uri? = null
@@ -123,8 +124,10 @@ class EditListingActivity : AppCompatActivity() {
         // Set on click listener for the save button
         saveButton = findViewById(R.id.saveButton)
         saveButton.setOnClickListener {
-            saveListing()
-            finish()
+            lifecycleScope.launch {
+                saveListing()
+                finish()
+            }
         }
     }
 
@@ -152,7 +155,7 @@ class EditListingActivity : AppCompatActivity() {
         })
     }
 
-    private fun saveListing() {
+    private suspend fun saveListing() {
         // Get input values
         val title = titleEditText.text.toString()
         val price = priceEditText.text.toString().toInt()
@@ -169,47 +172,32 @@ class EditListingActivity : AppCompatActivity() {
         listing.type = type
         listing.meetingLocation = location
 
-//        // Save photo to Firebase Storage and save URL to room database
-//        if (imageUri != null) {
-//            uploadImageToFirebaseStorage(imageUri!!)
-//
-//            // Save image URL to room database
-//            listing.imageUrls = imageUrls
-//        }
-
-        lifecycleScope.launch {
-            // Upload image to Firebase Storage and get the URL
+        try {
+            // Upload image if one is selected
             if (imageUri != null) {
-                imageUrls.clear()
-                var imageUrl: String? = null
-                try {
-                    imageUrl = uploadImageToFirebaseStorage(imageUri!!)
-                    println("Debug: Successfully uploaded image, URL: $imageUrl")
-                } catch (e: Exception) {
-                    println("Debug: Exception during image upload: ${e.message}")
-                }
-
-                if (imageUrl != null) {
-                    imageUrls.add(imageUrl)
-                    listing.imageUrls = imageUrls
-                } else {
-                    println("Debug: Failed to upload image")
-                }
+                imageUrl = uploadImageToFirebaseStorage(imageUri!!)
+                println("Debug: Successfully uploaded image, URL: $imageUrl")
+                listing.imageUrl = imageUrl!! // Save the uploaded image URL
             } else {
-                println("Debug: imageUri is null")
+                println("Debug: No image to upload, imageUri is null")
             }
 
-            try {
-                println("Debug: Listing before update: $listing")
-                listingViewModel.updateListing(listing)
-                updateListingInFirebase(listing)
-                Toast.makeText(this@EditListingActivity, "Listing updated", Toast.LENGTH_SHORT)
-                    .show()
-            } catch (e: Exception) {
-                println("Debug: Exception during listing update: ${e.message}")
-            }
+            // Update listing in Room database
+            println("Debug: Listing before update: $listing")
+            listingViewModel.updateListing(listing)
+
+            // Update listing in Firebase
+            updateListingInFirebase(listing)
+
+            Toast.makeText(this@EditListingActivity, "Listing updated", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            println("Debug: Exception during saveListing: ${e.message}")
+            Toast.makeText(
+                this@EditListingActivity,
+                "Failed to update listing: ${e.message}",
+                Toast.LENGTH_SHORT
+            ).show()
         }
-
     }
 
     private fun updateListingInFirebase(listing: Listing) {
@@ -221,8 +209,8 @@ class EditListingActivity : AppCompatActivity() {
             "category" to listing.category,
             "type" to listing.type,
             "meetingLocation" to listing.meetingLocation,
-            "imageUrls" to listing.imageUrls
-        )
+            "imageUrl" to listing.imageUrl
+        ) as Map<String, Any>
 
         listingRef.update(updatedListing)
             .addOnSuccessListener {
@@ -233,58 +221,21 @@ class EditListingActivity : AppCompatActivity() {
             }
     }
 
-//    private fun uploadImageToFirebaseStorage(imageUri: Uri) {
-//        val storageRef = storage.reference
-//
-//        // Set up image reference
-//        val imageByteArray = getImageByteArray(this, imageUri)
-//        val fileNameWithExtension = getFileName(applicationContext, imageUri)
-//        val imageRef = storageRef.child("images/${userId}/${listing.id}/$fileNameWithExtension")
-//        println("Uploading to path: ${imageRef.path}")
-//
-//        // Upload image to Firebase Storage
-//        val uploadTask = imageRef.putBytes(imageByteArray!!)
-//        uploadTask.continueWithTask { task ->
-//            if (!task.isSuccessful) {
-//                task.exception?.let { throw it }
-//            }
-//            imageRef.downloadUrl
-//        }.addOnCompleteListener { task ->
-//            if (task.isSuccessful) {
-//                val downloadUri = task.result.toString()
-//                println("Successfully added the downloaded image uri")
-//                imageUrls.add(downloadUri)
-//            }
-//        }.addOnFailureListener() { e ->
-//            println("Failed to upload image to Firebase Storage: ${e.message}")
-//        }
-//    }
-
     private suspend fun uploadImageToFirebaseStorage(imageUri: Uri): String? {
-        return suspendCancellableCoroutine { continuation ->
-            val storageRef = storage.reference
-            val fileNameWithExtension = getFileName(applicationContext, imageUri)
-            val imageRef = storageRef.child("images/${userId}/${listing.id}/$fileNameWithExtension")
-            var downloadUri = ""
-            println("Debug: Uploading to path: ${imageRef.path}")
-            println("Debug: Image URI: $imageUri")
+        val storageRef = storage.reference
+        val fileNameWithExtension = getFileName(applicationContext, imageUri)
+        val imageRef = storageRef.child("images/${userId}/${listing.id}/$fileNameWithExtension")
+        println("Debug: Uploading to path: ${imageRef.path}")
+        println("Debug: Image URI: $imageUri")
 
-            val uploadTask = imageRef.putFile(imageUri)
-            uploadTask.addOnSuccessListener { taskSnapshot ->
-                imageRef.downloadUrl.addOnSuccessListener { uri ->
-                    continuation.resume(uri.toString(), null)
-                    println("Debug: Successfully added the downloaded image uri: $uri")
-                }.addOnFailureListener { e ->
-                    continuation.resumeWithException(e)
-                    println("Debug: Failed to get download URL: ${e.message}")
-                }
-            }.addOnFailureListener { e ->
-                continuation.resumeWithException(e)
-                println("Debug: Failed to upload image to Firebase Storage: ${e.message}")
-            }.addOnCanceledListener {
-                continuation.cancel()
-                println("Debug: Upload cancelled")
-            }
+        return try {
+            val uploadTask = imageRef.putFile(imageUri).await()
+            val downloadUrl = imageRef.downloadUrl.await()
+            println("Debug: Successfully added the downloaded image uri: $downloadUrl")
+            downloadUrl.toString()
+        } catch (e: Exception) {
+            println("Debug: Failed to upload image to Firebase Storage: ${e.message}")
+            null
         }
     }
 
@@ -307,11 +258,6 @@ class EditListingActivity : AppCompatActivity() {
                 Toast.makeText(this, "Image uploaded", Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    private fun getImageByteArray(context: Context, uri: Uri): ByteArray? {
-        return context.contentResolver.openInputStream(uri)
-            ?.use { inputStream: InputStream -> inputStream.readBytes() }
     }
 
     private fun getFileName(context: Context, uri: Uri): String {

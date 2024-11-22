@@ -80,22 +80,26 @@ class ListingViewModel(private val repository: ListingRepository): ViewModel() {
         }
     }
 
+//    fun updateListing(listing: Listing) {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            val id = listing.id
+//            val title = listing.title
+//            val price = listing.price
+//            val description = listing.description
+//            val category = listing.category
+//            val type = listing.type
+//            val imageUrls = listing.imageUrls
+//            val meetingLocation = listing.meetingLocation
+//
+//            repository.updateListing(id, title, price, description, meetingLocation, category, imageUrls, type)
+//        }
+//    }
+
     fun updateListing(listing: Listing) {
         viewModelScope.launch(Dispatchers.IO) {
-            val id = listing.id
-            val title = listing.title
-            val price = listing.price
-            val description = listing.description
-            val category = listing.category
-            val type = listing.type
-            val imageUrls = listing.imageUrls
-            val meetingLocation = listing.meetingLocation
-
-            repository.updateListing(id, title, price, description, meetingLocation, category, imageUrls, type)
+            repository.update(listing)
         }
     }
-
-
 
 }
 

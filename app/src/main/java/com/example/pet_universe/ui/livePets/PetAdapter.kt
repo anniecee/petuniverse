@@ -14,7 +14,7 @@ data class Pet(
     val price: Int,
     val type: String,
     val description: String,
-    val imageUrls: List<String>,
+    val imageUrl: String,
     val petLocation: String
 )
 
@@ -38,8 +38,8 @@ class PetAdapter(
         }
 
         fun bindData(listing: Pet) {
-            if (listing.imageUrls.isNotEmpty()) {
-                val imageUrl = listing.imageUrls[0]
+            if (listing.imageUrl != null) {
+                val imageUrl = listing.imageUrl
                 petImageView.load(imageUrl) {
                     crossfade(true)
                     placeholder(R.drawable.pet_accessories_logo)

@@ -32,8 +32,8 @@ data class Listing(
     @ColumnInfo(name = "meeting_location")
     var meetingLocation: String = "",
 
-    @ColumnInfo(name = "imageUrls")
-    var imageUrls: List<String> = emptyList(),
+    @ColumnInfo(name = "imageUrl")
+    var imageUrl: String = "",
 
     // Save user id of seller when listing is created
     @ColumnInfo(name = "seller_id")

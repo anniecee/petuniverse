@@ -55,7 +55,7 @@ class AddListingActivity : AppCompatActivity() {
 
     // if the user decides to upload multiple images
     private var imageUris: MutableList<Uri> = mutableListOf()
-    private var imageUrls = mutableListOf<String>()
+    private var imageUrl : String = ""
 
     // Elements
     private lateinit var titleEditText: EditText
@@ -147,7 +147,8 @@ class AddListingActivity : AppCompatActivity() {
             return
         }
         val uniqueId = System.currentTimeMillis() * 1000 + (0..999).random()
-        val imagesByteArray = imageUris.mapNotNull { uri -> getImageByteArray(this, uri) }
+        imageUri = imageUris[0]
+        val imageByteArray = getImageByteArray(this, imageUri!!)!!
 
         // Add debug statement for tracking
         println("Attempting to save listing with ID: $uniqueId")
@@ -163,9 +164,9 @@ class AddListingActivity : AppCompatActivity() {
             sellerId = auth.currentUser?.uid
         )
 
-        saveListingToFirestore(listing, imagesByteArray) { success ->
+        saveListingToFirestore(listing, imageByteArray) { success ->
             if (success) {
-                listing.imageUrls = imageUrls // Set imageUrls of listing to the Firestore URLs
+                listing.imageUrl = imageUrl // Set imageUrls of listing to the Firestore URLs
                 listingViewModel.insert(listing) // Save to Room on success
                 println("Listing saved to Room successfully!")
                 println("Listing in Room: $listing")
@@ -198,7 +199,7 @@ class AddListingActivity : AppCompatActivity() {
 //    }
     private fun saveListingToFirestore(
         listing: Listing,
-        imagesByteArray: List<ByteArray>,
+        imageByteArray: ByteArray,
         onComplete: (Boolean) -> Unit
     ) {
         val userId = auth.currentUser?.uid ?: return
@@ -206,19 +207,19 @@ class AddListingActivity : AppCompatActivity() {
             .document(listing.id.toString())
         val globalListingRef = firestore.collection("listings").document(listing.id.toString())
 
-        if (imagesByteArray.isEmpty()) {
-            saveListingDocument(userListingRef, listing, emptyList()) { success ->
+        if (imageByteArray.isEmpty()) {
+            saveListingDocument(userListingRef, listing, "") { success ->
                 if (success) {
-                    saveListingDocument(globalListingRef, listing, emptyList(), onComplete)
+                    saveListingDocument(globalListingRef, listing, "", onComplete)
                 } else {
                     onComplete(false)
                 }
             }
         } else {
-            uploadImagesToFirebaseStorage(imagesByteArray, listing.id.toString()) { imageUrls ->
-                saveListingDocument(userListingRef, listing, imageUrls) { success ->
+            uploadImagesToFirebaseStorage(imageByteArray, listing.id.toString()) { imageUrl ->
+                saveListingDocument(userListingRef, listing, imageUrl) { success ->
                     if (success) {
-                        saveListingDocument(globalListingRef, listing, imageUrls, onComplete)
+                        saveListingDocument(globalListingRef, listing, imageUrl, onComplete)
                     } else {
                         onComplete(false)
                     }
@@ -230,7 +231,7 @@ class AddListingActivity : AppCompatActivity() {
     private fun saveListingDocument(
         firestoreRef: DocumentReference,
         listing: Listing,
-        imageUrls: List<String>,
+        imageUrl: String,
         onComplete: (Boolean) -> Unit
     ) {
         val sellerId = auth.currentUser?.uid ?: return  // Ensure sellerId is set
@@ -246,7 +247,7 @@ class AddListingActivity : AppCompatActivity() {
                 "type" to listing.type,
                 "meetingLocation" to listing.meetingLocation,
                 "sellerId" to sellerId,
-                "imageUrls" to imageUrls
+                "imageUrl" to imageUrl
             )
 
             println("sellerId: $sellerId")
@@ -265,42 +266,39 @@ class AddListingActivity : AppCompatActivity() {
     }
 
     private fun uploadImagesToFirebaseStorage(
-        imagesByteArray: List<ByteArray>,
+        imageByteArray: ByteArray,
         listingId: String,
-        onSuccess: (List<String>) -> Unit
+        onSuccess: (String) -> Unit
     ) {
         val userId = auth.currentUser?.uid ?: return
         val storageRef = storage.reference
 
-        imagesByteArray.forEachIndexed { index, imageByteArray ->
-            //val imageRef = storageRef.child("images/$userId/$listingId/image_$index.jpg")
-            val fileNameWithExtension = getFileName(applicationContext, imageUris[index])
-            val imageRef = storageRef.child("images/$userId/$listingId/$fileNameWithExtension")
-            println("Uploading to path: ${imageRef.path}")
+        //val imageRef = storageRef.child("images/$userId/$listingId/image_$index.jpg")
+        val fileNameWithExtension = getFileName(applicationContext, imageUri!!)
+        val imageRef = storageRef.child("images/$userId/$listingId/$fileNameWithExtension")
+        println("Uploading to path: ${imageRef.path}")
 
-            if (imageByteArray.isNotEmpty()) {
-                val uploadTask = imageRef.putBytes(imageByteArray)
-                uploadTask.continueWithTask { task ->
-                    if (!task.isSuccessful) {
-                        task.exception?.let { throw it }
-                    }
-                    imageRef.downloadUrl
-                }.addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val downloadUri = task.result.toString()
-                        println("Successfully added the downloaded image uri")
-                        imageUrls.add(downloadUri)
-                        if (imageUrls.size == imagesByteArray.size) {
-                            onSuccess(imageUrls)
-                        }
-                    }
-                }.addOnFailureListener() { e ->
-                    println("Failed to upload image to Firebase Storage: ${e.message}")
+        if (imageByteArray.isNotEmpty()) {
+            val uploadTask = imageRef.putBytes(imageByteArray)
+            uploadTask.continueWithTask { task ->
+                if (!task.isSuccessful) {
+                    task.exception?.let { throw it }
                 }
-            } else {
-                println("Error: Empty imageByteArray for image $index")
+                imageRef.downloadUrl
+            }.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val downloadUri = task.result.toString()
+                    println("Successfully added the downloaded image uri")
+                    imageUrl = downloadUri
+                    onSuccess(downloadUri)
+                }
+            }.addOnFailureListener() { e ->
+                println("Failed to upload image to Firebase Storage: ${e.message}")
             }
+        } else {
+            println("Error: Empty imageByteArray for image")
         }
+
     }
 
     private fun getImageByteArray(context: Context, uri: Uri): ByteArray? {

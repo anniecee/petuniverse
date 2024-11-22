@@ -153,7 +153,7 @@ class LivePetsFragment : Fragment() {
                     price = listing.price,
                     type = listing.type,
                     description = listing.description,
-                    imageUrls = listing.imageUrls,
+                    imageUrl = listing.imageUrl,
                     petLocation = listing.meetingLocation
                 )
             }
@@ -170,7 +170,7 @@ class LivePetsFragment : Fragment() {
                     price = listing.price,
                     type = listing.type,
                     description = listing.description,
-                    imageUrls = listing.imageUrls,
+                    imageUrl = listing.imageUrl,
                     petLocation = listing.meetingLocation
                 )
             }

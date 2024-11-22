@@ -52,8 +52,8 @@ class SellerListingsAdapter(private val context: Context, private val sellerList
 //        }
         // Function to set image for the listing from the first image URL
         fun bindData(listing: Listing) {
-            if (listing.imageUrls.isNotEmpty()) {
-                val image = listing.imageUrls[0]
+            if (listing.imageUrl != null) {
+                val image = listing.imageUrl
                 listingPhoto.load(image) {
                     crossfade(true)
                 }

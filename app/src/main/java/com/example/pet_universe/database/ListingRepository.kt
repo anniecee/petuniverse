@@ -58,9 +58,15 @@ class ListingRepository(private val listingDatabaseDao: ListingDatabaseDao) {
 
     }
 
-    fun updateListing(id: Long, title: String, price: Int, description: String, meetingLocation: String, category: String, imageUrls: List<String>, type: String) {
+//    fun updateListing(id: Long, title: String, price: Int, description: String, meetingLocation: String, category: String, imageUrls: List<String>, type: String) {
+//        CoroutineScope(IO).launch {
+//            listingDatabaseDao.update(id, title, price, description, meetingLocation, category, imageUrls, type)
+//        }
+//    }
+
+    fun update(listing: Listing) {
         CoroutineScope(IO).launch {
-            listingDatabaseDao.update(id, title, price, description, meetingLocation, category, imageUrls, type)
+            listingDatabaseDao.update(listing)
         }
     }
 }
