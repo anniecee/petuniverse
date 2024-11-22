@@ -121,18 +121,29 @@ class SellerListingsAdapter(private val context: Context, private val sellerList
 
         // Remove the listing from Firebase
         deleteListingFromFirebase(sellerListings[position].id)
+
+        Toast.makeText(context, "Listing deleted", Toast.LENGTH_SHORT).show()
     }
 
     private fun deleteListingFromFirebase(listingId: Long) {
         val userId = sharedPref.getString("userId", null) ?: return
-        firestore.collection("users/$userId/listings")
+        val userListingRef = firestore.collection("users").document(userId).collection("listings")
             .document(listingId.toString())
-            .delete()
+        val globalListingRef = firestore.collection("listings").document(listingId.toString())
+
+        userListingRef.delete()
             .addOnSuccessListener {
-                Toast.makeText(context, "Listing deleted", Toast.LENGTH_SHORT).show()
+                println( "Listing deleted in user's collection")
             }
             .addOnFailureListener { e ->
-                Toast.makeText(context, "Failed to delete listing: ${e.message}", Toast.LENGTH_SHORT).show()
+                println("Failed to delete listing: ${e.message}")
+            }
+        globalListingRef.delete()
+            .addOnSuccessListener {
+                println("Listing deleted in global collection")
+            }
+            .addOnFailureListener { e ->
+                println("Failed to delete listing: ${e.message}")
             }
     }
 
