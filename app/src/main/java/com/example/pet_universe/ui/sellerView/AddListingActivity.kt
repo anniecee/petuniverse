@@ -120,30 +120,23 @@ class AddListingActivity : AppCompatActivity() {
     // Launch gallery to pick an image
     private fun openGalleryForImage() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
         resultLauncher.launch(intent)
     }
 
     // Handle image result
-    private val resultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val data: Intent? = result.data
-
-                //new code implementation for selecting multiple images
-                imageUris.clear()
-                data?.clipData?.let { clipData ->
-                    for (i in 0 until clipData.itemCount) {
-                        clipData.getItemAt(i)?.uri?.let { imageUris.add(it) }
-                    }
-                } ?: data?.data?.let { imageUris.add(it) }
-
-                // Print out image uris
-                imageUris.forEach { uri -> println("Image URI: $uri") }
-                photoTextView.text = "${imageUris.size} images selected"
-                Toast.makeText(this, "${imageUris.size} images selected", Toast.LENGTH_SHORT).show()
+    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data: Intent? = result.data
+            imageUri = data?.data
+            val uri = imageUri // This to prevent null pointer exception
+            if (uri != null) {
+                val fileName = uri.pathSegments.last()
+                photoTextView = findViewById(R.id.photoTextView)
+                photoTextView.text = fileName.toString() + ".jpg"
+                Toast.makeText(this, "Image uploaded", Toast.LENGTH_SHORT).show()
             }
         }
+    }
 
     //new code implementation for firebase and firestore
     private suspend fun saveListing() {
@@ -152,7 +145,6 @@ class AddListingActivity : AppCompatActivity() {
             return
         }
         val uniqueId = System.currentTimeMillis() * 1000 + (0..999).random()
-        imageUri = imageUris[0]
         val imageByteArray = getImageByteArray(this, imageUri!!)!!
 
         val listing = Listing(
@@ -176,21 +168,6 @@ class AddListingActivity : AppCompatActivity() {
             Toast.makeText(this, "Failed to save listing.", Toast.LENGTH_SHORT).show()
         }
     }
-
-    //    private fun saveListingToFirestore(listing: Listing, imagesByteArray: List<ByteArray>, onComplete: (Boolean) -> Unit) {
-//        val userId = auth.currentUser?.uid ?: return
-//        val firestoreRef = firestore.collection("users").document(userId).collection("listings").document(listing.id.toString())
-//
-//        if (imagesByteArray.isEmpty()) {
-//            // If no images, continue with empty imageUrls list
-//            saveListingDocument(firestoreRef, listing, emptyList(), onComplete)
-//        } else {
-//            // Otherwise, upload images to Firebase Storage
-//            uploadImagesToFirebaseStorage(imagesByteArray, listing.id.toString()) { imageUrls ->
-//                saveListingDocument(firestoreRef, listing, imageUrls, onComplete)
-//            }
-//        }
-//    }
 
     private suspend fun saveListingToFirestore(
         listing: Listing,
