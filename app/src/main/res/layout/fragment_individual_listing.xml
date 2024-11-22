@@ -7,45 +7,45 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="16dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingBottom="16dp">
 
         <TextView
-            android:id="@+id/livePetsTitle"
+            android:id="@+id/listingTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Live Pets"
+            android:layout_centerHorizontal="true"
+            android:text="Listing"
             android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_centerHorizontal="true" />
+            android:textStyle="bold" />
 
         <include
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
             layout="@layout/layout_profile_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true" />
 
     </RelativeLayout>
 
     <ImageView
-        android:id="@+id/petImageView"
+        android:id="@+id/listingImageView"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:src="@drawable/live_pets_logo"
-        android:scaleType="centerCrop"
         android:layout_marginBottom="8dp"
-        android:contentDescription="Image of pet" />
+        android:contentDescription="Image"
+        android:scaleType="centerCrop"
+        android:src="@drawable/live_pets_logo" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginRight="10dp"
         android:layout_marginTop="8dp"
-        android:gravity="center">
+        android:layout_marginRight="10dp"
+        android:gravity="center"
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/petNameTextView"
+            android:id="@+id/listingNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Name"
@@ -54,17 +54,18 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/petTypeTextView"
+        android:id="@+id/listingTypeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Type"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="10dp"
+        android:text="Type" />
+
     <TextView
-        android:id="@+id/petPriceTextView"
+        android:id="@+id/listingPriceTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Price"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="10dp"
+        android:text="Price" />
     <!--
     <TextView
         android:id="@+id/sizeOfPetTextView"
@@ -86,13 +87,14 @@
         android:id="@+id/locationTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Location"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        android:text="Location" />
+
     <TextView
-        android:id="@+id/petDescriptionTextView"
+        android:id="@+id/listingDescriptionTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Description of the pet"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        android:text="Description" />
 
 </LinearLayout>

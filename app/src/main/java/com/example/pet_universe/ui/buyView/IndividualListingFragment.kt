@@ -1,4 +1,4 @@
-package com.example.pet_universe.ui.livePets
+package com.example.pet_universe.ui.buyView
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,21 +10,21 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.example.pet_universe.R
-import com.example.pet_universe.databinding.FragmentIndividualPetBinding
+import com.example.pet_universe.databinding.FragmentIndividualListingBinding
 import com.example.pet_universe.ui.profile.ProfileViewModel
 
-class IndividualPetFragment : Fragment() {
+class IndividualListingFragment : Fragment() {
 
-    private var _binding: FragmentIndividualPetBinding? = null
+    private var _binding: FragmentIndividualListingBinding? = null
     private val binding get() = _binding!!
-    private val livePetsViewModel: LivePetsViewModel by activityViewModels()
+    private val listingsViewModel: ListingsViewModel by activityViewModels()
     private val profileViewModel: ProfileViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentIndividualPetBinding.inflate(inflater, container, false)
+        _binding = FragmentIndividualListingBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -41,17 +41,17 @@ class IndividualPetFragment : Fragment() {
             findNavController().navigate(R.id.action_global_to_accountSettings)
         }
 
-        livePetsViewModel.selectedPet.observe(viewLifecycleOwner) { pet ->
-            binding.petNameTextView.text = pet.name
-            binding.petPriceTextView.text = "$${pet.price}" // Format price with dollar sign
-            binding.petTypeTextView.text = pet.type
-            binding.petDescriptionTextView.text = pet.description
-            binding.locationTextView.text = pet.petLocation
+        listingsViewModel.selectedListing.observe(viewLifecycleOwner) { listing ->
+            binding.listingNameTextView.text = listing.title
+            binding.listingPriceTextView.text = "$${listing.price}" // Format price with dollar sign
+            binding.listingTypeTextView.text = listing.type
+            binding.listingDescriptionTextView.text = listing.description
+            binding.locationTextView.text = listing.meetingLocation
 
             // Load the first image from the imageUrls list using Coil
-            if (pet.imageUrl != null) {
-                val imageUrl = pet.imageUrl
-                binding.petImageView.load(imageUrl) {
+            if (listing.imageUrl != null) {
+                val imageUrl = listing.imageUrl
+                binding.listingImageView.load(imageUrl) {
                     crossfade(true)
                     placeholder(R.drawable.pet_accessories_logo)
                     error(R.drawable.pet_accessories_logo)

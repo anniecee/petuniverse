@@ -14,7 +14,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Pet Image with Rounded Corners -->
+        <!-- Image with Rounded Corners -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="180dp"
@@ -23,7 +23,7 @@
             app:cardElevation="0dp">
 
             <ImageView
-                android:id="@+id/petImageView"
+                android:id="@+id/listingImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="Pet Image"
@@ -31,7 +31,7 @@
                 android:src="@drawable/pet_accessories_logo" />
         </androidx.cardview.widget.CardView>
 
-        <!-- Pet Info Section -->
+        <!-- Info Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,9 +39,9 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <!-- Pet Name -->
+            <!-- Name -->
             <TextView
-                android:id="@+id/petNameTextView"
+                android:id="@+id/listingTitleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -55,9 +55,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
-            <!-- Pet Price -->
+            <!-- Price -->
             <TextView
-                android:id="@+id/petPriceTextView"
+                android:id="@+id/listingPriceTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Price"
@@ -77,18 +77,18 @@
         <!--            android:textColor="@android:color/darker_gray"-->
         <!--            />-->
 
-        <!-- Pet Type -->
+        <!-- Type -->
         <TextView
-            android:id="@+id/petTypeTextView"
+            android:id="@+id/listingTypeTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:lineSpacingExtra="4dp"
             android:text="This is the type of pet."
             android:textSize="14sp" />
 
-        <!-- Pet Description -->
+        <!-- Description -->
         <TextView
-            android:id="@+id/petDescriptionTextView"
+            android:id="@+id/listingDescriptionTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:lineSpacingExtra="4dp"
