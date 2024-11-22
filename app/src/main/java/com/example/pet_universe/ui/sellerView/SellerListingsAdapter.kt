@@ -45,15 +45,10 @@ class SellerListingsAdapter(private val context: Context, private val sellerList
         val listingPhoto: ImageView = itemView.findViewById(R.id.listingPhoto)
         val deleteButton: FloatingActionButton = itemView.findViewById(R.id.deleteButton)
 
-        //        // This function is called to set the image of the listing
-//        fun bindData(listing: Listing) {
-//            val bitmap = BitmapFactory.decodeByteArray(listing.photo, 0, listing.photo.size)
-//            listingPhoto.setImageBitmap(bitmap)
-//        }
-        // Function to set image for the listing from the first image URL
+        // Function to set image for the listing
         fun bindData(listing: Listing) {
-            if (listing.imageUrls.isNotEmpty()) {
-                val image = listing.imageUrls[0]
+            if (listing.imageUrl != null) {
+                val image = listing.imageUrl
                 listingPhoto.load(image) {
                     crossfade(true)
                 }
@@ -121,18 +116,31 @@ class SellerListingsAdapter(private val context: Context, private val sellerList
 
         // Remove the listing from Firebase
         deleteListingFromFirebase(sellerListings[position].id)
+
+        Toast.makeText(context, "Listing deleted", Toast.LENGTH_SHORT).show()
     }
 
+    // Remove listing from Firebase in both the user's collection and the global collection
     private fun deleteListingFromFirebase(listingId: Long) {
         val userId = sharedPref.getString("userId", null) ?: return
-        firestore.collection("users/$userId/listings")
+        val userListingRef = firestore.collection("users").document(userId).collection("listings")
             .document(listingId.toString())
-            .delete()
+        val globalListingRef = firestore.collection("listings").document(listingId.toString())
+
+        userListingRef.delete()
             .addOnSuccessListener {
-                Toast.makeText(context, "Listing deleted", Toast.LENGTH_SHORT).show()
+                println( "Listing deleted in user's collection")
             }
             .addOnFailureListener { e ->
-                Toast.makeText(context, "Failed to delete listing: ${e.message}", Toast.LENGTH_SHORT).show()
+                println("Failed to delete listing: ${e.message}")
+            }
+
+        globalListingRef.delete()
+            .addOnSuccessListener {
+                println("Listing deleted in global collection")
+            }
+            .addOnFailureListener { e ->
+                println("Failed to delete listing: ${e.message}")
             }
     }
 

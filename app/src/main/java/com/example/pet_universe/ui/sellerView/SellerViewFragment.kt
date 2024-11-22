@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -77,7 +76,6 @@ class SellerViewFragment : Fragment() {
         recyclerAdapter = SellerListingsAdapter(requireContext(), sellerListings, firestore, sharedPref)
         recyclerView.adapter = recyclerAdapter
 
-        //new code
         // Find the user's listings & observe data
         val userId = sharedPref.getString("userId", null)
 
@@ -102,15 +100,14 @@ class SellerViewFragment : Fragment() {
 
     }
 
+    // Fetch listings from Firebase
     private fun fetchSellerListingsFromFirebase(userId: String) {
         firestore.collection("users/$userId/listings")
             .get()
             .addOnSuccessListener { result ->
                 val listings = result.mapNotNull { document ->
                     val listing = document.toObject(Listing::class.java)
-                    // Print id of listing & id of each listing in sellerListings to debug
-                    println("Listing ID: ${listing.id}")
-                    println("Seller Listings: ${sellerListings.map { it.id }}")
+
                     // Check if any listing in sellerListings has the same id as the current listing,
                     // if not, add the listing to sellerListings
                     if (sellerListings.none { it.id == listing.id }) {
@@ -126,6 +123,7 @@ class SellerViewFragment : Fragment() {
             .addOnFailureListener { e -> println("Error getting documents: $e") }
     }
 
+    // Save listings to local database
     private fun saveListingsToLocalDatabase(listings: List<Listing>) {
         lifecycleScope.launch {
             listings.forEach { listing ->

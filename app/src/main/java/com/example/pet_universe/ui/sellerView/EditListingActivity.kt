@@ -1,11 +1,13 @@
 package com.example.pet_universe.ui.sellerView
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
@@ -22,7 +24,12 @@ import com.example.pet_universe.database.ListingDatabaseDao
 import com.example.pet_universe.database.ListingRepository
 import com.example.pet_universe.database.ListingViewModel
 import com.example.pet_universe.database.ListingViewModelFactory
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
+import java.util.UUID
+import kotlinx.coroutines.tasks.await
 
 class EditListingActivity : AppCompatActivity() {
     private lateinit var backButton : Button
@@ -39,6 +46,11 @@ class EditListingActivity : AppCompatActivity() {
     private lateinit var listingViewModel: ListingViewModel
     private lateinit var listing: Listing
 
+    // Firebase
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var storage: FirebaseStorage
+    private lateinit var auth: FirebaseAuth
+
     // Elements
     private lateinit var titleEditText : EditText
     private lateinit var priceEditText : EditText
@@ -48,9 +60,13 @@ class EditListingActivity : AppCompatActivity() {
     private lateinit var locationEditText : EditText
     private lateinit var changePhotoButton : Button
     private lateinit var photoTextView: TextView
+    private var imageUrl : String? = ""
 
     // Image
     private var imageUri: Uri? = null
+
+    // User
+    private lateinit var userId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,12 +75,23 @@ class EditListingActivity : AppCompatActivity() {
         // Set up shared preferences
         sharedPref = getSharedPreferences("UserProfile", MODE_PRIVATE)
 
-        // Set up database
+        // Initialize Firebase
+        firestore = FirebaseFirestore.getInstance()
+        storage = FirebaseStorage.getInstance()
+        auth = FirebaseAuth.getInstance()
+
+        // Enable Firestore logging
+        FirebaseFirestore.setLoggingEnabled(true)
+
+        // Set up Room database
         database = ListingDatabase.getInstance(this)
         listingDao = database.listingDao
         repository = ListingRepository(listingDao)
         viewModelFactory = ListingViewModelFactory(repository)
         listingViewModel = ViewModelProvider(this, viewModelFactory).get(ListingViewModel::class.java)
+
+        // User ID
+        userId = auth.currentUser?.uid ?: return
 
         // Get the listing from the database
         val listingId = intent.getLongExtra("listingId", -1)
@@ -94,8 +121,10 @@ class EditListingActivity : AppCompatActivity() {
         // Set on click listener for the save button
         saveButton = findViewById(R.id.saveButton)
         saveButton.setOnClickListener {
-            saveListing()
-            finish()
+            lifecycleScope.launch {
+                saveListing()
+                finish()
+            }
         }
     }
 
@@ -123,7 +152,7 @@ class EditListingActivity : AppCompatActivity() {
         })
     }
 
-    private fun saveListing() {
+    private suspend fun saveListing() {
         // Get input values
         val title = titleEditText.text.toString()
         val price = priceEditText.text.toString().toInt()
@@ -140,23 +169,68 @@ class EditListingActivity : AppCompatActivity() {
         listing.type = type
         listing.meetingLocation = location
 
+        try {
+            // Upload image if one is selected
+            if (imageUri != null) {
+                imageUrl = uploadImageToFirebaseStorage(imageUri!!)
+                listing.imageUrl = imageUrl!! // Save the uploaded image URL
+            } else {
+                println("Debug: No image to upload, imageUri is null")
+            }
 
-        // Save uploaded photo to room database
-        // TODO: Save photo to Firebase Storage and save URL to room database
-//        if (imageUri != null) {
-//            val inputStream = contentResolver.openInputStream(imageUri!!)
-//            val photo = inputStream?.readBytes()
-//            if (photo != null) {
-//                listing.photo = photo
-//            }
-//        }
-
-        // Update the listing in the database
-        lifecycleScope.launch {
+            // Update listing in Room database & Firebase database
             listingViewModel.updateListing(listing)
-        }
+            updateListingInFirebase(listing)
 
-        Toast.makeText(this, "Listing updated", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@EditListingActivity, "Listing updated", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            println("Debug: Exception during saveListing: ${e.message}")
+            Toast.makeText(
+                this@EditListingActivity,
+                "Failed to update listing: ${e.message}",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    private fun updateListingInFirebase(listing: Listing) {
+        val listingRef = firestore.collection("users/$userId/listings").document(listing.id.toString())
+        val updatedListing = hashMapOf(
+            "title" to listing.title,
+            "price" to listing.price.toDouble(),
+            "description" to listing.description,
+            "category" to listing.category,
+            "type" to listing.type,
+            "meetingLocation" to listing.meetingLocation,
+            "imageUrl" to listing.imageUrl
+        ) as Map<String, Any>
+
+        listingRef.update(updatedListing)
+            .addOnSuccessListener {
+                println("Listing updated in Firebase")
+            }
+            .addOnFailureListener { e ->
+                println("Error updating listing in Firebase: $e")
+            }
+    }
+
+    // Upload image to Firebase Storage
+    private suspend fun uploadImageToFirebaseStorage(imageUri: Uri): String? {
+        val storageRef = storage.reference
+        val fileNameWithExtension = getFileName(applicationContext, imageUri)
+        val imageRef = storageRef.child("images/${userId}/${listing.id}/$fileNameWithExtension")
+        println("Debug: Uploading to path: ${imageRef.path}")
+        println("Debug: Image URI: $imageUri")
+
+        return try {
+            val uploadTask = imageRef.putFile(imageUri).await()
+            val downloadUrl = imageRef.downloadUrl.await()
+            println("Debug: Successfully added the downloaded image uri: $downloadUrl")
+            downloadUrl.toString()
+        } catch (e: Exception) {
+            println("Debug: Failed to upload image to Firebase Storage: ${e.message}")
+            null
+        }
     }
 
     // Launch gallery to pick an image
@@ -178,6 +252,21 @@ class EditListingActivity : AppCompatActivity() {
                 Toast.makeText(this, "Image uploaded", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun getFileName(context: Context, uri: Uri): String {
+        var fileName: String = UUID.randomUUID().toString() // Fallback to a unique name
+        if (uri.scheme == "content") {
+            context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    fileName =
+                        cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME))
+                }
+            }
+        } else if (uri.path != null) {
+            fileName = uri.path!!.substringAfterLast('/')
+        }
+        return fileName
     }
 
     override fun onDestroy() {
