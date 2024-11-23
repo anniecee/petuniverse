@@ -199,7 +199,10 @@ class EditListingActivity : AppCompatActivity() {
     }
 
     private fun updateListingInFirebase(listing: Listing) {
-        val listingRef = firestore.collection("users/$userId/listings").document(listing.id.toString())
+        val userListingRef = firestore.collection("users").document(userId).collection("listings")
+            .document(listing.id.toString())
+        val globalListingRef = firestore.collection("listings").document(listing.id.toString())
+
         val updatedListing = hashMapOf(
             "title" to listing.title,
             "price" to listing.price.toDouble(),
@@ -210,12 +213,20 @@ class EditListingActivity : AppCompatActivity() {
             "imageUrl" to listing.imageUrl
         ) as Map<String, Any>
 
-        listingRef.update(updatedListing)
+        userListingRef.update(updatedListing)
             .addOnSuccessListener {
                 println("Listing updated in Firebase")
             }
             .addOnFailureListener { e ->
                 println("Error updating listing in Firebase: $e")
+            }
+
+        globalListingRef.update(updatedListing)
+            .addOnSuccessListener {
+                println("Listing updated in global collection")
+            }
+            .addOnFailureListener { e ->
+                println("Error updating listing in global collection: $e")
             }
     }
 
