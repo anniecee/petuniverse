@@ -55,7 +55,7 @@ class ChatViewModel(
     private suspend fun fetchUserName(userId: String): String {
         return try {
             val documentSnapshot = firestore.collection("users").document(userId).get().await()
-            documentSnapshot.getString("first_name") ?: "Unknown"
+            documentSnapshot.getString("firstName") ?: "Unknown"
         } catch (e: Exception) {
             "Unknown"
         }
