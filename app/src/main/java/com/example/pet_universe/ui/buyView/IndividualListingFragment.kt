@@ -43,10 +43,10 @@ class IndividualListingFragment : Fragment() {
 
         listingsViewModel.selectedListing.observe(viewLifecycleOwner) { listing ->
             binding.listingNameTextView.text = listing.title
-            binding.listingPriceTextView.text = "$${listing.price}" // Format price with dollar sign
-            binding.listingTypeTextView.text = listing.type
+            binding.listingPriceTextView.text = "Price: $${listing.price}" // Format price with dollar sign
+            binding.listingTypeTextView.text = "Type: ${listing.type}"
             binding.listingDescriptionTextView.text = listing.description
-            binding.locationTextView.text = listing.meetingLocation
+            binding.locationTextView.text = "Location: ${listing.meetingLocation}"
 
             // Load the first image from the imageUrls list using Coil
             if (listing.imageUrl != null) {
