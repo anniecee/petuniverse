@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -12,6 +13,7 @@ import coil.load
 import com.example.pet_universe.R
 import com.example.pet_universe.databinding.FragmentIndividualListingBinding
 import com.example.pet_universe.ui.profile.ProfileViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 class IndividualListingFragment : Fragment() {
 
@@ -41,6 +43,26 @@ class IndividualListingFragment : Fragment() {
             findNavController().navigate(R.id.action_global_to_accountSettings)
         }
 
+        // for starting the chat
+        binding.startChatButton.setOnClickListener {
+            val listing = listingsViewModel.selectedListing.value
+            if (listing != null) {
+                val sellerId = listing.sellerId ?: ""
+                val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+                if (sellerId == currentUserId) {
+                    Toast.makeText(context, "You cannot chat with yourself.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                val chatId = generateChatId(currentUserId, sellerId, listing.id)
+                val action = IndividualListingFragmentDirections.actionIndividualPetFragmentToChatFragment(
+                    chatId = chatId,
+                    receiverId = sellerId,
+                    listingId = listing.id
+                )
+                findNavController().navigate(action)
+            }
+        }
+
         listingsViewModel.selectedListing.observe(viewLifecycleOwner) { listing ->
             binding.listingNameTextView.text = listing.title
             binding.listingPriceTextView.text = "$${listing.price}" // Format price with dollar sign
@@ -58,6 +80,11 @@ class IndividualListingFragment : Fragment() {
                 }
             }
         }
+    }
+
+    // Function to generate chatId
+    private fun generateChatId(userId1: String, userId2: String, listingId: Long): String {
+        return if (userId1 < userId2) "${userId1}_${userId2}_${listingId}" else "${userId2}_${userId1}_${listingId}"
     }
 
     override fun onDestroyView() {

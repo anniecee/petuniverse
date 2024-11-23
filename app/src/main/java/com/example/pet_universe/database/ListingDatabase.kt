@@ -5,9 +5,11 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Listing::class], version = 1)
+@Database(entities = [Listing::class, Chat::class, Message::class], version = 1)
 abstract class ListingDatabase: RoomDatabase() {
     abstract val listingDao: ListingDatabaseDao
+    abstract val chatDao: ChatDao
+    abstract val messageDao: MessageDao
 
     companion object {
         @Volatile

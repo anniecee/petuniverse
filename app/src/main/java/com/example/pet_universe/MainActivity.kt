@@ -76,6 +76,10 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(R.id.navigation_accounts)
                     true
                 }
+                R.id.navigation_chat -> {
+                    navController.navigate(R.id.chatListFragment)
+                    true
+                }
                 else -> false
             }
         }
