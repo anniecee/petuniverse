@@ -142,13 +142,18 @@ class EditListingActivity : AppCompatActivity() {
         descriptionEditText.setText(listing.description)
         locationEditText.setText(listing.meetingLocation)
         categorySpinner.setSelection(when (listing.category) {
+            "Live Pets" -> 0
+            "Pet Food" -> 1
+            "Pet Accessories" -> 2
+            "Other" -> 3
+            else -> 3
+        })
+        typeSpinner.setSelection(when (listing.type) {
             "Dog" -> 0
             "Cat" -> 1
             "Bird" -> 2
-            "Pet Food" -> 3
-            "Accessories" -> 4
-            "Other" -> 5
-            else -> 0
+            "Other" -> 3
+            else -> 3
         })
     }
 
