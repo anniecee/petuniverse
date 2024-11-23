@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("androidx.navigation.safeargs")
+    id("androidx.navigation.safeargs.kotlin")
     id("kotlin-kapt")
     id("com.google.gms.google-services")
 }
@@ -61,6 +61,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2") // For lifecycleScope support
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2") // ViewModel extension for coroutines
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.1")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

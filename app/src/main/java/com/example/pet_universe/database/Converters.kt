@@ -2,6 +2,7 @@ package com.example.pet_universe.database
 
 import androidx.room.TypeConverter
 import java.util.Calendar
+import java.util.Date
 
 class Converters {
     @TypeConverter
@@ -29,6 +30,16 @@ class Converters {
     }
 
     @TypeConverter
+    fun fromDate(value: Date?): Long? {
+        return value?.time
+    }
+
+    @TypeConverter
+    fun toDate(value: Long?): Date? {
+        return value?.let { Date(it) }
+    }
+
+    @TypeConverter
     fun fromByteArray(byteArray: ByteArray): List<Int> {
         return byteArray.toList().map { it.toInt() }
     }
@@ -47,6 +58,8 @@ class Converters {
     fun toStringList(data: String): List<String> {
         return data.split(",")
     }
+
+
 
 //    @TypeConverter
 //    fun fromMap(map: Map<String, Double>): String {

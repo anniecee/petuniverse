@@ -137,7 +137,10 @@ class AddListingActivity : AppCompatActivity() {
             return
         }
         val uniqueId = System.currentTimeMillis() * 1000 + (0..999).random()
-        val imageByteArray = getImageByteArray(this, imageUri!!)!!
+        var imageByteArray: ByteArray? = null
+        if (imageUri != null) {
+            imageByteArray = getImageByteArray(this, imageUri!!)
+        }
 
         val listing = Listing(
             id = uniqueId,
@@ -163,7 +166,7 @@ class AddListingActivity : AppCompatActivity() {
     // Save listing to Firestore: both user's collection and global collection
     private suspend fun saveListingToFirestore(
         listing: Listing,
-        imageByteArray: ByteArray
+        imageByteArray: ByteArray?
     ): Boolean {
         val userId = auth.currentUser?.uid ?: return false
         val userListingRef = firestore.collection("users").document(userId).collection("listings")
@@ -171,11 +174,11 @@ class AddListingActivity : AppCompatActivity() {
         val globalListingRef = firestore.collection("listings").document(listing.id.toString())
 
         return try {
-            if (imageByteArray.isEmpty()) {
+            if (imageByteArray == null || imageByteArray.isEmpty()) {
                 saveListingDocument(userListingRef, listing, "").await()
                 saveListingDocument(globalListingRef, listing, "").await()
             } else {
-                imageUrl = uploadImagesToFirebaseStorage(imageByteArray, listing.id.toString()).await()
+                imageUrl = uploadImagesToFirebaseStorage(imageByteArray, listing.id.toString(), imageUri!!).await()
                 saveListingDocument(userListingRef, listing, imageUrl).await()
                 saveListingDocument(globalListingRef, listing, imageUrl).await()
             }
@@ -209,11 +212,12 @@ class AddListingActivity : AppCompatActivity() {
     // Upload image to Firebase Storage
     private fun uploadImagesToFirebaseStorage(
         imageByteArray: ByteArray,
-        listingId: String
+        listingId: String,
+        imageUri: Uri
     ): Task<String> {
         val userId = auth.currentUser?.uid ?: return Tasks.forException(Exception("User not authenticated"))
         val storageRef = storage.reference
-        val fileNameWithExtension = getFileName(applicationContext, imageUri!!)
+        val fileNameWithExtension = getFileName(applicationContext, imageUri)
         val imageRef = storageRef.child("images/$userId/$listingId/$fileNameWithExtension")
 
         return imageRef.putBytes(imageByteArray).continueWithTask { task ->

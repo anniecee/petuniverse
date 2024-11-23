@@ -29,7 +29,24 @@
         android:id="@+id/individualPetFragment"
         android:name="com.example.pet_universe.ui.buyView.IndividualListingFragment"
         android:label="Individual Pet"
-        tools:layout="@layout/fragment_individual_listing" />
+        tools:layout="@layout/fragment_individual_listing" >
+
+        <action
+            android:id="@+id/action_individualPetFragment_to_chatFragment"
+            app:destination="@id/chatFragment"
+            app:popUpTo="@id/individualPetFragment"
+            app:popUpToInclusive="false">
+            <argument
+                android:name="chatId"
+                app:argType="string" />
+            <argument
+                android:name="receiverId"
+                app:argType="string" />
+            <argument
+                android:name="listingId"
+                app:argType="long" />
+        </action>
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_seller"
@@ -46,5 +63,42 @@
     <action
         android:id="@+id/action_global_to_accountSettings"
         app:destination="@id/navigation_accounts" />
+
+    <fragment
+        android:id="@+id/chatListFragment"
+        android:name="com.example.pet_universe.ui.chatView.ChatListFragment"
+        android:label="Chat"
+        tools:layout="@layout/fragment_chat_list" >
+        <action
+            android:id="@+id/action_chatListFragment_to_chatFragment"
+            app:destination="@id/chatFragment">
+            <argument
+                android:name="chatId"
+                app:argType="string" />
+            <argument
+                android:name="receiverId"
+                app:argType="string" />
+            <argument
+                android:name="listingId"
+                app:argType="long" />
+        </action>
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.pet_universe.ui.chatView.ChatFragment"
+        android:label="Chat"
+        tools:layout="@layout/fragment_chat">
+        <argument
+            android:name="chatId"
+            app:argType="string" />
+        <argument
+            android:name="receiverId"
+            app:argType="string" />
+        <argument
+            android:name="listingId"
+            app:argType="long" />
+    </fragment>
 
 </navigation>
