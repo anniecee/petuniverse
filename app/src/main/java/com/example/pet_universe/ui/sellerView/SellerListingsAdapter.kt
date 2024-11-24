@@ -69,8 +69,16 @@ class SellerListingsAdapter(private val context: Context, private val sellerList
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.listingTitle.text = sellerListings[position].title
         holder.listingPrice.text = "$" + sellerListings[position].price.toString()
-        holder.listingDescription.text = sellerListings[position].description
-        holder.listingCategory.text = "Category: " + sellerListings[position].category
+        holder.listingCategory.text = "Listed In: ${sellerListings[position].category}, ${sellerListings[position].type}"
+
+        val maxLength = 80
+        val cleanedDescription = sellerListings[position].description.replace("\n", " ")
+        val truncatedDescription = if (cleanedDescription.length > maxLength) {
+            cleanedDescription.take(maxLength) + "..."
+        } else {
+            cleanedDescription
+        }
+        holder.listingDescription.text = truncatedDescription
 
         // Set image of listing
         holder.bindData(sellerListings[position])
@@ -84,7 +92,7 @@ class SellerListingsAdapter(private val context: Context, private val sellerList
 
             // Show confirmation dialog
             AlertDialog.Builder(context)
-                .setTitle("Delete $listingTitle")
+                .setTitle("Delete \"$listingTitle\"")
                 .setMessage("Are you sure you want to delete this listing?")
                 .setPositiveButton("Yes") { _, _ ->
                     // User confirmed deletion

@@ -34,8 +34,8 @@ class ListingsAdapter(
                 val imageUrl = listing.imageUrl
                 listingImageView.load(imageUrl) {
                     crossfade(true)
-                    placeholder(R.drawable.pet_accessories_logo)
-                    error(R.drawable.pet_accessories_logo)
+                    placeholder(R.drawable.image_placeholder)
+                    error(R.drawable.image_placeholder)
                 }
             }
         }

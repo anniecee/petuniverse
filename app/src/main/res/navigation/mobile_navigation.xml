@@ -18,23 +18,23 @@
         <fragment
         android:id="@+id/listingsFragment"
         android:name="com.example.pet_universe.ui.buyView.ListingsFragment"
-        android:label="Live Pets"
+        android:label="Listings"
         tools:layout="@layout/fragment_listings" >
             <action
                 android:id="@+id/action_listingsFragment_to_individualListingFragment"
-                app:destination="@id/individualPetFragment" />
+                app:destination="@id/individualListFragment" />
         </fragment>
 
     <fragment
-        android:id="@+id/individualPetFragment"
+        android:id="@+id/individualListFragment"
         android:name="com.example.pet_universe.ui.buyView.IndividualListingFragment"
-        android:label="Individual Pet"
+        android:label="Individual Listing"
         tools:layout="@layout/fragment_individual_listing" >
 
         <action
             android:id="@+id/action_individualPetFragment_to_chatFragment"
             app:destination="@id/chatFragment"
-            app:popUpTo="@id/individualPetFragment"
+            app:popUpTo="@id/individualListFragment"
             app:popUpToInclusive="false">
             <argument
                 android:name="chatId"

@@ -13,14 +13,17 @@
 
         <!-- Profile Icon Section -->
         <RelativeLayout
+            android:id="@+id/profileIcon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:gravity="center_horizontal">
 
+            <!-- Include the profile icon layout -->
             <include layout="@layout/layout_profile_icon_xl" />
         </RelativeLayout>
 
+        <!-- Username Text -->
         <TextView
             android:id="@+id/userNameTextView"
             android:layout_width="match_parent"
@@ -28,10 +31,10 @@
             android:layout_gravity="center_horizontal"
             android:textAlignment="center"
             android:layout_marginBottom="32dp"
-            android:text="Username"
-            android:textSize="18sp" />
+            android:text=" "
+            android:textSize="24sp" />
 
-        <!-- Personal and Account Info Section -->
+        <!-- Personal Info Section -->
         <TextView
             android:id="@+id/personalInfoTextView"
             android:layout_width="match_parent"
@@ -48,7 +51,7 @@
             android:layout_marginBottom="16dp"
             android:background="#CCCCCC" />
 
-        <!-- Password and Security Section -->
+        <!-- Password Section -->
         <TextView
             android:id="@+id/passwordSecurityTextView"
             android:layout_width="match_parent"
@@ -82,7 +85,7 @@
             android:layout_marginBottom="16dp"
             android:background="#CCCCCC" />
 
-        <!-- Delete Account Section -->
+        <!-- Sign Out Button -->
         <TextView
             android:id="@+id/signInOutButton"
             android:layout_width="match_parent"

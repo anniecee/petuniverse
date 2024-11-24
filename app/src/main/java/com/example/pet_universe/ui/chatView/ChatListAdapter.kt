@@ -43,8 +43,8 @@ class ChatListAdapter(private val onChatClick: (Chat) -> Unit) : RecyclerView.Ad
             // Fetch listing information
             binding.listingTitleTextView.text = chat.listingTitle
             binding.listingImageView.load(chat.listingImageUrl) {
-                placeholder(R.drawable.live_pets_logo)
-                error(R.drawable.live_pets_logo)
+                placeholder(R.drawable.image_placeholder)
+                error(R.drawable.image_placeholder)
             }
             binding.root.setOnClickListener { onChatClick(chat) }
         }

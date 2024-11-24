@@ -6,13 +6,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
+import com.example.pet_universe.R
 import com.example.pet_universe.databinding.FragmentAccountsBinding
+import com.example.pet_universe.ui.profile.ProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class AccountSettingsFragment : Fragment() {
 
@@ -20,6 +24,9 @@ class AccountSettingsFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var accountsViewModel: AccountsViewModel
     private lateinit var auth: FirebaseAuth
+    private val profileViewModel: ProfileViewModel by activityViewModels()
+    private val firestore = FirebaseFirestore.getInstance()
+    private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,21 +36,33 @@ class AccountSettingsFragment : Fragment() {
         _binding = FragmentAccountsBinding.inflate(inflater, container, false)
         auth = FirebaseAuth.getInstance()
 
+        // Displaying username (optimize later, perhaps use ProfileViewModel)
+        if (currentUserId.isNotEmpty()) {
+            firestore.collection("users").document(currentUserId).get()
+                .addOnSuccessListener { document ->
+                    val firstName = document.getString("firstName") ?: ""
+                    val lastName = document.getString("lastName") ?: ""
+                    binding.userNameTextView.text = "$firstName $lastName"
+                }
+                .addOnFailureListener {
+                    // Handle failure
+                }
+        }
+
         binding.signInOutButton.text = "Sign Out"
-        // Observe the sign-in state
-//        accountsViewModel.isSignedIn.observe(viewLifecycleOwner) { isSignedIn ->
-//            if (!isSignedIn) {
-//                // If not signed in, redirect to sign-in screen
-//                navigateToSignIn()
-//            }
-//            binding.signInOutButton.text = if (isSignedIn) "Sign Out" else "Sign In"
-//        }
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Set up profile icon initial
+        profileViewModel.userInitial.observe(viewLifecycleOwner) { initial ->
+            val profileIconLayout = binding.root.findViewById<RelativeLayout>(R.id.profileIcon)
+            val profileTextView = profileIconLayout.findViewById<TextView>(R.id.profileTextView)
+            profileTextView.text = initial ?: "You"
+        }
 
         binding.signInOutButton.setOnClickListener {
             // Handle sign-out or sign-in toggle

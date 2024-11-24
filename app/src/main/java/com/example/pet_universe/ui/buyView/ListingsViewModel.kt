@@ -86,7 +86,7 @@ class ListingsViewModel(application: Application) : AndroidViewModel(application
         // Price filter
         _selectedPriceRange.value?.let { range ->
             filteredList = when (range) {
-                "\$0 (Adoption)" -> filteredList.filter { it.price < 1 }
+                "\$0 (Free)" -> filteredList.filter { it.price < 1 }
                 "More than \$0 - \$50" -> filteredList.filter { it.price in 1..50 }
                 "\$51 - \$100" -> filteredList.filter { it.price in 51..100 }
                 "\$101 - \$200" -> filteredList.filter { it.price in 101..200 }

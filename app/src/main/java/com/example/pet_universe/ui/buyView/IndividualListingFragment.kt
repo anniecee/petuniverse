@@ -20,7 +20,7 @@ class IndividualListingFragment : Fragment() {
     private var _binding: FragmentIndividualListingBinding? = null
     private val binding get() = _binding!!
     private val listingsViewModel: ListingsViewModel by activityViewModels()
-    private val profileViewModel: ProfileViewModel by activityViewModels()
+//    private val profileViewModel: ProfileViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,38 +34,40 @@ class IndividualListingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Set up profile icon
-        profileViewModel.userInitial.observe(viewLifecycleOwner) { initial ->
-            binding.root.findViewById<TextView>(R.id.profileIcon).text = initial ?: ""
-        }
+//        profileViewModel.userInitial.observe(viewLifecycleOwner) { initial ->
+//            binding.root.findViewById<TextView>(R.id.profileIcon).text = initial ?: ""
+//        }
 
         // Navigate to AccountSettingsFragment on profileIcon click
-        binding.root.findViewById<TextView>(R.id.profileIcon).setOnClickListener {
-            findNavController().navigate(R.id.action_global_to_accountSettings)
-        }
+//        binding.root.findViewById<TextView>(R.id.profileIcon).setOnClickListener {
+//            findNavController().navigate(R.id.action_global_to_accountSettings)
+//        }
 
         // for starting the chat
-        binding.startChatButton.setOnClickListener {
-            val listing = listingsViewModel.selectedListing.value
-            if (listing != null) {
-                val sellerId = listing.sellerId ?: ""
-                val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-                if (sellerId == currentUserId) {
-                    Toast.makeText(context, "You cannot chat with yourself.", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
+        val listing = listingsViewModel.selectedListing.value
+        if (listing != null) {
+            val sellerId = listing.sellerId ?: ""
+            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+            if (sellerId == currentUserId) {
+                binding.startChatButton.visibility = View.GONE
+            } else {
+                binding.startChatButton.setOnClickListener {
+                    val chatId = generateChatId(currentUserId, sellerId, listing.id)
+                    val action =
+                        IndividualListingFragmentDirections.actionIndividualPetFragmentToChatFragment(
+                            chatId = chatId,
+                            receiverId = sellerId,
+                            listingId = listing.id
+                        )
+                    findNavController().navigate(action)
                 }
-                val chatId = generateChatId(currentUserId, sellerId, listing.id)
-                val action = IndividualListingFragmentDirections.actionIndividualPetFragmentToChatFragment(
-                    chatId = chatId,
-                    receiverId = sellerId,
-                    listingId = listing.id
-                )
-                findNavController().navigate(action)
             }
         }
 
         listingsViewModel.selectedListing.observe(viewLifecycleOwner) { listing ->
             binding.listingNameTextView.text = listing.title
-            binding.listingPriceTextView.text = "Price: $${listing.price}" // Format price with dollar sign
+            binding.listingPriceTextView.text =
+                "Price: $${listing.price}" // Format price with dollar sign
             binding.listingTypeTextView.text = "Type: ${listing.type}"
             binding.listingDescriptionTextView.text = listing.description
             binding.locationTextView.text = "Location: ${listing.meetingLocation}"
@@ -75,8 +77,8 @@ class IndividualListingFragment : Fragment() {
                 val imageUrl = listing.imageUrl
                 binding.listingImageView.load(imageUrl) {
                     crossfade(true)
-                    placeholder(R.drawable.pet_accessories_logo)
-                    error(R.drawable.pet_accessories_logo)
+                    placeholder(R.drawable.image_placeholder)
+                    error(R.drawable.image_placeholder)
                 }
             }
         }
