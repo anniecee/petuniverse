@@ -55,7 +55,7 @@ class ChatViewModel(
     private suspend fun fetchUserName(userId: String): String {
         return try {
             val documentSnapshot = firestore.collection("users").document(userId).get().await()
-            documentSnapshot.getString("first_name") ?: "Unknown"
+            documentSnapshot.getString("firstName") ?: "Unknown"
         } catch (e: Exception) {
             "Unknown"
         }
@@ -111,24 +111,51 @@ class ChatViewModel(
     }
 
     private fun syncChatsFromFirebase() {
-        firestore.collection("chats")
-            .whereArrayContains("userIds", currentUserId)
-            .addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    println("Error syncing chats: $e")
-                    return@addSnapshotListener
-                }
-                if(snapshot != null) {
-                    for (doc in snapshot.documents) {
-                        val chat = doc.toObject(Chat::class.java)
-                        if (chat != null) {
-                            viewModelScope.launch {
-                                chatRepository.insert(chat)
-                            }
+        // Query where userId1 == currentUserId
+        val query1 = firestore.collection("chats")
+            .whereEqualTo("userId1", currentUserId)
+
+        // Query where userId2 == currentUserId
+        val query2 = firestore.collection("chats")
+            .whereEqualTo("userId2", currentUserId)
+
+        // Listen to query1
+        query1.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                println("Error syncing chats (query1): $e")
+                return@addSnapshotListener
+            }
+            if (snapshot != null) {
+                for (docChange in snapshot.documentChanges) {
+                    val doc = docChange.document
+                    val chat = doc.toObject(Chat::class.java)
+                    if (chat != null) {
+                        viewModelScope.launch {
+                            chatRepository.insert(chat)
                         }
                     }
                 }
             }
+        }
+
+        // Listen to query2
+        query2.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                println("Error syncing chats (query2): $e")
+                return@addSnapshotListener
+            }
+            if (snapshot != null) {
+                for (docChange in snapshot.documentChanges) {
+                    val doc = docChange.document
+                    val chat = doc.toObject(Chat::class.java)
+                    if (chat != null) {
+                        viewModelScope.launch {
+                            chatRepository.insert(chat)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun syncMessagesFromFirebase(chatId: String) {

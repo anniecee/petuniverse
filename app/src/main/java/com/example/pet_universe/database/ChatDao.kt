@@ -8,7 +8,7 @@ interface ChatDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(chat: Chat)
 
-    @Query("SELECT * FROM chat_table WHERE userId1 = :userId OR userId2 = :userId")
+    @Query("SELECT * FROM chat_table WHERE userId1 = :userId OR userId2 = :userId ORDER BY lastTimestamp DESC")
     fun getChatsForUser(userId: String): Flow<List<Chat>>
 
     @Query("SELECT * FROM chat_table WHERE chatId = :chatId")
