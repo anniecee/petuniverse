@@ -234,6 +234,7 @@ class SignUpFragment : Fragment() {
         userViewModel.insert(user)
     }
 
+
     private fun saveInitialToSharedPreferences(initial: String) {
         val sharedPref = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
         with(sharedPref.edit()) {

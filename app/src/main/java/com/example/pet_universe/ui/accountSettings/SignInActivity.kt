@@ -41,6 +41,8 @@ class SignInActivity : AppCompatActivity() {
     private lateinit var logoImageView: ImageView
     private lateinit var loginButton: Button
     private lateinit var signUpTextView: TextView
+    private lateinit var resetPasswordTextView: TextView
+
 
     // Shared preferences for user data (without password)
     private lateinit var sharedPref: SharedPreferences
@@ -63,8 +65,9 @@ class SignInActivity : AppCompatActivity() {
         passwordEditText = findViewById(R.id.passwordEditText)
         loginButton = findViewById(R.id.loginButton)
         signUpTextView = findViewById(R.id.signUpTextView)
+        resetPasswordTextView = findViewById(R.id.resetPasswordTextView)
 
-        binding.navView.visibility = View.GONE  // This hides the navigation bar on the SignInActivity
+        //binding.navView.visibility = View.GONE  // This hides the navigation bar on the SignInActivity
 
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
@@ -90,6 +93,12 @@ class SignInActivity : AppCompatActivity() {
                 addToBackStack(null)
                 replace(android.R.id.content, SignUpFragment())
             }
+        }
+
+        resetPasswordTextView.setOnClickListener {
+            // Load ForgetPWFragment
+            val intent = Intent(this, ResetPasswordActivity::class.java)
+            startActivity(intent)
         }
     }
 
