@@ -1,14 +1,15 @@
 package com.example.pet_universe.ui.chatView
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.pet_universe.R
 import com.example.pet_universe.database.ChatRepository
 import com.example.pet_universe.database.ListingDatabase
 import com.example.pet_universe.database.ListingRepository
@@ -35,7 +36,11 @@ class ChatFragment : Fragment() {
     private lateinit var receiverId: String
     private var listingId: Long = 0L
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentChatBinding.inflate(inflater, container, false)
         val database = ListingDatabase.getInstance(requireContext())
         val chatRepository = ChatRepository(database.chatDao)
@@ -52,6 +57,9 @@ class ChatFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Set up RecyclerView
         messageAdapter = MessageAdapter()
         binding.messagesRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.messagesRecyclerView.adapter = messageAdapter
@@ -59,11 +67,19 @@ class ChatFragment : Fragment() {
         // Observe messages
         chatViewModel.messagesLiveData.observe(viewLifecycleOwner) { messages ->
             messageAdapter.submitList(messages)
-            // Scroll to the latest message
             binding.messagesRecyclerView.scrollToPosition(messages.size - 1)
         }
 
-        // Load messages for the chat
+        // Observe chats to get user name and listing title
+        chatViewModel.chatsLiveData.observe(viewLifecycleOwner) { chats ->
+            chats.find { it.chatId == chatId }?.let { chat ->
+                binding.userNameTextView.text = chat.otherUserName
+                binding.listingTitleTextView.text = chat.listingTitle
+            }
+        }
+
+        // Load data
+        chatViewModel.getChatsForUser()
         chatViewModel.getMessagesForChat(chatId)
 
         // Handle send button click
@@ -81,7 +97,8 @@ class ChatFragment : Fragment() {
                 chatViewModel.sendMessage(message)
                 binding.messageEditText.text.clear()
             } else {
-                Toast.makeText(requireContext(), "Cannot send empty message", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Cannot send empty message", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
 

@@ -3,18 +3,16 @@ package com.example.pet_universe.ui.chatView
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.pet_universe.R
 import com.example.pet_universe.database.Chat
-import com.example.pet_universe.database.ListingViewModel
 import com.example.pet_universe.databinding.ItemChatBinding
-import com.google.firebase.auth.FirebaseAuth
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ChatListAdapter(private val onChatClick: (Chat) -> Unit) : RecyclerView.Adapter<ChatListAdapter.ChatViewHolder>() {
+class ChatListAdapter(private val onChatClick: (Chat) -> Unit) :
+    RecyclerView.Adapter<ChatListAdapter.ChatViewHolder>() {
 
     private var chatList = listOf<Chat>()
 
@@ -34,13 +32,29 @@ class ChatListAdapter(private val onChatClick: (Chat) -> Unit) : RecyclerView.Ad
         notifyDataSetChanged()
     }
 
-    inner class ChatViewHolder(private val binding: ItemChatBinding) : RecyclerView.ViewHolder(binding.root) {
+    fun formatTimestamp(timestamp: Date): String {
+        val now = System.currentTimeMillis()
+        val diff = now - timestamp.time
+
+        return when {
+            diff < 60 * 60 * 1000 -> "${diff / (60 * 1000)}m" // Minutes ago
+            diff < 24 * 60 * 60 * 1000 -> "${diff / (60 * 60 * 1000)}h" // Hours ago
+            diff < 7 * 24 * 60 * 60 * 1000 -> SimpleDateFormat("EEE.", Locale.getDefault()).format(
+                timestamp
+            ) // Day of the week
+            else -> SimpleDateFormat(
+                "yyyy-MM-dd",
+                Locale.getDefault()
+            ).format(timestamp) // Full date
+        }
+    }
+
+    inner class ChatViewHolder(private val binding: ItemChatBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(chat: Chat) {
             binding.lastMessageTextView.text = chat.lastMessage
-            val dateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
-            binding.timestampTextView.text = dateFormat.format(chat.lastTimestamp)
+            binding.timestampTextView.text = formatTimestamp(chat.lastTimestamp)
             binding.usernameTextView.text = chat.otherUserName
-            // Fetch listing information
             binding.listingTitleTextView.text = chat.listingTitle
             binding.listingImageView.load(chat.listingImageUrl) {
                 placeholder(R.drawable.image_placeholder)

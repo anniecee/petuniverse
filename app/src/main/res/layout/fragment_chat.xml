@@ -4,6 +4,34 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <!-- User Header -->
+    <LinearLayout
+        android:id="@+id/userHeaderLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/userNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/listingTitleTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:textSize="14sp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:gravity="end" />
+    </LinearLayout>
+
     <!-- Messages List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/messagesRecyclerView"

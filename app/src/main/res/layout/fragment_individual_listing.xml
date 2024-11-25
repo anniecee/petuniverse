@@ -103,6 +103,36 @@
             android:layout_marginTop="10dp"
             android:text="Description" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:orientation="horizontal">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp">
+
+                <ImageView
+                    android:id="@+id/listingSellerImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Seller Profile Image"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_account_circle" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/listingSellerTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:paddingStart="5dp"
+                android:text="Sold by: " />
+        </LinearLayout>
+
     </LinearLayout>
 
     <!-- Fancy Chat Button -->
@@ -118,6 +148,22 @@
         android:gravity="center_vertical"
         android:padding="12dp"
         android:text="Chat with Seller"
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
+
+    <!-- Fancy Edit Button -->
+    <Button
+        android:id="@+id/editListingButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:backgroundTint="@color/teal_700"
+        android:drawableLeft="@drawable/ic_pencil"
+        android:drawablePadding="8dp"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+        android:text="Edit this Listing"
         android:textColor="@android:color/white"
         android:textStyle="bold" />
 
