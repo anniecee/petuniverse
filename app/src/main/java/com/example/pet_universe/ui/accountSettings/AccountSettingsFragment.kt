@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
+import com.example.pet_universe.MainActivity
 import com.example.pet_universe.R
 import com.example.pet_universe.databinding.FragmentAccountsBinding
 import com.example.pet_universe.ui.profile.ProfileViewModel
@@ -42,7 +43,9 @@ class AccountSettingsFragment : Fragment() {
                 .addOnSuccessListener { document ->
                     val firstName = document.getString("firstName") ?: ""
                     val lastName = document.getString("lastName") ?: ""
+                    val email = document.getString("email") ?: ""
                     binding.userNameTextView.text = "$firstName $lastName"
+                    binding.useremailFromDB.text = "$email"
                 }
                 .addOnFailureListener {
                     // Handle failure
@@ -62,6 +65,26 @@ class AccountSettingsFragment : Fragment() {
             val profileIconLayout = binding.root.findViewById<RelativeLayout>(R.id.profileIcon)
             val profileTextView = profileIconLayout.findViewById<TextView>(R.id.profileTextView)
             profileTextView.text = initial ?: "You"
+        }
+
+        binding.editName.setOnClickListener {
+            if (auth.currentUser != null) {
+                // Show confirmation dialog before sign-out
+                startActivity(Intent(requireContext(), ChangeNameActivity::class.java))
+                requireActivity().finish()
+            } else {
+                navigateToSignIn() // Navigate to sign-in if user is not signed in
+            }
+        }
+
+        binding.editEmail.setOnClickListener {
+            if (auth.currentUser != null) {
+                // Show confirmation dialog before sign-out
+                startActivity(Intent(requireContext(), ChangeEmailActivity::class.java))
+                requireActivity().finish()
+            } else {
+                navigateToSignIn() // Navigate to sign-in if user is not signed in
+            }
         }
 
         binding.signInOutButton.setOnClickListener {
