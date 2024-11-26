@@ -36,8 +36,10 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:background="@drawable/rounded_edittext"
+        android:ellipsize="end"
         android:hint="Search"
-        android:padding="12dp" />
+        android:padding="12dp"
+        android:singleLine="true" />
 
     <!-- Filter Buttons -->
     <android.widget.HorizontalScrollView
@@ -75,27 +77,27 @@
             </LinearLayout>
 
             <!-- Age Filter Title and Spinner -->
-<!--            <LinearLayout-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:gravity="center"-->
-<!--                android:orientation="horizontal">-->
+            <!--            <LinearLayout-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:gravity="center"-->
+            <!--                android:orientation="horizontal">-->
 
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:gravity="center"-->
-<!--                    android:text="Age: "-->
-<!--                    android:textColor="@android:color/black"-->
-<!--                    android:textSize="14sp" />-->
+            <!--                <TextView-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:gravity="center"-->
+            <!--                    android:text="Age: "-->
+            <!--                    android:textColor="@android:color/black"-->
+            <!--                    android:textSize="14sp" />-->
 
-<!--                <Spinner-->
-<!--                    android:id="@+id/ageFilterButton"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:entries="@array/live_pets_age_filter_spinner_entries"-->
-<!--                    android:focusable="false" />-->
-<!--            </LinearLayout>-->
+            <!--                <Spinner-->
+            <!--                    android:id="@+id/ageFilterButton"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:entries="@array/live_pets_age_filter_spinner_entries"-->
+            <!--                    android:focusable="false" />-->
+            <!--            </LinearLayout>-->
 
             <!-- Price Filter Title and Spinner -->
             <LinearLayout
