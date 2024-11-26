@@ -72,14 +72,14 @@ class MessageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 timestamp
             ) ==
                     SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date(now)) ->
-                "Today " + SimpleDateFormat("HH:mm", Locale.getDefault()).format(timestamp) // Today
+                "Today, " + SimpleDateFormat("HH:mm", Locale.getDefault()).format(timestamp) // Today
             diff < 2 * 24 * 60 * 60 * 1000 ->
-                "Yesterday " + SimpleDateFormat(
+                "Yesterday, " + SimpleDateFormat(
                     "HH:mm",
                     Locale.getDefault()
                 ).format(timestamp) // Yesterday
             else -> SimpleDateFormat(
-                "MMM. dd, HH:mm",
+                "MMM dd, HH:mm",
                 Locale.getDefault()
             ).format(timestamp) // Date and time
         }

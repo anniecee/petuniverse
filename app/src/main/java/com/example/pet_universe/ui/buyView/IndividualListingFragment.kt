@@ -52,6 +52,7 @@ class IndividualListingFragment : Fragment() {
 
             // for starting the chat
             if (sellerId == currentUserId) {
+                binding.listingSoldByTextView.visibility = View.GONE
                 binding.listingSellerImageView.visibility = View.GONE
                 binding.listingSellerTextView.visibility = View.GONE
                 binding.startChatButton.visibility = View.GONE
@@ -61,7 +62,7 @@ class IndividualListingFragment : Fragment() {
             } else {
                 lifecycleScope.launch {
                     val sellerName = fetchSellerName(sellerId)
-                    binding.listingSellerTextView.text = "Sold by: $sellerName"
+                    binding.listingSellerTextView.text = "$sellerName"
                 }
 
                 binding.editListingButton.visibility = View.GONE

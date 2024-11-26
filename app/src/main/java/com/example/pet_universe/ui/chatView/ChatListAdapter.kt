@@ -39,7 +39,7 @@ class ChatListAdapter(private val onChatClick: (Chat) -> Unit) :
         return when {
             diff < 60 * 60 * 1000 -> "${diff / (60 * 1000)}m" // Minutes ago
             diff < 24 * 60 * 60 * 1000 -> "${diff / (60 * 60 * 1000)}h" // Hours ago
-            diff < 7 * 24 * 60 * 60 * 1000 -> SimpleDateFormat("EEE.", Locale.getDefault()).format(
+            diff < 7 * 24 * 60 * 60 * 1000 -> SimpleDateFormat("EEE", Locale.getDefault()).format(
                 timestamp
             ) // Day of the week
             else -> SimpleDateFormat(
