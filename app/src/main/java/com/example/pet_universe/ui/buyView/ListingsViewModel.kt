@@ -63,15 +63,100 @@ class ListingsViewModel(application: Application) : AndroidViewModel(application
         applyFilters()
     }
 
+    // For more robust search
+    private fun calculateRelevanceScore(
+        searchWords: List<String>,
+        searchContexts: List<String>,
+        listingPrice: Int
+    ): Int {
+        var score = 0
+
+        searchWords.forEach { word ->
+            searchContexts.forEachIndexed { index, context ->
+                when {
+                    // Exact whole word match
+                    context.split("\\s+".toRegex()).contains(word) ->
+                        score += when (index) {
+                            0 -> 3 // Highest score for title matches
+                            1 -> 2 // Medium score for description
+                            2 -> 1 // Low score for type
+                            3 -> 0 // Minimal score for price
+                            4 -> 2 // Medium score for location
+                            else -> 0
+                        }
+
+                    // Partial word match
+                    context.contains(word) ->
+                        score += when (index) {
+                            0 -> 2
+                            1 -> 1
+                            2 -> 0
+                            3 -> 0
+                            4 -> 1
+                            else -> 0
+                        }
+                }
+            }
+
+            // Special price-related search handling
+            word.replace("$", "").toIntOrNull()?.let { searchPrice ->
+                // Prioritize exact or very close price matches
+                val priceDifference = Math.abs(listingPrice - searchPrice)
+                score += when {
+                    priceDifference == 0 -> 5 // Exact price match
+                    priceDifference <= searchPrice * 0.1 -> 3 // Within 10%
+                    priceDifference <= searchPrice * 0.2 -> 1 // Within 20%
+                    else -> 0
+                }
+            }
+
+            // Price range keywords
+            when (word) {
+                "free" -> if (listingPrice < 1) score += 2
+                "cheap" -> if (listingPrice < 50) score += 1
+                "expensive" -> if (listingPrice > 200) score += 1
+            }
+        }
+
+        return score
+    }
+
     private fun applyFilters() {
         var filteredList = currentListings
 
         // Search filter
         _searchQuery.value?.let { query ->
             if (query.isNotEmpty()) {
-                filteredList = filteredList.filter { listing ->
-                    listing.title.contains(query, ignoreCase = true) ||
-                            listing.description.contains(query, ignoreCase = true)
+                // Enhanced tokenization to handle price-related searches
+                val searchWords = query.lowercase()
+                    .replace("[^a-zA-Z0-9\\s$]".toRegex(), "")
+                    .split("\\s+".toRegex())
+                    .filter { it.isNotEmpty() } // Filter out empty strings
+
+                // Only apply search if there are non-empty search words
+                if (searchWords.isNotEmpty()) {
+                    filteredList = filteredList.mapNotNull { listing ->
+                        // Prepare searchable fields, including location
+                        val searchContext = listOf(
+                            listing.title.lowercase(),
+                            listing.description.lowercase(),
+                            listing.type.lowercase(),
+                            listing.price.toString(),
+                            listing.meetingLocation.lowercase()
+                        )
+
+                        // Calculate relevance score
+                        val relevanceScore = calculateRelevanceScore(
+                            searchWords,
+                            searchContext,
+                            listing.price
+                        )
+
+                        // Only return listings with some match
+                        if (relevanceScore > 0) {
+                            Pair(listing, relevanceScore)
+                        } else null
+                    }.map { it.first } // Extract the listing
                 }
             }
         }
