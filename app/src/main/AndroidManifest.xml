@@ -7,6 +7,7 @@
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
+        android:enableOnBackInvokedCallback="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -41,6 +42,10 @@
             android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
         <activity android:name=".ui.accountSettings.ResetPasswordActivity"
+            android:exported="true"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+        </activity>
+        <activity android:name=".ui.accountSettings.EditProfileActivity"
             android:exported="true"
             android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>

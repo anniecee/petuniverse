@@ -1,13 +1,17 @@
 package com.example.pet_universe.ui.accountSettings
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
@@ -37,17 +41,7 @@ class AccountSettingsFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
 
         // Displaying username (optimize later, perhaps use ProfileViewModel)
-        if (currentUserId.isNotEmpty()) {
-            firestore.collection("users").document(currentUserId).get()
-                .addOnSuccessListener { document ->
-                    val firstName = document.getString("firstName") ?: ""
-                    val lastName = document.getString("lastName") ?: ""
-                    binding.userNameTextView.text = "$firstName $lastName"
-                }
-                .addOnFailureListener {
-                    // Handle failure
-                }
-        }
+        displayUsername()
 
         binding.signInOutButton.text = "Sign Out"
 
@@ -86,12 +80,41 @@ class AccountSettingsFragment : Fragment() {
                 navigateToSignIn() // Navigate to sign-in if user is not signed in
             }
         }
+
+        binding.personalInfoTextView.setOnClickListener {
+            val intent = Intent(requireContext(), EditProfileActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.passwordSecurityTextView.setOnClickListener {
+            val intent = Intent(requireContext(), ChangePasswordActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    private fun displayUsername() {
+        if (currentUserId.isNotEmpty()) {
+            firestore.collection("users").document(currentUserId).get()
+                .addOnSuccessListener { document ->
+                    val firstName = document.getString("firstName") ?: ""
+                    val lastName = document.getString("lastName") ?: ""
+                    binding.userNameTextView.text = "$firstName $lastName"
+                }
+                .addOnFailureListener {
+                    // Handle failure
+                }
+        }
     }
 
     private fun navigateToSignIn() {
         // Navigate the user to the sign-in screen
         startActivity(Intent(requireContext(), SignInActivity::class.java))
         requireActivity().finish()  // Optionally close the current activity
+    }
+
+    override fun onResume() {
+        super.onResume()
+        displayUsername() // Refresh the user name TextView
     }
 
     override fun onDestroyView() {

@@ -2,6 +2,7 @@ package com.example.pet_universe.database
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -42,6 +43,12 @@ class UserRepository(private val userDao: UserDao) {
     suspend fun getLastName(lastName: String): User? {
         return withContext(IO) {
             userDao.getLastName(lastName)
+        }
+    }
+
+    fun updateProfile(user: User) {
+        CoroutineScope(IO).launch {
+            userDao.update(user.firstName, user.lastName, user.email, user.password)
         }
     }
 
