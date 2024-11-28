@@ -52,6 +52,7 @@ class ListingViewModel(private val repository: ListingRepository) : ViewModel() 
                     document.toObject(Listing::class.java)
                 }
                 saveListingsToLocalDatabase(listings)
+                println("Debug: Fetched pet listings from Firebase")
             }.addOnFailureListener { e ->
                 println("Got the error in the fetchListingsFromFirebase function in ListingViewModel. $e")
             }
@@ -96,6 +97,8 @@ class ListingViewModel(private val repository: ListingRepository) : ViewModel() 
     // Save fetched listings to Room database
     private fun saveListingsToLocalDatabase(listings: List<Listing>) {
         viewModelScope.launch(Dispatchers.IO) {
+            // Delete all listings before inserting new ones
+            repository.deleteAll()
             repository.insertListings(listings)
         }
     }
