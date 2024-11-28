@@ -27,4 +27,10 @@ interface UserDao {
 
     @Query("SELECT * FROM user_table WHERE last_name = :lastName")
     suspend fun getLastName(lastName: String): User?
+
+    @Query("UPDATE user_table SET first_name = :firstName, last_name = :lastName, password =:password WHERE email = :email")
+    suspend fun update(firstName: String, lastName: String, email: String, password: String)
+
+    @Query("UPDATE user_table SET password = :password WHERE email = :email")
+    suspend fun updatePassword(email: String, password: String)
 }

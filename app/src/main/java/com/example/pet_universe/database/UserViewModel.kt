@@ -49,6 +49,18 @@ class UserViewModel(private val repository: UserRepository): ViewModel() {
         }
     }
 
+    suspend fun updateProfile(user: User) {
+        withContext(IO) {
+            repository.updateProfile(user)
+        }
+    }
+
+    fun updatePassword(user: User) {
+        viewModelScope.launch(IO) {
+            repository.updatePassword(user)
+        }
+    }
+
 }
 
 class UserViewModelFactory(private val repository: UserRepository) : ViewModelProvider.Factory {
