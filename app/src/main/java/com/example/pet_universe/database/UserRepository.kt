@@ -52,4 +52,10 @@ class UserRepository(private val userDao: UserDao) {
         }
     }
 
+    fun updatePassword(user: User) {
+        CoroutineScope(IO).launch {
+            userDao.updatePassword(user.email, user.password)
+        }
+    }
+
 }

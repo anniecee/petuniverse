@@ -44,6 +44,7 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var userViewModel: UserViewModel
     private lateinit var userProfile: User
 
+    // Views
     private lateinit var userNameTV: TextView
     private lateinit var firstNameET: EditText
     private lateinit var lastNameET: EditText

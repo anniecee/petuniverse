@@ -55,6 +55,12 @@ class UserViewModel(private val repository: UserRepository): ViewModel() {
         }
     }
 
+    fun updatePassword(user: User) {
+        viewModelScope.launch(IO) {
+            repository.updatePassword(user)
+        }
+    }
+
 }
 
 class UserViewModelFactory(private val repository: UserRepository) : ViewModelProvider.Factory {
