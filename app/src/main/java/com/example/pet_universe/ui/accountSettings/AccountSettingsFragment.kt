@@ -55,7 +55,7 @@ class AccountSettingsFragment : Fragment() {
         profileViewModel.userInitial.observe(viewLifecycleOwner) { initial ->
             val profileIconLayout = binding.root.findViewById<RelativeLayout>(R.id.profileIcon)
             val profileTextView = profileIconLayout.findViewById<TextView>(R.id.profileTextView)
-            profileTextView.text = initial ?: "You"
+            profileTextView.text = initial ?: "?"
         }
 
         binding.signInOutButton.setOnClickListener {

@@ -38,7 +38,7 @@ class SellerViewFragment : Fragment() {
     private lateinit var sharedPref: SharedPreferences
 
     // Recycler View
-    private lateinit var recyclerView : RecyclerView
+    private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerAdapter: SellerListingsAdapter
     private var sellerListings = mutableListOf<Listing>()
 
@@ -68,12 +68,14 @@ class SellerViewFragment : Fragment() {
         listingDao = database.listingDao
         repository = ListingRepository(listingDao)
         viewModelFactory = ListingViewModelFactory(repository)
-        listingViewModel = ViewModelProvider(this, viewModelFactory).get(ListingViewModel::class.java)
+        listingViewModel =
+            ViewModelProvider(this, viewModelFactory).get(ListingViewModel::class.java)
 
         // Set up Recycler View
         recyclerView = binding.sellerRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerAdapter = SellerListingsAdapter(requireContext(), sellerListings, firestore, sharedPref)
+        recyclerAdapter =
+            SellerListingsAdapter(requireContext(), sellerListings, firestore, sharedPref)
         recyclerView.adapter = recyclerAdapter
 
         // Find the user's listings & observe data
@@ -127,7 +129,8 @@ class SellerViewFragment : Fragment() {
     private fun saveListingsToLocalDatabase(listings: List<Listing>) {
         lifecycleScope.launch {
             listings.forEach { listing ->
-                val existingListing = listingViewModel.getListingById(listing.id) // Check if listing exists
+                val existingListing =
+                    listingViewModel.getListingById(listing.id) // Check if listing exists
                 if (existingListing == null) {
                     listingViewModel.insert(listing)
                     sellerListings.add(listing) // Add new listing here to display in recycler view
@@ -138,14 +141,20 @@ class SellerViewFragment : Fragment() {
 
     private fun observeListingsFromRoom(userId: String) {
         lifecycleScope.launch {
-            listingViewModel.getActiveListingsBySellerId(userId).observe(viewLifecycleOwner) { listings ->
-                sellerListings.clear()
-                sellerListings.addAll(listings)
-                recyclerAdapter.notifyDataSetChanged()
-            }
-            println("Debug: Seller Listings: $sellerListings")
+            listingViewModel.getActiveListingsBySellerId(userId)
+                .observe(viewLifecycleOwner) { listings ->
+                    if (listings.isEmpty()) {
+                        binding.sellerRecyclerView.visibility = View.GONE
+                        binding.emptyStateView.visibility = View.VISIBLE
+                    } else {
+                        binding.sellerRecyclerView.visibility = View.VISIBLE
+                        binding.emptyStateView.visibility = View.GONE
+                        sellerListings.clear()
+                        sellerListings.addAll(listings)
+                        recyclerAdapter.notifyDataSetChanged()
+                    }
+                }
         }
-
     }
 
     override fun onResume() {
@@ -156,6 +165,7 @@ class SellerViewFragment : Fragment() {
             observeListingsFromRoom(it)
         }
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null // Avoid memory leaks

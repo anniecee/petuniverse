@@ -89,7 +89,7 @@ class EditProfileActivity : AppCompatActivity() {
         profileViewModel.userInitial.observe(this) { initial ->
             val profileIconLayout = findViewById<RelativeLayout>(R.id.profileIcon)
             val profileTextView = findViewById<TextView>(R.id.profileTextView)
-            profileTextView.text = initial ?: "You"
+            profileTextView.text = initial ?: "?"
         }
 
         // Get user data from Firestore

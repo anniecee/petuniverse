@@ -11,9 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:paddingBottom="16dp"
         android:text="Your Active Listings"
-        android:textSize="24sp"
-        android:paddingBottom="16dp"/>
+        android:textSize="24sp" />
 
     <!-- RecyclerView to display listings -->
     <androidx.recyclerview.widget.RecyclerView
@@ -23,6 +23,29 @@
         android:layout_below="@id/sellerHeadingTextView"
         android:clipToPadding="false"
         android:scrollbars="vertical" />
+
+    <!-- Placeholder View -->
+    <LinearLayout
+        android:id="@+id/emptyStateView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/sellerHeadingTextView"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_dollar_sign_black_24" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="No Listings Yet"
+            android:textSize="20sp" />
+    </LinearLayout>
 
     <!-- Floating Action Button for adding new listing -->
     <com.google.android.material.button.MaterialButton
@@ -41,5 +64,4 @@
         android:text="Add"
         android:textColor="@android:color/white"
         android:translationZ="8dp" />
-
 </RelativeLayout>
