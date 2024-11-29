@@ -44,8 +44,8 @@ class ListingRepository(private val listingDatabaseDao: ListingDatabaseDao) {
         }
     }
 
-    suspend fun getActiveListingsBySellerId(userId: String): Flow<List<Listing>>  {
-        return withContext(IO){
+    suspend fun getActiveListingsBySellerId(userId: String): Flow<List<Listing>> {
+        return withContext(IO) {
             listingDatabaseDao.getActiveListingsBySellerId(userId)
         }
 
@@ -63,6 +63,12 @@ class ListingRepository(private val listingDatabaseDao: ListingDatabaseDao) {
 //            listingDatabaseDao.update(id, title, price, description, meetingLocation, category, imageUrls, type)
 //        }
 //    }
+
+    suspend fun getAllListings(): Flow<List<Listing>> {
+        return withContext(IO) {
+            listingDatabaseDao.getAllListings()
+        }
+    }
 
     fun update(listing: Listing) {
         CoroutineScope(IO).launch {

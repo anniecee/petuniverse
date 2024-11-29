@@ -7,6 +7,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -29,77 +30,134 @@ class ListingViewModel(private val repository: ListingRepository) : ViewModel() 
     }
 
     // Fetch listings from Firebase and save to Room
-
-    // This is for all listings regardless of category
-//    fun fetchListingsFromFirebase() {
-//        firestore.collection("listings")
-//            .get()
-//            .addOnSuccessListener { result ->
-//                val listings = result.map { document ->
-//                    document.toObject(Listing::class.java)
-//                }
-//                saveListingsToLocalDatabase(listings)
-//            }
-//            .addOnFailureListener { e ->
-//                 println("got the error in the fetchListingsFromFirebase function in ListingViewModel. $e")
-//            }
-//    }
+    private var isFetching = false
 
     fun fetchPetListingsFromFirebase() {
-        firestore.collection("listings").whereEqualTo("category", "Live Pets").get()
+        if (isFetching) return
+        isFetching = true
+
+        firestore.collection("listings")
+            .whereEqualTo("category", "Live Pets")
+            .get()
             .addOnSuccessListener { result ->
                 val listings = result.map { document ->
                     document.toObject(Listing::class.java)
                 }
-                saveListingsToLocalDatabase(listings)
-                println("Debug: Fetched pet listings from Firebase")
-            }.addOnFailureListener { e ->
-                println("Got the error in the fetchListingsFromFirebase function in ListingViewModel. $e")
+                println("Debug: Fetched ${listings.size} Pet Listings")
+                saveListingsToLocalDatabase("Live Pets", listings)
+            }
+            .addOnFailureListener { e ->
+                println("Error fetching Pet Listings: $e")
+            }
+            .addOnCompleteListener {
+                isFetching = false
             }
     }
 
     fun fetchFoodListingsFromFirebase() {
-        firestore.collection("listings").whereEqualTo("category", "Pet Food").get()
+        if (isFetching) return
+        isFetching = true
+
+        firestore.collection("listings")
+            .whereEqualTo("category", "Pet Food")
+            .get()
             .addOnSuccessListener { result ->
                 val listings = result.map { document ->
                     document.toObject(Listing::class.java)
                 }
-                saveListingsToLocalDatabase(listings)
-            }.addOnFailureListener { e ->
-                println("Got the error in the fetchListingsFromFirebase function in ListingViewModel. $e")
+                println("Debug: Fetched ${listings.size} Food Listings")
+                saveListingsToLocalDatabase("Pet Food", listings)
+            }
+            .addOnFailureListener { e ->
+                println("Error fetching Food Listings: $e")
+            }
+            .addOnCompleteListener {
+                isFetching = false
             }
     }
 
     fun fetchAccessoryListingsFromFirebase() {
-        firestore.collection("listings").whereEqualTo("category", "Pet Accessories").get()
+        if (isFetching) return
+        isFetching = true
+
+        firestore.collection("listings")
+            .whereEqualTo("category", "Pet Accessories")
+            .get()
             .addOnSuccessListener { result ->
                 val listings = result.map { document ->
                     document.toObject(Listing::class.java)
                 }
-                saveListingsToLocalDatabase(listings)
-            }.addOnFailureListener { e ->
-                println("Got the error in the fetchListingsFromFirebase function in ListingViewModel. $e")
+                println("Debug: Fetched ${listings.size} Accessory Listings")
+                saveListingsToLocalDatabase("Pet Accessories", listings)
+            }
+            .addOnFailureListener { e ->
+                println("Error fetching Accessory Listings: $e")
+            }
+            .addOnCompleteListener {
+                isFetching = false
             }
     }
 
     fun fetchOtherListingsFromFirebase() {
-        firestore.collection("listings").whereEqualTo("category", "Other").get()
+        if (isFetching) return
+        isFetching = true
+
+        firestore.collection("listings")
+            .whereEqualTo("category", "Other")
+            .get()
             .addOnSuccessListener { result ->
                 val listings = result.map { document ->
                     document.toObject(Listing::class.java)
                 }
-                saveListingsToLocalDatabase(listings)
-            }.addOnFailureListener { e ->
-                println("Got the error in the fetchListingsFromFirebase function in ListingViewModel. $e")
+                println("Debug: Fetched ${listings.size} Other Listings")
+                saveListingsToLocalDatabase("Other", listings)
+            }
+            .addOnFailureListener { e ->
+                println("Error fetching Other Listings: $e")
+            }
+            .addOnCompleteListener {
+                isFetching = false
             }
     }
 
     // Save fetched listings to Room database
-    private fun saveListingsToLocalDatabase(listings: List<Listing>) {
+    private fun saveListingsToLocalDatabase(category: String, firebaseListings: List<Listing>) {
         viewModelScope.launch(Dispatchers.IO) {
-            // Delete all listings before inserting new ones
-            repository.deleteAll()
-            repository.insertListings(listings)
+            try {
+                // Collect current listings from Flow
+                val currentListings = repository.getAllListings().first()
+
+                // Listings that already exist in local database for this category
+                val existingListings = currentListings.filter { it.category == category }
+
+                // Find the listings that need to be deleted (those in local db but not in firebase)
+                val listingsToRemove = existingListings.filterNot { localListing ->
+                    firebaseListings.any { firebaseListing -> firebaseListing.id == localListing.id }
+                }
+
+                // Find the listings to add (those in firebase but not in local db)
+                val listingsToAdd = firebaseListings.filterNot { firebaseListing ->
+                    existingListings.any { localListing -> localListing.id == firebaseListing.id }
+                }
+
+                // Delete listings that don't exist in firebase anymore
+                listingsToRemove.forEach { repository.delete(it.id) }
+
+                // Insert new listings that don't exist in local database
+                if (listingsToAdd.isNotEmpty()) {
+                    repository.insertListings(listingsToAdd)
+                    println("Saved ${listingsToAdd.size} $category listings to local database")
+                } else {
+                    println("No new $category listings to save")
+                }
+
+                // Log current database state
+//                val updatedListings = repository.getAllListings().first()
+//                println("Total listings after update: ${updatedListings.size}")
+//                println("Listings in $category: ${updatedListings.filter { it.category == category }.size}")
+            } catch (e: Exception) {
+                println("Error saving $category listings to local database: $e")
+            }
         }
     }
 
