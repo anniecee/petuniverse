@@ -51,6 +51,8 @@ class SellerListingsAdapter(private val context: Context, private val sellerList
                 val image = listing.imageUrl
                 listingPhoto.load(image) {
                     crossfade(true)
+                    placeholder(R.drawable.image_placeholder)
+                    error(R.drawable.image_placeholder)
                 }
             }
         }
@@ -125,7 +127,7 @@ class SellerListingsAdapter(private val context: Context, private val sellerList
         // Remove the listing from Firebase
         deleteListingFromFirebase(sellerListings[position].id)
 
-        Toast.makeText(context, "Listing deleted", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Listing deleted successfully.", Toast.LENGTH_SHORT).show()
     }
 
     // Remove listing from Firebase in both the user's collection and the global collection

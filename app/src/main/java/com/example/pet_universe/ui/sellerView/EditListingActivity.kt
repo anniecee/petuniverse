@@ -101,7 +101,7 @@ class EditListingActivity : AppCompatActivity() {
                 setListingValues()
             } ?: run {
                 // Handle the case where the listing is not found
-                Toast.makeText(this@EditListingActivity, "Listing not found", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@EditListingActivity, "Listing not found.", Toast.LENGTH_SHORT).show()
                 finish()
             }
         }
@@ -187,7 +187,7 @@ class EditListingActivity : AppCompatActivity() {
             listingViewModel.updateListing(listing)
             updateListingInFirebase(listing)
 
-            Toast.makeText(this@EditListingActivity, "Listing updated", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@EditListingActivity, "Listing updated successfully.", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             println("Debug: Exception during saveListing: ${e.message}")
             Toast.makeText(
@@ -265,7 +265,7 @@ class EditListingActivity : AppCompatActivity() {
                 val fileName = uri.pathSegments.last()
                 photoTextView = findViewById(R.id.photoTextView)
                 photoTextView.text = fileName.toString() + ".jpg"
-                Toast.makeText(this, "Image uploaded", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Image uploaded successfully.", Toast.LENGTH_SHORT).show()
             }
         }
     }

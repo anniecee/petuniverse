@@ -53,6 +53,13 @@
             android:focusable="false" />
 
         <!-- Input Fields -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Title:"
+            android:textSize="17sp" />
+
         <EditText
             android:id="@+id/titleEditText"
             android:layout_width="match_parent"
@@ -64,6 +71,13 @@
             android:padding="12dp"
             android:singleLine="true" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Price:"
+            android:textSize="17sp" />
+
         <EditText
             android:id="@+id/priceEditText"
             android:layout_width="match_parent"
@@ -73,6 +87,13 @@
             android:hint="Price *"
             android:inputType="number"
             android:padding="12dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Description:"
+            android:textSize="17sp" />
 
         <EditText
             android:id="@+id/descriptionEditText"
@@ -85,6 +106,13 @@
             android:inputType="textMultiLine"
             android:overScrollMode="ifContentScrolls"
             android:padding="12dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Meeting Location:"
+            android:textSize="17sp" />
 
         <EditText
             android:id="@+id/meetingLocationEditText"

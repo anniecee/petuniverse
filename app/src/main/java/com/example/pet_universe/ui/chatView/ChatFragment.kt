@@ -98,7 +98,7 @@ class ChatFragment : Fragment() {
                 chatViewModel.sendMessage(message)
                 binding.messageEditText.text.clear()
             } else {
-                Toast.makeText(requireContext(), "Cannot send empty message", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), "Cannot send empty message.", Toast.LENGTH_SHORT)
                     .show()
             }
         }

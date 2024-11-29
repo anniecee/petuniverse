@@ -115,8 +115,16 @@ class EditProfileActivity : AppCompatActivity() {
         // Set on click listener for save button
         saveButton.setOnClickListener() {
             lifecycleScope.launch {
-                saveProfile()
-                finish()
+                if (firstNameET.text.isNullOrEmpty() || lastNameET.text.isNullOrEmpty()) {
+                    Toast.makeText(
+                        applicationContext,
+                        "Please fill in all required fields.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    saveProfile()
+                    finish()
+                }
             }
         }
 
@@ -148,12 +156,17 @@ class EditProfileActivity : AppCompatActivity() {
                 .update("firstName", firstName, "lastName", lastName)
                 .addOnSuccessListener {
                     // Handle success
-                    Toast.makeText(this@EditProfileActivity, "Profile updated", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@EditProfileActivity, "Profile updated.", Toast.LENGTH_SHORT)
+                        .show()
                     println("Debug: in Firestore: $firstName $lastName")
                 }
                 .addOnFailureListener {
                     // Handle failure
-                    Toast.makeText(this@EditProfileActivity, "Profile update failed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@EditProfileActivity,
+                        "Profile update failed.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     println("Failed to update user data")
                 }
         }

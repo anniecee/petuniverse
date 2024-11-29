@@ -70,6 +70,7 @@ class AccountSettingsFragment : Fragment() {
                         accountsViewModel.isSignedIn = MutableLiveData<Boolean>().apply {
                             value = false // Update the sign-in state
                         }
+                        profileViewModel.handleUserLogout() // Call handleUserLogout to reset the userInitial when logging out
                         navigateToSignIn()  // Redirect to sign-in
                     }
                     .setNegativeButton("No") { dialog, _ ->
