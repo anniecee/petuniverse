@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_home"
+        android:id="@+id/navigation_buy"
         android:icon="@drawable/ic_seller_view_black_24dp"
-        android:title="@string/title_home" />
+        android:title="@string/title_buy" />
 
     <item
         android:id="@+id/navigation_seller"
@@ -13,7 +13,7 @@
 
     <item
         android:id="@+id/navigation_chat"
-        android:icon="@drawable/ic_chat"
+        android:icon="@drawable/ic_chat_black"
         android:title="@string/title_chat" />
 
     <item

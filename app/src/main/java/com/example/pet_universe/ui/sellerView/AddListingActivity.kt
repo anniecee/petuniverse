@@ -50,7 +50,7 @@ class AddListingActivity : AppCompatActivity() {
 
     // Image
     private var imageUri: Uri? = null
-    private var imageUrl : String = ""
+    private var imageUrl: String = ""
 
     // Elements
     private lateinit var titleEditText: EditText
@@ -99,8 +99,16 @@ class AddListingActivity : AppCompatActivity() {
         uploadPhotoButton.setOnClickListener { openGalleryForImage() }
         sellButton.setOnClickListener {
             lifecycleScope.launch {
-                saveListing()
-                finish()
+                if (titleEditText.text.isNullOrEmpty() || priceEditText.text.isNullOrEmpty() || descriptionEditText.text.isNullOrEmpty() || locationEditText.text.isNullOrEmpty()) {
+                    Toast.makeText(
+                        applicationContext,
+                        "Please fill in all required fields.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    saveListing()
+                    finish()
+                }
             }
         }
         cancelButton = findViewById(R.id.cancelButton)
@@ -116,26 +124,23 @@ class AddListingActivity : AppCompatActivity() {
     }
 
     // Handle image result
-    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val data: Intent? = result.data
-            imageUri = data?.data
-            val uri = imageUri // This to prevent null pointer exception
-            if (uri != null) {
-                val fileName = uri.pathSegments.last()
-                photoTextView = findViewById(R.id.photoTextView)
-                photoTextView.text = fileName.toString() + ".jpg"
-                Toast.makeText(this, "Image uploaded", Toast.LENGTH_SHORT).show()
+    private val resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                imageUri = data?.data
+                val uri = imageUri // This to prevent null pointer exception
+                if (uri != null) {
+                    val fileName = uri.pathSegments.last()
+                    photoTextView = findViewById(R.id.photoTextView)
+                    photoTextView.text = fileName.toString() + ".jpg"
+                    Toast.makeText(this, "Image uploaded successfully.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
-    }
 
     // Save listing to Firestore and Room
     private suspend fun saveListing() {
-        if (titleEditText.text.isNullOrEmpty() || priceEditText.text.isNullOrEmpty()) {
-            Toast.makeText(this, "Please fill in all required fields.", Toast.LENGTH_SHORT).show()
-            return
-        }
         val uniqueId = System.currentTimeMillis() * 1000 + (0..999).random()
         var imageByteArray: ByteArray? = null
         if (imageUri != null) {
@@ -157,9 +162,13 @@ class AddListingActivity : AppCompatActivity() {
         if (success) {
             listing.imageUrl = imageUrl
             listingViewModel.insert(listing) // Save listing to Room
-            Toast.makeText(this@AddListingActivity, "Listing saved successfully!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this@AddListingActivity,
+                "Listing created successfully!",
+                Toast.LENGTH_SHORT
+            ).show()
         } else {
-            Toast.makeText(this, "Failed to save listing.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Failed to create listing.", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -178,7 +187,11 @@ class AddListingActivity : AppCompatActivity() {
                 saveListingDocument(userListingRef, listing, "").await()
                 saveListingDocument(globalListingRef, listing, "").await()
             } else {
-                imageUrl = uploadImagesToFirebaseStorage(imageByteArray, listing.id.toString(), imageUri!!).await()
+                imageUrl = uploadImagesToFirebaseStorage(
+                    imageByteArray,
+                    listing.id.toString(),
+                    imageUri!!
+                ).await()
                 saveListingDocument(userListingRef, listing, imageUrl).await()
                 saveListingDocument(globalListingRef, listing, imageUrl).await()
             }
@@ -215,7 +228,8 @@ class AddListingActivity : AppCompatActivity() {
         listingId: String,
         imageUri: Uri
     ): Task<String> {
-        val userId = auth.currentUser?.uid ?: return Tasks.forException(Exception("User not authenticated"))
+        val userId =
+            auth.currentUser?.uid ?: return Tasks.forException(Exception("User not authenticated"))
         val storageRef = storage.reference
         val fileNameWithExtension = getFileName(applicationContext, imageUri)
         val imageRef = storageRef.child("images/$userId/$listingId/$fileNameWithExtension")

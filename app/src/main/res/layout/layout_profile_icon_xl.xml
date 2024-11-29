@@ -10,7 +10,7 @@
         android:layout_height="150dp"
         android:background="@drawable/ic_profile"
         android:gravity="center"
-        android:text="A"
+        android:text="\?"
         android:textColor="@android:color/white"
         android:textSize="85sp"
         android:textStyle="bold" />

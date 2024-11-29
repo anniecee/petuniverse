@@ -1,13 +1,11 @@
 package com.example.pet_universe.ui.accountSettings
 
 import android.os.Bundle
-import android.security.keystore.KeyGenParameterSpec
-import android.security.keystore.KeyProperties
-import android.util.Base64
 import android.widget.Button
 import android.widget.EditText
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -23,10 +21,6 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
-import java.security.KeyStore
-import javax.crypto.Cipher
-import javax.crypto.KeyGenerator
-import javax.crypto.SecretKey
 
 class ChangePasswordActivity : AppCompatActivity() {
 
@@ -34,12 +28,10 @@ class ChangePasswordActivity : AppCompatActivity() {
         ViewModelProvider(this).get(ProfileViewModel::class.java)
     }
 
-    // Firebase
     private lateinit var auth: FirebaseAuth
     private val firestore = FirebaseFirestore.getInstance()
     private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
-    // Room database
     private lateinit var database: UserDatabase
     private lateinit var userDao: UserDao
     private lateinit var repository: UserRepository
@@ -50,10 +42,10 @@ class ChangePasswordActivity : AppCompatActivity() {
     // Views
     private lateinit var userNameTV: TextView
     private lateinit var emailET: EditText
-    private lateinit var oldPasswordET : EditText
+    private lateinit var oldPasswordET: EditText
     private lateinit var passwordET: EditText
-    private lateinit var saveButton : Button
-    private lateinit var cancelButton : Button
+    private lateinit var saveButton: Button
+    private lateinit var cancelButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +53,7 @@ class ChangePasswordActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        // Set up Room database
+        // Initialize Room database and ViewModel
         database = UserDatabase.getInstance(this)
         userDao = database.userDao
         repository = UserRepository(userDao)
@@ -94,7 +86,7 @@ class ChangePasswordActivity : AppCompatActivity() {
         profileViewModel.userInitial.observe(this) { initial ->
             val profileIconLayout = findViewById<RelativeLayout>(R.id.profileIcon)
             val profileTextView = findViewById<TextView>(R.id.profileTextView)
-            profileTextView.text = initial ?: "You"
+            profileTextView.text = initial ?: "?"
         }
 
         // Get user data from Firestore
@@ -115,47 +107,78 @@ class ChangePasswordActivity : AppCompatActivity() {
             }
         }
 
-        // Set on click listener for save button
-        saveButton.setOnClickListener() {
-            lifecycleScope.launch {
-                savePassword()
-                finish()
+        // Set up save button click listener
+        saveButton.setOnClickListener {
+            val oldPassword = oldPasswordET.text.toString()
+            val newPassword = passwordET.text.toString()
+
+            // Check if old and new password fields are filled
+            if (oldPassword.isEmpty() || newPassword.isEmpty()) {
+                Toast.makeText(
+                    applicationContext,
+                    "Please fill in all required fields.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener  // Prevent further action if fields are empty
             }
+
+            // Additional check for new password requirements (e.g., minimum length)
+            if (newPassword.length < 6) {
+                Toast.makeText(
+                    applicationContext,
+                    "New password must be at least 6 characters long.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener  // Prevent further action if new password is too short
+            }
+
+            // If everything is valid, attempt to change the password
+            savePassword(oldPassword, newPassword)
         }
 
-        // Set on click listener for cancel button
-        cancelButton.setOnClickListener() {
-            finish()
+        // Set up cancel button click listener
+        cancelButton.setOnClickListener {
+            finish()  // Close the activity when cancel is clicked
         }
     }
 
-    private fun savePassword() {
-        val oldPassword = oldPasswordET.text.toString()
-        val newPassword = passwordET.text.toString()
+    private fun savePassword(oldPassword: String, newPassword: String) {
         val user = auth.currentUser!!
 
-        if (oldPassword.isNotEmpty() && newPassword.isNotEmpty()) {
-            val credential = EmailAuthProvider.getCredential(user.email!!, oldPassword)
+        // Reauthenticate user with old password
+        val credential = EmailAuthProvider.getCredential(user.email!!, oldPassword)
 
-            // Prompt the user to re-provide their sign-in credentials
-            user.reauthenticate(credential)
-                .addOnCompleteListener {
-                    println("User re-authenticated.")
-                    // Update password in Firebase
+        user.reauthenticate(credential)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // If reauthentication is successful, attempt to update password
                     user.updatePassword(newPassword)
                         .addOnSuccessListener {
-                            println("Password updated.")
+                            // Password updated successfully
+                            Toast.makeText(
+                                this,
+                                "Password updated successfully.",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             // Update password in Room database
                             userProfile.password = newPassword
                             lifecycleScope.launch {
                                 userViewModel.updatePassword(userProfile)
                             }
-                        }.addOnFailureListener {
-                            // Handle failure
-                            println("Failed to update password.")
+                            finish()  // Close activity after successful password update
                         }
+                        .addOnFailureListener { e ->
+                            // Handle failure when updating password
+                            Toast.makeText(
+                                this,
+                                "Failed to update password: ${e.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                } else {
+                    // If reauthentication fails (e.g., incorrect old password)
+                    Toast.makeText(this, "Old password is incorrect.", Toast.LENGTH_SHORT).show()
                 }
-        }
+            }
     }
-
 }

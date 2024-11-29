@@ -55,7 +55,7 @@ class AccountSettingsFragment : Fragment() {
         profileViewModel.userInitial.observe(viewLifecycleOwner) { initial ->
             val profileIconLayout = binding.root.findViewById<RelativeLayout>(R.id.profileIcon)
             val profileTextView = profileIconLayout.findViewById<TextView>(R.id.profileTextView)
-            profileTextView.text = initial ?: "You"
+            profileTextView.text = initial ?: "?"
         }
 
         binding.signInOutButton.setOnClickListener {
@@ -70,6 +70,7 @@ class AccountSettingsFragment : Fragment() {
                         accountsViewModel.isSignedIn = MutableLiveData<Boolean>().apply {
                             value = false // Update the sign-in state
                         }
+                        profileViewModel.handleUserLogout() // Call handleUserLogout to reset the userInitial when logging out
                         navigateToSignIn()  // Redirect to sign-in
                     }
                     .setNegativeButton("No") { dialog, _ ->

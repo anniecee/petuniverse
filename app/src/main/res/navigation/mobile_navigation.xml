@@ -3,15 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigation_buy">
 
     <fragment
-        android:id="@+id/navigation_home"
+        android:id="@+id/navigation_buy"
         android:name="com.example.pet_universe.ui.buyView.BuyFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home">
+        android:label="@string/title_buy"
+        tools:layout="@layout/fragment_buy">
     <action
-        android:id="@+id/action_navigation_home_to_listingsFragment"
+        android:id="@+id/action_navigation_buy_to_listingsFragment"
         app:destination="@id/listingsFragment" />
         </fragment>
 
@@ -32,7 +32,7 @@
         tools:layout="@layout/fragment_individual_listing" >
 
         <action
-            android:id="@+id/action_individualPetFragment_to_chatFragment"
+            android:id="@+id/action_individualListingFragment_to_chatFragment"
             app:destination="@id/chatFragment"
             app:popUpTo="@id/individualListFragment"
             app:popUpToInclusive="false">

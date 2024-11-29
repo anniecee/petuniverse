@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingHorizontal="16dp"
+    android:paddingTop="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,12 +25,6 @@
                 android:text="Name"
                 android:textAlignment="center"
                 android:textSize="24sp" />
-
-            <!--            <include-->
-            <!--                layout="@layout/layout_profile_icon"-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_alignParentEnd="true" />-->
         </RelativeLayout>
 
         <!-- Image Section with Rounded Corners -->
@@ -62,23 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="Price" />
-        <!--
-        <TextView
-            android:id="@+id/sizeOfPetTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp" />
-        <TextView
-            android:id="@+id/breedTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp" />
-        <TextView
-            android:id="@+id/ageTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp" />
-            -->
+
         <TextView
             android:id="@+id/locationTextView"
             android:layout_width="match_parent"
@@ -138,31 +117,31 @@
         android:id="@+id/startChatButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:backgroundTint="@color/teal_700"
-        android:drawableLeft="@drawable/ic_chat"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_button"
+        android:drawableLeft="@drawable/ic_chat_white"
         android:drawablePadding="8dp"
         android:elevation="4dp"
         android:gravity="center_vertical"
         android:padding="12dp"
         android:text="Chat with Seller"
-        android:textColor="@android:color/white"
-        android:textStyle="bold" />
+        android:textColor="@android:color/white" />
 
     <!-- Fancy Edit Button -->
     <Button
         android:id="@+id/editListingButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:backgroundTint="@color/teal_700"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_button"
         android:drawableLeft="@drawable/ic_pencil"
         android:drawablePadding="8dp"
         android:elevation="4dp"
         android:gravity="center_vertical"
         android:padding="12dp"
         android:text="Edit this Listing"
-        android:textColor="@android:color/white"
-        android:textStyle="bold" />
+        android:textColor="@android:color/white" />
 
 </LinearLayout>

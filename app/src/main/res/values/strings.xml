@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Pet Universe</string>
-    <string name="title_home">Buy</string>
+    <string name="title_buy">Buy</string>
     <string name="title_seller_view">Sell</string>
     <string name="title_chat">Chat</string>
     <string name="title_accounts">Account</string>
@@ -31,13 +31,6 @@
         <item>Bird</item>
         <item>Other</item>
     </string-array>
-<!--    <string-array name="live_pets_age_filter_spinner_entries">-->
-<!--        <item>All</item>-->
-<!--        <item>Newborn (Less than 1 year)</item>-->
-<!--        <item>Young (1–3 years)</item>-->
-<!--        <item>Adult (3–8 years)</item>-->
-<!--        <item>Senior (More than 8 years)</item>-->
-<!--    </string-array>-->
     <string-array name="live_pets_price_filter_spinner_entries">
         <item>All</item>
         <item>$0 (Free)</item>

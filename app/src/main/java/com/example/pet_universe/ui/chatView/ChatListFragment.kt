@@ -1,12 +1,13 @@
 package com.example.pet_universe.ui.chatView
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.pet_universe.R
 import com.example.pet_universe.database.ChatRepository
 import com.example.pet_universe.database.ListingDatabase
 import com.example.pet_universe.database.ListingRepository
@@ -51,7 +52,14 @@ class ChatListFragment : Fragment() {
         binding.chatRecyclerView.adapter = chatListAdapter
 
         chatViewModel.chatsLiveData.observe(viewLifecycleOwner) { chats ->
-            chatListAdapter.submitList(chats)
+            if (chats.isEmpty()) {
+                binding.chatRecyclerView.visibility = View.GONE
+                binding.emptyStateView.visibility = View.VISIBLE
+            } else {
+                binding.chatRecyclerView.visibility = View.VISIBLE
+                binding.emptyStateView.visibility = View.GONE
+                chatListAdapter.submitList(chats)
+            }
         }
         chatViewModel.getChatsForUser()
     }

@@ -52,6 +52,13 @@
             android:focusable="false" />
 
         <!-- Input Fields -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Title:"
+            android:textSize="17sp" />
+
         <EditText
             android:id="@+id/titleEditText"
             android:layout_width="match_parent"
@@ -63,6 +70,13 @@
             android:padding="12dp"
             android:singleLine="true" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Price:"
+            android:textSize="17sp" />
+
         <EditText
             android:id="@+id/priceEditText"
             android:layout_width="match_parent"
@@ -73,26 +87,31 @@
             android:inputType="number"
             android:padding="12dp" />
 
-<!--        <EditText-->
-<!--            android:id="@+id/livePetsAgeEditText"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginBottom="16dp"-->
-<!--            android:background="@drawable/rounded_edittext"-->
-<!--            android:hint="Age *"-->
-<!--            android:inputType="numberDecimal"-->
-<!--            android:padding="12dp" />-->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Description:"
+            android:textSize="17sp" />
 
         <EditText
             android:id="@+id/descriptionEditText"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="140dp"
             android:layout_marginBottom="16dp"
             android:background="@drawable/rounded_edittext"
             android:gravity="start|top"
             android:hint="Description *"
             android:inputType="textMultiLine"
+            android:overScrollMode="ifContentScrolls"
             android:padding="12dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Meeting Location:"
+            android:textSize="17sp" />
 
         <EditText
             android:id="@+id/meetingLocationEditText"

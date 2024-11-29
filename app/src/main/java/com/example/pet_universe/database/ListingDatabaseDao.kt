@@ -36,6 +36,9 @@ interface ListingDatabaseDao {
     @Query("UPDATE listing_table SET title = :title, price = :price, description = :description, meeting_location = :meetingLocation, category = :category, imageUrl = :imageUrl, type = :type WHERE id = :id")
     suspend fun updateListing(id: Long, title: String, price: Int, description: String, meetingLocation: String, category: String, imageUrl: String, type: String)
 
+    @Query("SELECT * FROM listing_table")
+    fun getAllListings(): Flow<List<Listing>>
+
     suspend fun update(listing: Listing) {
         println("Executing update query: UPDATE listing_table SET title = '${listing.title}', price = ${listing.price}, description = '${listing.description}', meeting_location = '${listing.meetingLocation}', category = '${listing.category}', imageUrls = '${listing.imageUrl}', type = '${listing.type}' WHERE id = ${listing.id}")
         updateListing(listing.id, listing.title, listing.price, listing.description, listing.meetingLocation, listing.category, listing.imageUrl, listing.type)

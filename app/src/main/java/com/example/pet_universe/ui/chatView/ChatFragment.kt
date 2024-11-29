@@ -1,5 +1,6 @@
 package com.example.pet_universe.ui.chatView
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -97,7 +98,7 @@ class ChatFragment : Fragment() {
                 chatViewModel.sendMessage(message)
                 binding.messageEditText.text.clear()
             } else {
-                Toast.makeText(requireContext(), "Cannot send empty message", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), "Cannot send empty message.", Toast.LENGTH_SHORT)
                     .show()
             }
         }
@@ -105,6 +106,35 @@ class ChatFragment : Fragment() {
         // Optionally, disable send button when there's no text
         binding.messageEditText.addTextChangedListener { text ->
             binding.sendButton.isEnabled = !text.isNullOrBlank()
+        }
+
+        setupKeyboardListener()
+    }
+
+    private fun setupKeyboardListener() {
+        val rootView = binding.chatFragment
+        val messageInputLayout = binding.messageInputLayout
+        val recyclerView = binding.messagesRecyclerView
+
+        rootView.viewTreeObserver.addOnGlobalLayoutListener {
+            val rect = Rect()
+            rootView.getWindowVisibleDisplayFrame(rect)
+
+            val screenHeight = rootView.rootView.height
+            val keyboardHeight = screenHeight - rect.bottom
+
+            if (keyboardHeight > screenHeight * 0.15) {
+                // Move the input bar precisely above the keyboard
+                val inputBarHeight = messageInputLayout.height
+                messageInputLayout.translationY = -(keyboardHeight - inputBarHeight).toFloat()
+
+                // Adjust RecyclerView padding for extra space
+                recyclerView.setPadding(0, 0, 0, keyboardHeight - inputBarHeight)
+            } else {
+                // Reset when the keyboard is dismissed
+                messageInputLayout.translationY = 0f
+                recyclerView.setPadding(0, 0, 0, 0)
+            }
         }
     }
 

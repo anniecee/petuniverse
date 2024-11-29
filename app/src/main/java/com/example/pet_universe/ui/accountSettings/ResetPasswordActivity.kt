@@ -42,7 +42,7 @@ class ResetPasswordActivity : AppCompatActivity() {
             if (validateInputs(sPassword)) {
                 auth.sendPasswordResetEmail(sPassword)
                     .addOnSuccessListener {
-                        Toast.makeText(this, "Please check your email", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Please check your email.", Toast.LENGTH_SHORT).show()
                         finish()
                     }
                     .addOnFailureListener {
