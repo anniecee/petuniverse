@@ -12,6 +12,7 @@
 
         <!-- Title Text -->
         <TextView
+            android:id="@+id/sellerAddHeadingTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
@@ -73,25 +74,16 @@
             android:inputType="number"
             android:padding="12dp" />
 
-<!--        <EditText-->
-<!--            android:id="@+id/livePetsAgeEditText"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginBottom="16dp"-->
-<!--            android:background="@drawable/rounded_edittext"-->
-<!--            android:hint="Age *"-->
-<!--            android:inputType="numberDecimal"-->
-<!--            android:padding="12dp" />-->
-
         <EditText
             android:id="@+id/descriptionEditText"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="140dp"
             android:layout_marginBottom="16dp"
             android:background="@drawable/rounded_edittext"
             android:gravity="start|top"
             android:hint="Description *"
             android:inputType="textMultiLine"
+            android:overScrollMode="ifContentScrolls"
             android:padding="12dp" />
 
         <EditText

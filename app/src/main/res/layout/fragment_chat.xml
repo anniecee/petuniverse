@@ -24,12 +24,12 @@
             android:id="@+id/listingTitleTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginStart="8dp"
-            android:textSize="14sp"
+            android:layout_weight="1"
             android:ellipsize="end"
+            android:gravity="end"
             android:maxLines="1"
-            android:gravity="end" />
+            android:textSize="14sp" />
     </LinearLayout>
 
     <!-- Messages List -->
@@ -38,7 +38,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:overScrollMode="never"
         android:scrollbars="vertical" />
 
     <!-- Input Bar -->
@@ -46,24 +45,30 @@
         android:id="@+id/messageInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:orientation="horizontal">
+        android:layout_gravity="bottom"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/rounded_edittext"
+        android:orientation="horizontal"
+        android:padding="8dp">
 
         <EditText
             android:id="@+id/messageEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
+            android:background="@android:color/transparent"
             android:hint="Type a message"
-            android:layout_marginBottom="50dp"/>
+            android:singleLine="true" />
 
         <ImageButton
             android:id="@+id/sendButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_send"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Send"
-            android:layout_marginBottom="50dp"
-            android:background="?attr/selectableItemBackgroundBorderless" />
+            android:src="@drawable/ic_send" />
     </LinearLayout>
 </LinearLayout>

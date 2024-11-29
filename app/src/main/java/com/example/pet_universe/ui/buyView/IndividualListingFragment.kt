@@ -21,7 +21,6 @@ class IndividualListingFragment : Fragment() {
     private var _binding: FragmentIndividualListingBinding? = null
     private val binding get() = _binding!!
     private val listingsViewModel: ListingsViewModel by activityViewModels()
-    //    private val profileViewModel: ProfileViewModel by activityViewModels()
     private val firestore = FirebaseFirestore.getInstance()
 
     override fun onCreateView(
@@ -34,16 +33,6 @@ class IndividualListingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Set up profile icon
-//        profileViewModel.userInitial.observe(viewLifecycleOwner) { initial ->
-//            binding.root.findViewById<TextView>(R.id.profileIcon).text = initial ?: ""
-//        }
-
-        // Navigate to AccountSettingsFragment on profileIcon click
-//        binding.root.findViewById<TextView>(R.id.profileIcon).setOnClickListener {
-//            findNavController().navigate(R.id.action_global_to_accountSettings)
-//        }
 
         val listing = listingsViewModel.selectedListing.value
         if (listing != null) {
@@ -69,7 +58,7 @@ class IndividualListingFragment : Fragment() {
                 binding.startChatButton.setOnClickListener {
                     val chatId = generateChatId(currentUserId, sellerId, listing.id)
                     val action =
-                        IndividualListingFragmentDirections.actionIndividualPetFragmentToChatFragment(
+                        IndividualListingFragmentDirections.actionIndividualListingFragmentToChatFragment(
                             chatId = chatId,
                             receiverId = sellerId,
                             listingId = listing.id

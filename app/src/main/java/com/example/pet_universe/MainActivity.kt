@@ -15,9 +15,6 @@ import com.example.pet_universe.database.UserViewModel
 import com.example.pet_universe.database.UserViewModelFactory
 import com.example.pet_universe.databinding.ActivityMainBinding
 import com.example.pet_universe.ui.accountSettings.SignInActivity
-import com.google.firebase.FirebaseApp
-import com.google.firebase.appcheck.FirebaseAppCheck
-import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
@@ -58,14 +55,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadMainLayout() {
         val navController = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment).navController
-        val appBarConfiguration = AppBarConfiguration(setOf(R.id.navigation_home, R.id.navigation_seller, R.id.navigation_accounts))
+        val appBarConfiguration = AppBarConfiguration(setOf(R.id.navigation_buy, R.id.navigation_seller, R.id.navigation_accounts))
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         // Set up action to ensure BuyFragment is loaded as default
         binding.navView.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.navigation_home -> {
-                    navController.navigate(R.id.navigation_home)
+                R.id.navigation_buy -> {
+                    navController.navigate(R.id.navigation_buy)
                     true
                 }
                 R.id.navigation_seller -> {

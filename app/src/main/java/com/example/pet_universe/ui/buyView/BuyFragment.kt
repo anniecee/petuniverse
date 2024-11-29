@@ -8,12 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.pet_universe.R
-import com.example.pet_universe.databinding.FragmentHomeBinding
+import com.example.pet_universe.databinding.FragmentBuyBinding
 import com.example.pet_universe.ui.profile.ProfileViewModel
 
 class BuyFragment : Fragment() {
 
-    private var _binding: FragmentHomeBinding? = null
+    private var _binding: FragmentBuyBinding? = null
     private val binding get() = _binding!!
     private val buyViewModel: BuyViewModel by activityViewModels()
     private val profileViewModel: ProfileViewModel by activityViewModels()
@@ -22,7 +22,7 @@ class BuyFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentBuyBinding.inflate(inflater, container, false)
 
         setupImageViewListeners()
         return binding.root
@@ -45,22 +45,22 @@ class BuyFragment : Fragment() {
     private fun setupImageViewListeners() {
         binding.livePetsImageView.setOnClickListener {
             buyViewModel.selectedCategory.value = "Live Pets"
-            findNavController().navigate(R.id.action_navigation_home_to_listingsFragment)
+            findNavController().navigate(R.id.action_navigation_buy_to_listingsFragment)
         }
 
         binding.foodImageView.setOnClickListener {
             buyViewModel.selectedCategory.value = "Pet Food"
-            findNavController().navigate(R.id.action_navigation_home_to_listingsFragment)
+            findNavController().navigate(R.id.action_navigation_buy_to_listingsFragment)
         }
 
         binding.accessoriesImageView.setOnClickListener {
             buyViewModel.selectedCategory.value = "Pet Accessories"
-            findNavController().navigate(R.id.action_navigation_home_to_listingsFragment)
+            findNavController().navigate(R.id.action_navigation_buy_to_listingsFragment)
         }
 
         binding.otherImageView.setOnClickListener {
             buyViewModel.selectedCategory.value = "Other"
-            findNavController().navigate(R.id.action_navigation_home_to_listingsFragment)
+            findNavController().navigate(R.id.action_navigation_buy_to_listingsFragment)
         }
     }
 
