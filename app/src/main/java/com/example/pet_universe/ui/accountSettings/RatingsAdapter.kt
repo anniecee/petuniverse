@@ -2,6 +2,7 @@ package com.example.pet_universe.ui.accountSettings
 
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pet_universe.database.Rating
@@ -51,6 +52,14 @@ class RatingsAdapter : RecyclerView.Adapter<RatingsAdapter.RatingViewHolder>() {
             // Fetch and display the name of the user who gave the rating
             val fromUserId = rating.fromUserId
             binding.fromUserTextView.text = "From: Loading..."
+
+            // fetching the review text
+            if (rating.reviewText.isNotEmpty()) {
+                binding.reviewTextView.text = rating.reviewText
+                binding.reviewTextView.visibility = View.VISIBLE
+            } else {
+                binding.reviewTextView.visibility = View.GONE
+            }
 
             if (userNamesCache.containsKey(fromUserId)) {
                 binding.fromUserTextView.text = "From: ${userNamesCache[fromUserId]}"

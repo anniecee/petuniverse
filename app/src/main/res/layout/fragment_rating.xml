@@ -44,6 +44,18 @@
         android:stepSize="1.0"
         android:layout_marginBottom="16dp"/>
 
+    <!-- EditText for entering review -->
+    <EditText
+        android:id="@+id/reviewEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Write your review here..."
+        android:inputType="textMultiLine"
+        android:lines="4"
+        android:maxLines="6"
+        android:gravity="top"
+        android:layout_marginBottom="10dp"/>
+
     <!-- Submit Button -->
     <Button
         android:id="@+id/submitRatingButton"

@@ -30,6 +30,13 @@
         android:layout_marginTop="4dp"/>
 
     <TextView
+        android:id="@+id/reviewTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Review: This is a sample review text."
+        android:layout_marginTop="4dp"/>
+
+    <TextView
         android:id="@+id/timestampTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

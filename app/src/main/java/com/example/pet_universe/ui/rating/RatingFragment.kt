@@ -67,11 +67,13 @@ class RatingFragment : Fragment() {
         // Handle rating submission
         binding.submitRatingButton.setOnClickListener {
             val ratingValue = binding.submitRatingBar.rating.toInt()
+            val reviewText = binding.reviewEditText.text.toString().trim()
             if (ratingValue > 0) {
                 val rating = com.example.pet_universe.database.Rating(
                     fromUserId = currentUserId,
                     toUserId = toUserId,
                     listingId = listingId,
+                    reviewText = reviewText,
                     ratingValue = ratingValue
                 )
                 ratingViewModel.submitRating(rating)
