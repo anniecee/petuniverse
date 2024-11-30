@@ -43,4 +43,7 @@ interface ListingDatabaseDao {
         println("Executing update query: UPDATE listing_table SET title = '${listing.title}', price = ${listing.price}, description = '${listing.description}', meeting_location = '${listing.meetingLocation}', category = '${listing.category}', imageUrls = '${listing.imageUrl}', type = '${listing.type}', isFav = '${listing.isFav}' WHERE id = ${listing.id}")
         updateListing(listing.id, listing.title, listing.price, listing.description, listing.meetingLocation, listing.category, listing.imageUrl, listing.type, listing.isFav)
     }
+
+    @Query ("SELECT * FROM listing_table WHERE is_fav = 1")
+    fun getFavoritesListings(): Flow<List<Listing>>
 }

@@ -19,6 +19,7 @@ import com.example.pet_universe.database.ListingViewModel
 import com.example.pet_universe.database.ListingViewModelFactory
 import com.example.pet_universe.databinding.FragmentIndividualListingBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -36,6 +37,9 @@ class IndividualListingFragment : Fragment() {
     private lateinit var repository: ListingRepository
     private lateinit var viewModelFactory: ListingViewModelFactory
     private lateinit var listingViewModel: ListingViewModel
+
+    private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+    private lateinit var favListRef: CollectionReference
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,7 +61,6 @@ class IndividualListingFragment : Fragment() {
 
         val listing = listingsViewModel.selectedListing.value
         if (listing != null) {
-            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
             val sellerId = listing.sellerId ?: ""
 
             // for starting the chat
@@ -108,53 +111,59 @@ class IndividualListingFragment : Fragment() {
             }
         }
 
-        // Set up favorite button
-        binding.favButton.setBackgroundResource(
-            if (listing!!.isFav) R.drawable.ic_favorite_red else R.drawable.ic_favorite_border
-        )
+        // Set up favorite button if listing is in favorites list
+        favListRef = firestore.collection("users").document(currentUserId).collection("favorites")
+        val docRef = favListRef.document(listing?.id.toString())
+        docRef.get().addOnSuccessListener { document ->
+            if (document.exists()) {
+                binding.favButton.setBackgroundResource(R.drawable.ic_favorite_red)
+            } else {
+                binding.favButton.setBackgroundResource(R.drawable.ic_favorite_border)
+            }
+        }
 
-        // Toggle favorite status when button is clicked
+        // Update favorite list when button is toggled
         binding.favButton.setOnClickListener {
-            // Toggle favorite status
-            listingsViewModel.toggleFavorite(listing)
-            binding.favButton.setBackgroundResource(
-                if (listing.isFav) R.drawable.ic_favorite_red else R.drawable.ic_favorite_border
-            )
-
-            // Update favorite status in Firestore & local database
-            updateFavStatus(listing)
+            if (listing != null) {
+                docRef.get().addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        docRef.delete()
+                        binding.favButton.setBackgroundResource(R.drawable.ic_favorite_border)
+                        listing.isFav = false
+                        listingViewModel.updateListing(listing)
+                    } else {
+                        addToFavList(listing)
+                        binding.favButton.setBackgroundResource(R.drawable.ic_favorite_red)
+                        listing.isFav = true
+                        listingViewModel.updateListing(listing)
+                    }
+                }
+            }
         }
     }
 
-    private fun updateFavStatus(listing: Listing) {
-        // Update listing in Firestore in both global and user-specific collections
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-        val userListingRef = firestore.collection("users").document(userId).collection("listings")
-            .document(listing.id.toString())
-        val globalListingRef = firestore.collection("listings").document(listing.id.toString())
+    private fun addToFavList(listing: Listing) {
+        // Add to favorite list in Firestore
+        val docRef = favListRef.document(listing.id.toString())
 
-        val updatedListing = hashMapOf(
-            "isFav" to listing.isFav
-        ) as Map<String, Any>
+        val favListing = hashMapOf(
+            "id" to listing.id,
+            "title" to listing.title,
+            "description" to listing.description,
+            "type" to listing.type,
+            "price" to listing.price,
+            "meetingLocation" to listing.meetingLocation,
+            "sellerId" to listing.sellerId,
+            "imageUrl" to listing.imageUrl,
+        )
 
-        userListingRef.update(updatedListing)
+        docRef.set(favListing)
             .addOnSuccessListener {
                 println("Listing updated in Firebase")
             }
             .addOnFailureListener { e ->
                 println("Error updating listing in Firebase: $e")
             }
-
-        globalListingRef.update(updatedListing)
-            .addOnSuccessListener {
-                println("Listing updated in global collection")
-            }
-            .addOnFailureListener { e ->
-                println("Error updating listing in global collection: $e")
-            }
-
-        // Update local database
-        listingViewModel.updateListing(listing)
     }
 
     private suspend fun fetchSellerName(sellerId: String): String {

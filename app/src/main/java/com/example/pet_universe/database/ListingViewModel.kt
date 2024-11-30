@@ -173,6 +173,18 @@ class ListingViewModel(private val repository: ListingRepository) : ViewModel() 
         }
     }
 
+    suspend fun getAllListings(): LiveData<List<Listing>> {
+        return withContext(Dispatchers.IO) {
+            repository.getAllListings().asLiveData()
+        }
+    }
+
+    suspend fun getFavoritesListings(): LiveData<List<Listing>> {
+        return withContext(Dispatchers.IO) {
+            repository.getFavoritesListings().asLiveData()
+        }
+    }
+
     suspend fun getListingsBySellerId(userId: Long): LiveData<List<Listing>> {
         return withContext(Dispatchers.IO) {
             repository.getListingsBySellerId(userId).asLiveData()
