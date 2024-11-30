@@ -81,7 +81,8 @@ class IndividualListingFragment : Fragment() {
                 binding.rateSellerTextView.setOnClickListener {
                     val action =
                         IndividualListingFragmentDirections.actionIndividualListingFragmentToRatingFragment(
-                            toUserId = sellerId
+                            toUserId = sellerId,
+                            listingId = listing.id
                         )
                     findNavController().navigate(action)
                 }

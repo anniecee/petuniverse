@@ -13,4 +13,8 @@ interface RatingDao {
 
     @Query("SELECT AVG(ratingValue) FROM rating_table WHERE toUserId = :userId")
     suspend fun getAverageRatingForUser(userId: String): Float?
+
+    @Query("SELECT * FROM rating_table WHERE fromUserId = :fromUserId AND toUserId = :toUserId AND listingId = :listingId LIMIT 1")
+    suspend fun getRating(fromUserId: String, toUserId: String, listingId: Long): Rating?
+
 }

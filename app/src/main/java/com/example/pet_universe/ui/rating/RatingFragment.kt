@@ -5,6 +5,7 @@ import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.example.pet_universe.database.ListingDatabase
 import com.example.pet_universe.database.RatingRepository
@@ -12,6 +13,7 @@ import com.example.pet_universe.databinding.FragmentRatingBinding
 import com.example.pet_universe.ui.rating.RatingViewModel
 import com.example.pet_universe.ui.rating.RatingViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 
 class RatingFragment : Fragment() {
 
@@ -23,6 +25,7 @@ class RatingFragment : Fragment() {
     private val args: RatingFragmentArgs by navArgs()
     private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
     private lateinit var toUserId: String // The user being rated
+    private var listingId: Long = 0L
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentRatingBinding.inflate(inflater, container, false)
@@ -33,6 +36,7 @@ class RatingFragment : Fragment() {
         ratingViewModel = ViewModelProvider(this, factory).get(RatingViewModel::class.java)
 
         toUserId = args.toUserId
+        listingId = args.listingId
 
         return binding.root
     }
@@ -45,6 +49,21 @@ class RatingFragment : Fragment() {
         }
         ratingViewModel.fetchAverageRating(toUserId)
 
+
+        lifecycleScope.launch {
+            val hasRated = ratingViewModel.hasUserRatedListing(currentUserId, toUserId, listingId)
+            if (hasRated) {
+                // User has already rated
+                binding.submitRatingBar.visibility = View.GONE
+                binding.submitRatingButton.visibility = View.GONE
+                binding.submitRatingLabel.text = "You have already rated this listing."
+            } else {
+                // User has not rated yet
+                binding.submitRatingBar.visibility = View.VISIBLE
+                binding.submitRatingButton.visibility = View.VISIBLE
+            }
+        }
+
         // Handle rating submission
         binding.submitRatingButton.setOnClickListener {
             val ratingValue = binding.submitRatingBar.rating.toInt()
@@ -52,6 +71,7 @@ class RatingFragment : Fragment() {
                 val rating = com.example.pet_universe.database.Rating(
                     fromUserId = currentUserId,
                     toUserId = toUserId,
+                    listingId = listingId,
                     ratingValue = ratingValue
                 )
                 ratingViewModel.submitRating(rating)

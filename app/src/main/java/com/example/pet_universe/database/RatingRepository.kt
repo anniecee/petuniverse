@@ -14,4 +14,8 @@ class RatingRepository(private val ratingDao: RatingDao) {
     suspend fun getAverageRatingForUser(userId: String): Float? {
         return ratingDao.getAverageRatingForUser(userId)
     }
+
+    suspend fun getRating(fromUserId: String, toUserId: String, listingId: Long): Rating? {
+        return ratingDao.getRating(fromUserId, toUserId, listingId)
+    }
 }

@@ -13,6 +13,7 @@ data class Rating(
     var fromUserId: String = "",
     var toUserId: String = "",
     var ratingValue: Int = 0, // Rating from 1 to 5
+    var listingId: Long = 0L,
     var timestamp: Date = Date()
 ) {
     // Convert to Map for Firebase
@@ -21,6 +22,7 @@ data class Rating(
         "fromUserId" to fromUserId,
         "toUserId" to toUserId,
         "ratingValue" to ratingValue,
+        "listingId" to listingId,
         "timestamp" to com.google.firebase.Timestamp(timestamp)
     )
 }

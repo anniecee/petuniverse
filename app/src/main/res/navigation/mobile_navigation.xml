@@ -53,6 +53,9 @@
             <argument
                 android:name="toUserId"
                 app:argType="string" />
+            <argument
+                android:name="listingId"
+                app:argType="long" />
         </action>
     </fragment>
 
@@ -64,6 +67,9 @@
         <argument
             android:name="toUserId"
             app:argType="string" />
+        <argument
+            android:name="listingId"
+            app:argType="long" />
     </fragment>
 
     <fragment
