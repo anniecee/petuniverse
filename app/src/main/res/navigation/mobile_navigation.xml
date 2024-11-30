@@ -88,6 +88,10 @@
         android:id="@+id/action_global_to_accountSettings"
         app:destination="@id/navigation_accounts" />
 
+    <action
+        android:id="@+id/action_navigation_accounts_to_myRatingsFragment"
+        app:destination="@id/myRatingsFragment" />
+
     <fragment
         android:id="@+id/chatListFragment"
         android:name="com.example.pet_universe.ui.chatView.ChatListFragment"
@@ -124,5 +128,11 @@
             android:name="listingId"
             app:argType="long" />
     </fragment>
+
+    <fragment
+        android:id="@+id/myRatingsFragment"
+        android:name="com.example.pet_universe.ui.accountSettings.MyRatingsFragment"
+        android:label="My Ratings"
+        tools:layout="@layout/fragment_my_ratings" />
 
 </navigation>

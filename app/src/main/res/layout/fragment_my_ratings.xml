@@ -1,0 +1,35 @@
+<!-- fragment_my_ratings.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_height="match_parent">
+
+    <!-- Average Rating Display -->
+    <TextView
+        android:id="@+id/averageRatingTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Average Rating: 0.0"
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp"/>
+
+    <RatingBar
+        android:id="@+id/averageRatingBar"
+        style="?android:attr/ratingBarStyleIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:isIndicator="true"
+        android:numStars="5"
+        android:stepSize="0.5"
+        android:rating="0.0"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Ratings List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ratingsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+</LinearLayout>

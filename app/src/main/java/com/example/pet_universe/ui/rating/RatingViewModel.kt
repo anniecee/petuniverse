@@ -37,6 +37,38 @@ class RatingViewModel(private val ratingRepository: RatingRepository) : ViewMode
 //        }
 //    }
 
+    // Function to get ratings as LiveData
+    fun getRatingsForUser(userId: String): LiveData<List<Rating>> {
+        return ratingRepository.getRatingsForUser(userId).asLiveData()
+    }
+
+    // Function to fetch ratings from Firebase and store them in local database
+    fun fetchRatingsForUser(userId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            // Fetch ratings from Firebase
+            val ratingsSnapshot = firestore.collection("ratings")
+                .whereEqualTo("toUserId", userId)
+                .get()
+                .await()
+
+            val ratings = ratingsSnapshot.documents.mapNotNull { doc ->
+                val rating = doc.toObject(Rating::class.java)
+                rating?.copy(id = doc.id)
+            }
+
+            // Save ratings to local database
+            ratings.forEach { rating ->
+                ratingRepository.insert(rating)
+            }
+
+            // Calculate average rating
+            val averageRating = ratingRepository.getAverageRatingForUser(userId) ?: 0f
+
+            _averageRating.postValue(averageRating)
+        }
+    }
+
+    //function to submit the rating if the rating has not already been submitted to the same listing by the user
     fun submitRating(rating: Rating) {
         viewModelScope.launch(Dispatchers.IO) {
             // Check if rating already exists

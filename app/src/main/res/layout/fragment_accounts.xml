@@ -68,6 +68,23 @@
             android:layout_marginBottom="16dp"
             android:background="#CCCCCC" />
 
+        <!-- Password Section -->
+        <TextView
+            android:id="@+id/ratingTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="My Rating"
+            android:textSize="18sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="16dp"
+            android:background="#CCCCCC" />
+
         <!-- Sign Out Button -->
         <TextView
             android:id="@+id/signInOutButton"
