@@ -41,9 +41,10 @@ class ChangePasswordActivity : AppCompatActivity() {
 
     // Views
     private lateinit var userNameTV: TextView
-    private lateinit var emailET: EditText
+    //private lateinit var emailET: EditText
     private lateinit var oldPasswordET: EditText
     private lateinit var passwordET: EditText
+    private lateinit var confirmPasswordET: EditText
     private lateinit var saveButton: Button
     private lateinit var cancelButton: Button
 
@@ -63,9 +64,10 @@ class ChangePasswordActivity : AppCompatActivity() {
 
         // Initialize views
         userNameTV = findViewById(R.id.userNameTextView)
-        emailET = findViewById(R.id.emailEditText)
+        //emailET = findViewById(R.id.emailEditText)
         oldPasswordET = findViewById(R.id.oldPasswordEditText)
         passwordET = findViewById(R.id.passwordEditText)
+        confirmPasswordET = findViewById(R.id.confirmPasswordEditText)
         saveButton = findViewById(R.id.saveButton)
         cancelButton = findViewById(R.id.cancelButton)
 
@@ -90,15 +92,15 @@ class ChangePasswordActivity : AppCompatActivity() {
         }
 
         // Get user data from Firestore
-        firestore.collection("users").document(currentUserId).get()
-            .addOnSuccessListener { document ->
-                val email = document.getString("email") ?: ""
-                emailET.setText(email)
-                emailET.isEnabled = false // Don't allow user to change email
-            }
-            .addOnFailureListener {
-                // Handle failure
-            }
+//        firestore.collection("users").document(currentUserId).get()
+//            .addOnSuccessListener { document ->
+//                val email = document.getString("email") ?: ""
+//                emailET.setText(email)
+//                emailET.isEnabled = false // Don't allow user to change email
+//            }
+//            .addOnFailureListener {
+//                // Handle failure
+//            }
 
         // Get user profile from Room database
         lifecycleScope.launch {
@@ -111,9 +113,10 @@ class ChangePasswordActivity : AppCompatActivity() {
         saveButton.setOnClickListener {
             val oldPassword = oldPasswordET.text.toString()
             val newPassword = passwordET.text.toString()
+            val confirmNewPassword = confirmPasswordET.text.toString()
 
             // Check if old and new password fields are filled
-            if (oldPassword.isEmpty() || newPassword.isEmpty()) {
+            if (oldPassword.isEmpty() || newPassword.isEmpty() || confirmNewPassword.isEmpty()) {
                 Toast.makeText(
                     applicationContext,
                     "Please fill in all required fields.",
@@ -132,6 +135,14 @@ class ChangePasswordActivity : AppCompatActivity() {
                 return@setOnClickListener  // Prevent further action if new password is too short
             }
 
+            if (confirmNewPassword != newPassword) {
+                Toast.makeText(
+                    applicationContext,
+                    "Password does not match.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener  // Prevent further action if entering password twice fails.
+            }
             // If everything is valid, attempt to change the password
             savePassword(oldPassword, newPassword)
         }

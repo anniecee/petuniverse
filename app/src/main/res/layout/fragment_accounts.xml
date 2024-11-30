@@ -42,7 +42,7 @@
             android:layout_marginBottom="8dp"
             android:clickable="true"
             android:focusable="true"
-            android:text="Personal and Account Info"
+            android:text="Personal Info"
             android:textSize="18sp" />
 
         <View
@@ -59,7 +59,7 @@
             android:layout_marginBottom="8dp"
             android:clickable="true"
             android:focusable="true"
-            android:text="Password and Security"
+            android:text="Password"
             android:textSize="18sp" />
 
         <View
