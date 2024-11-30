@@ -115,16 +115,14 @@ class IndividualListingFragment : Fragment() {
 
         // Toggle favorite status when button is clicked
         binding.favButton.setOnClickListener {
-            if (listing != null) {
-                // Toggle favorite status
-                listingsViewModel.toggleFavorite(listing)
-                binding.favButton.setBackgroundResource(
-                    if (listing.isFav) R.drawable.ic_favorite_red else R.drawable.ic_favorite_border
-                )
+            // Toggle favorite status
+            listingsViewModel.toggleFavorite(listing)
+            binding.favButton.setBackgroundResource(
+                if (listing.isFav) R.drawable.ic_favorite_red else R.drawable.ic_favorite_border
+            )
 
-                // Update favorite status in Firestore & local database
-                updateFavStatus(listing)
-            }
+            // Update favorite status in Firestore & local database
+            updateFavStatus(listing)
         }
     }
 
