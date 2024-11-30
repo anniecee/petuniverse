@@ -57,11 +57,6 @@ class ChatViewModel(
                     val listing =
                         fetchListingFromFirebase(chat.listingId) ?: getListingById(chat.listingId)
 
-                    // If we got the listing from Firebase, save it locally
-                    if (listing != null) {
-                        listingRepository.insert(listing)
-                    }
-
                     chat.copy(
                         otherUserName = otherUserName,
                         listingTitle = listing?.title ?: "Unknown Listing",
