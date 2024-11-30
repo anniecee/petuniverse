@@ -42,6 +42,15 @@
                 android:contentDescription="Image"
                 android:scaleType="centerCrop"
                 android:src="@drawable/image_placeholder" />
+
+            <Button
+                android:id="@+id/favButton"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/ic_favorite_red"
+                android:layout_gravity="right|top"
+                android:layout_marginEnd="8dp"/>
+
         </androidx.cardview.widget.CardView>
 
         <TextView

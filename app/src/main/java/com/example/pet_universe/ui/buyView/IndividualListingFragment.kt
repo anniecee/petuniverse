@@ -6,10 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.example.pet_universe.R
+import com.example.pet_universe.database.Listing
+import com.example.pet_universe.database.ListingDatabase
+import com.example.pet_universe.database.ListingDatabaseDao
+import com.example.pet_universe.database.ListingRepository
+import com.example.pet_universe.database.ListingViewModel
+import com.example.pet_universe.database.ListingViewModelFactory
 import com.example.pet_universe.databinding.FragmentIndividualListingBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -23,6 +30,13 @@ class IndividualListingFragment : Fragment() {
     private val listingsViewModel: ListingsViewModel by activityViewModels()
     private val firestore = FirebaseFirestore.getInstance()
 
+    // Room database
+    private lateinit var database: ListingDatabase
+    private lateinit var listingDao: ListingDatabaseDao
+    private lateinit var repository: ListingRepository
+    private lateinit var viewModelFactory: ListingViewModelFactory
+    private lateinit var listingViewModel: ListingViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,6 +47,13 @@ class IndividualListingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Set up Room database
+        database = ListingDatabase.getInstance(requireContext())
+        listingDao = database.listingDao
+        repository = ListingRepository(listingDao)
+        viewModelFactory = ListingViewModelFactory(repository)
+        listingViewModel = ViewModelProvider(this, viewModelFactory).get(ListingViewModel::class.java)
 
         val listing = listingsViewModel.selectedListing.value
         if (listing != null) {
@@ -86,6 +107,56 @@ class IndividualListingFragment : Fragment() {
                 }
             }
         }
+
+        // Set up favorite button
+        binding.favButton.setBackgroundResource(
+            if (listing!!.isFav) R.drawable.ic_favorite_red else R.drawable.ic_favorite_border
+        )
+
+        // Toggle favorite status when button is clicked
+        binding.favButton.setOnClickListener {
+            if (listing != null) {
+                // Toggle favorite status
+                listingsViewModel.toggleFavorite(listing)
+                binding.favButton.setBackgroundResource(
+                    if (listing.isFav) R.drawable.ic_favorite_red else R.drawable.ic_favorite_border
+                )
+
+                // Update favorite status in Firestore & local database
+                updateFavStatus(listing)
+            }
+        }
+    }
+
+    private fun updateFavStatus(listing: Listing) {
+        // Update listing in Firestore in both global and user-specific collections
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+        val userListingRef = firestore.collection("users").document(userId).collection("listings")
+            .document(listing.id.toString())
+        val globalListingRef = firestore.collection("listings").document(listing.id.toString())
+
+        val updatedListing = hashMapOf(
+            "isFav" to listing.isFav
+        ) as Map<String, Any>
+
+        userListingRef.update(updatedListing)
+            .addOnSuccessListener {
+                println("Listing updated in Firebase")
+            }
+            .addOnFailureListener { e ->
+                println("Error updating listing in Firebase: $e")
+            }
+
+        globalListingRef.update(updatedListing)
+            .addOnSuccessListener {
+                println("Listing updated in global collection")
+            }
+            .addOnFailureListener { e ->
+                println("Error updating listing in global collection: $e")
+            }
+
+        // Update local database
+        listingViewModel.updateListing(listing)
     }
 
     private suspend fun fetchSellerName(sellerId: String): String {

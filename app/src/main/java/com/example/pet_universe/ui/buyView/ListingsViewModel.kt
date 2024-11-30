@@ -190,4 +190,18 @@ class ListingsViewModel(application: Application) : AndroidViewModel(application
 
         _filteredListings.value = filteredList
     }
+
+    fun toggleFavorite(listing: Listing) {
+        if (listing.isFav) {
+            // Remove from favorites
+            listing.isFav = false
+        } else {
+            // Add to favorites
+            listing.isFav = true
+        }
+    }
+
+    fun updateListing(listing: Listing) {
+
+    }
 }

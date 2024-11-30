@@ -155,7 +155,8 @@ class AddListingActivity : AppCompatActivity() {
             category = categorySpinner.selectedItem.toString(),
             type = typeSpinner.selectedItem.toString(),
             meetingLocation = locationEditText.text.toString(),
-            sellerId = auth.currentUser?.uid
+            sellerId = auth.currentUser?.uid,
+            isFav = false
         )
 
         val success = saveListingToFirestore(listing, imageByteArray)
@@ -217,7 +218,8 @@ class AddListingActivity : AppCompatActivity() {
             "type" to listing.type,
             "meetingLocation" to listing.meetingLocation,
             "sellerId" to listing.sellerId,
-            "imageUrl" to imageUrl
+            "imageUrl" to imageUrl,
+            "isFav" to listing.isFav
         )
         return firestoreRef.set(listingMap)
     }
