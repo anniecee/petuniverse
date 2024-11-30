@@ -52,7 +52,16 @@ class ChatViewModel(
                     val otherUserId =
                         if (chat.userId1 == currentUserId) chat.userId2 else chat.userId1
                     val otherUserName = fetchUserName(otherUserId)
-                    val listing = getListingById(chat.listingId)
+//                    val listing = getListingById(chat.listingId)
+                    // Try Firebase first, then fall back to local
+                    val listing =
+                        fetchListingFromFirebase(chat.listingId) ?: getListingById(chat.listingId)
+
+                    // If we got the listing from Firebase, save it locally
+                    if (listing != null) {
+                        listingRepository.insert(listing)
+                    }
+
                     chat.copy(
                         otherUserName = otherUserName,
                         listingTitle = listing?.title ?: "Unknown Listing",
@@ -60,6 +69,29 @@ class ChatViewModel(
                     )
                 }
                 _chatsLiveData.postValue(chatsWithUsernames)
+            }
+        }
+    }
+
+    private suspend fun fetchListingFromFirebase(listingId: Long): Listing? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val doc =
+                    firestore.collection("listings").document(listingId.toString()).get().await()
+                if (doc.exists()) {
+                    println("DEBUG: Found listing in Firebase: ${doc.getString("title")}")
+                    Listing(
+                        id = listingId,
+                        title = doc.getString("title") ?: "Unknown Listing",
+                        imageUrl = doc.getString("imageUrl") ?: "",
+                    )
+                } else {
+                    println("DEBUG: Listing not found in Firebase: $listingId")
+                    null
+                }
+            } catch (e: Exception) {
+                println("DEBUG: Error fetching listing from Firebase: $e")
+                null
             }
         }
     }
@@ -173,6 +205,7 @@ class ChatViewModel(
                     if (chat != null) {
                         viewModelScope.launch {
                             chatRepository.insert(chat)
+                            println("user2 chat: $chat")
                         }
                     }
                 }
@@ -192,6 +225,7 @@ class ChatViewModel(
                     if (chat != null) {
                         viewModelScope.launch {
                             chatRepository.insert(chat)
+                            println("user1 chat: $chat")
                         }
                     }
                 }
