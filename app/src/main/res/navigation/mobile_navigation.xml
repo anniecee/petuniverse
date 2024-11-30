@@ -10,20 +10,36 @@
         android:name="com.example.pet_universe.ui.buyView.BuyFragment"
         android:label="@string/title_buy"
         tools:layout="@layout/fragment_buy">
-    <action
+        <action
         android:id="@+id/action_navigation_buy_to_listingsFragment"
         app:destination="@id/listingsFragment" />
-        </fragment>
+    </fragment>
 
-        <fragment
-        android:id="@+id/listingsFragment"
-        android:name="com.example.pet_universe.ui.buyView.ListingsFragment"
-        android:label="Listings"
-        tools:layout="@layout/fragment_listings" >
-            <action
-                android:id="@+id/action_listingsFragment_to_individualListingFragment"
-                app:destination="@id/individualListFragment" />
-        </fragment>
+    <fragment
+    android:id="@+id/listingsFragment"
+    android:name="com.example.pet_universe.ui.buyView.ListingsFragment"
+    android:label="Listings"
+    tools:layout="@layout/fragment_listings" >
+        <action
+            android:id="@+id/action_listingsFragment_to_individualListingFragment"
+            app:destination="@id/individualListFragment" />
+        <action
+            android:id="@+id/action_listingsFragment_to_favoritesFragment"
+            app:destination="@id/favoritesFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.example.pet_universe.ui.buyView.FavoritesFragment"
+        android:label="Favorites"
+        tools:layout="@layout/fragment_favorites" >
+        <action
+            android:id="@+id/action_favoritesFragment_to_listingFragment"
+            app:destination="@id/listingsFragment" />
+        <action
+            android:id="@+id/action_favoritesFragment_to_individualListingFragment"
+            app:destination="@id/individualListFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/individualListFragment"
