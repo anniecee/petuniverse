@@ -1,4 +1,4 @@
-package com.example.pet_universe.ui.chat
+package com.example.pet_universe.ui.chatView
 
 import androidx.lifecycle.*
 import com.example.pet_universe.database.Chat

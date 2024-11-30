@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import coil.load
 import com.example.pet_universe.R
 import com.example.pet_universe.database.ListingDatabase
+import com.example.pet_universe.database.MessageRepository
 import com.example.pet_universe.database.RatingRepository
 import com.example.pet_universe.databinding.FragmentIndividualListingBinding
 import com.example.pet_universe.ui.rating.RatingViewModel
@@ -29,6 +30,7 @@ class IndividualListingFragment : Fragment() {
     private val firestore = FirebaseFirestore.getInstance()
 
     private lateinit var ratingViewModel: RatingViewModel
+    private lateinit var individualListingViewModel: IndividualListingViewModel
     private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
 
@@ -42,6 +44,12 @@ class IndividualListingFragment : Fragment() {
         val ratingRepository = RatingRepository(database.ratingDao)
         val factory = RatingViewModelFactory(ratingRepository)
         ratingViewModel = ViewModelProvider(this, factory).get(RatingViewModel::class.java)
+
+        //This will be used to check if to show the give rating feature to the user or not
+        // meaning check to see if their is an interaction that happened between user or seller
+        val messageRepository = MessageRepository(database.messageDao)
+        val individualListingFactory = IndividualListingViewModelFactory(messageRepository)
+        individualListingViewModel = ViewModelProvider(this, individualListingFactory).get(IndividualListingViewModel::class.java)
 
         return binding.root
     }
@@ -64,6 +72,7 @@ class IndividualListingFragment : Fragment() {
                 binding.listingSellerImageView.visibility = View.GONE
                 binding.listingSellerTextView.visibility = View.GONE
                 binding.startChatButton.visibility = View.GONE
+
                 binding.editListingButton.setOnClickListener {
                     findNavController().navigate(R.id.navigation_seller)
                 }
@@ -75,6 +84,19 @@ class IndividualListingFragment : Fragment() {
                     //for making the rating visible in the individual listing fragment
                     val averageRating = ratingViewModel.getAverageRating(sellerId)
                     binding.sellerRatingBar.rating = averageRating
+                }
+
+                val chatId = generateChatId(currentUserId, sellerId, listing.id)
+
+                // Fetch message counts to determine if "Rate Seller" should be shown
+                individualListingViewModel.fetchMessageCounts(chatId, sellerId)
+                // Observe the canRateSeller LiveData
+                individualListingViewModel.canRateSeller.observe(viewLifecycleOwner) { canRate ->
+                    if (canRate) {
+                        binding.rateSellerTextView.visibility = View.VISIBLE
+                    } else {
+                        binding.rateSellerTextView.visibility = View.GONE
+                    }
                 }
 
                 // Navigate to RatingFragment when clicking "Rate Seller"
@@ -89,7 +111,7 @@ class IndividualListingFragment : Fragment() {
 
                 binding.editListingButton.visibility = View.GONE
                 binding.startChatButton.setOnClickListener {
-                    val chatId = generateChatId(currentUserId, sellerId, listing.id)
+                  //  val chatId = generateChatId(currentUserId, sellerId, listing.id)
                     val action =
                         IndividualListingFragmentDirections.actionIndividualListingFragmentToChatFragment(
                             chatId = chatId,
