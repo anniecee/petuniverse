@@ -10,7 +10,6 @@ import com.example.pet_universe.database.MessageRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -35,14 +34,27 @@ class ChatViewModel(
         syncChatsFromFirebase()
     }
 
+    fun updateFCMToken(token: String) {
+        viewModelScope.launch {
+            // Store token in Firestore
+            firestore.collection("users").document(currentUserId)
+                .update("fcmToken", token)
+                .addOnFailureListener { e ->
+                    println("Error updating FCM token: $e")
+                }
+        }
+    }
+
     fun getChatsForUser() {
         viewModelScope.launch {
             chatRepository.getChatsForUser(currentUserId).collect { chats ->
                 val chatsWithUsernames = chats.map { chat ->
-                    val otherUserId = if (chat.userId1 == currentUserId) chat.userId2 else chat.userId1
+                    val otherUserId =
+                        if (chat.userId1 == currentUserId) chat.userId2 else chat.userId1
                     val otherUserName = fetchUserName(otherUserId)
                     val listing = getListingById(chat.listingId)
-                    chat.copy(otherUserName = otherUserName,
+                    chat.copy(
+                        otherUserName = otherUserName,
                         listingTitle = listing?.title ?: "Unknown Listing",
                         listingImageUrl = listing?.imageUrl ?: ""
                     )
@@ -79,7 +91,7 @@ class ChatViewModel(
             val messageWithId = message.copy(id = messageId)
 
             // Insert into local database
-           // messageRepository.insert(messageWithId)
+            // messageRepository.insert(messageWithId)
 
             // Sync message to Firebase
             messageRef.set(messageWithId.toMap())
@@ -105,8 +117,37 @@ class ChatViewModel(
             chat.lastTimestamp = message.timestamp
             chatRepository.insert(chat)
             // Sync to Firebase
-           // syncMessageToFirebase(message)
+            // syncMessageToFirebase(message)
             syncChatToFirebase(chat)
+
+            // Get receiver's FCM token and sender's name
+            val receiverDoc = firestore.collection("users")
+                .document(message.receiverId)
+                .get()
+                .await()
+
+            // Get sender's name (current user)
+            val senderDoc = firestore.collection("users")
+                .document(currentUserId)
+                .get()
+                .await()
+
+            val senderName = senderDoc.getString("firstName") ?: "Unknown"
+            val receiverToken = receiverDoc.getString("fcmToken")
+
+            if (receiverToken != null) {
+                // Send notification through Firebase Cloud Functions
+                firestore.collection("notifications").add(
+                    mapOf(
+                        "token" to receiverToken,
+                        "title" to "$senderName",
+                        "body" to message.content,
+                        "type" to "chat",
+                        "chatId" to message.chatId,
+                        "senderId" to message.senderId
+                    )
+                )
+            }
         }
     }
 
