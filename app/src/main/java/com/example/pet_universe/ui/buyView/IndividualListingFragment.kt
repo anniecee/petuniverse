@@ -50,7 +50,7 @@ class IndividualListingFragment : Fragment() {
                 }
             } else {
                 lifecycleScope.launch {
-                    val sellerName = fetchSellerName(sellerId)
+                    val sellerName = fetchSellerName(sellerId) ?: "Seller"
                     binding.listingSellerTextView.text = "$sellerName"
                 }
 

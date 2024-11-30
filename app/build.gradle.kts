@@ -52,17 +52,22 @@ dependencies {
     implementation(libs.firebase.appcheck.debug)
     implementation("com.google.firebase:firebase-messaging-ktx")
     implementation(libs.firebase.appcheck.playintegrity)
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage")
 
     // Room components
     val room_version = "2.6.0"
     implementation("androidx.room:room-ktx:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
-    
+    implementation(libs.androidx.room.common)
+
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.1")
-    
+
     // AndroidX and Lifecycle
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -72,12 +77,13 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2") // For lifecycleScope support
+
     // Image loading
     implementation("io.coil-kt:coil:2.4.0")
     implementation("com.github.bumptech.glide:glide:4.15.1")
     kapt("com.github.bumptech.glide:compiler:4.15.1")
-    
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
