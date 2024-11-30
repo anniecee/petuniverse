@@ -34,5 +34,7 @@ data class User (
     var sellListingIdList: List<Long> = listOf(),
 
     @ColumnInfo(name = "fav_listing_id_list")
-    var favListingIdList: List<Long> = listOf()
+    var favListingIdList: List<Long> = listOf(),
+
+    var averageRating: Float = 0f
 )

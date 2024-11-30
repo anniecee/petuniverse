@@ -6,11 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.example.pet_universe.R
+import com.example.pet_universe.database.ListingDatabase
+import com.example.pet_universe.database.RatingRepository
 import com.example.pet_universe.databinding.FragmentIndividualListingBinding
+import com.example.pet_universe.ui.rating.RatingViewModel
+import com.example.pet_universe.ui.rating.RatingViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
@@ -23,11 +28,21 @@ class IndividualListingFragment : Fragment() {
     private val listingsViewModel: ListingsViewModel by activityViewModels()
     private val firestore = FirebaseFirestore.getInstance()
 
+    private lateinit var ratingViewModel: RatingViewModel
+    private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentIndividualListingBinding.inflate(inflater, container, false)
+
+        val database = ListingDatabase.getInstance(requireContext())
+        val ratingRepository = RatingRepository(database.ratingDao)
+        val factory = RatingViewModelFactory(ratingRepository)
+        ratingViewModel = ViewModelProvider(this, factory).get(RatingViewModel::class.java)
+
         return binding.root
     }
 
@@ -36,11 +51,15 @@ class IndividualListingFragment : Fragment() {
 
         val listing = listingsViewModel.selectedListing.value
         if (listing != null) {
-            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+         //   val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
             val sellerId = listing.sellerId ?: ""
 
             // for starting the chat
             if (sellerId == currentUserId) {
+                //rating
+                binding.sellerRatingBar.visibility = View.GONE
+                binding.rateSellerTextView.visibility = View.GONE
+
                 binding.listingSoldByTextView.visibility = View.GONE
                 binding.listingSellerImageView.visibility = View.GONE
                 binding.listingSellerTextView.visibility = View.GONE
@@ -52,6 +71,19 @@ class IndividualListingFragment : Fragment() {
                 lifecycleScope.launch {
                     val sellerName = fetchSellerName(sellerId)
                     binding.listingSellerTextView.text = "$sellerName"
+
+                    //for making the rating visible in the individual listing fragment
+                    val averageRating = ratingViewModel.getAverageRating(sellerId)
+                    binding.sellerRatingBar.rating = averageRating
+                }
+
+                // Navigate to RatingFragment when clicking "Rate Seller"
+                binding.rateSellerTextView.setOnClickListener {
+                    val action =
+                        IndividualListingFragmentDirections.actionIndividualListingFragmentToRatingFragment(
+                            toUserId = sellerId
+                        )
+                    findNavController().navigate(action)
                 }
 
                 binding.editListingButton.visibility = View.GONE

@@ -46,6 +46,24 @@
                 android:name="listingId"
                 app:argType="long" />
         </action>
+
+        <action
+            android:id="@+id/action_individualListingFragment_to_ratingFragment"
+            app:destination="@id/ratingFragment">
+            <argument
+                android:name="toUserId"
+                app:argType="string" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/ratingFragment"
+        android:name="com.example.pet_universe.ui.rating.RatingFragment"
+        android:label="Rate Seller"
+        tools:layout="@layout/fragment_rating">
+        <argument
+            android:name="toUserId"
+            app:argType="string" />
     </fragment>
 
     <fragment
