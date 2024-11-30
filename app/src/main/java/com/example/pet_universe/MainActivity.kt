@@ -16,6 +16,11 @@ import com.example.pet_universe.database.UserViewModelFactory
 import com.example.pet_universe.databinding.ActivityMainBinding
 import com.example.pet_universe.ui.accountSettings.SignInActivity
 import com.google.firebase.auth.FirebaseAuth
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,6 +33,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var repository: UserRepository
     private lateinit var viewModelFactory: UserViewModelFactory
     private lateinit var userViewModel: UserViewModel
+
+    companion object {
+        private const val NOTIFICATION_PERMISSION_CODE = 1001
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +57,9 @@ class MainActivity : AppCompatActivity() {
         if (auth.currentUser != null) {
             // User is signed in, proceed with loading the main content
             loadMainLayout()
+
+            // Request notification permission for Android 13+
+            requestNotificationPermission()
         } else {
             navigateToSignIn()
         }
@@ -86,6 +98,22 @@ class MainActivity : AppCompatActivity() {
         // Navigate the user to the sign-in screen
         startActivity(Intent(this, SignInActivity::class.java))
         finish()  // Optional: Close MainActivity if transitioning to sign-in
+    }
+
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    NOTIFICATION_PERMISSION_CODE
+                )
+            }
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
