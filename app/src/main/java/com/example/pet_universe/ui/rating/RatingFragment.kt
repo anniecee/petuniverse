@@ -56,6 +56,8 @@ class RatingFragment : Fragment() {
                 // User has already rated
                 binding.submitRatingBar.visibility = View.GONE
                 binding.submitRatingButton.visibility = View.GONE
+                binding.reviewEditText.visibility = View.GONE
+                binding.reviewWarningText.visibility = View.GONE
                 binding.submitRatingLabel.text = "You have already rated this listing."
             } else {
                 // User has not rated yet
@@ -81,7 +83,7 @@ class RatingFragment : Fragment() {
                 // Optionally, navigate back or close the fragment
                 requireActivity().onBackPressed()
             } else {
-                Toast.makeText(requireContext(), "Please select a rating", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Please select a rating.", Toast.LENGTH_SHORT).show()
             }
         }
     }

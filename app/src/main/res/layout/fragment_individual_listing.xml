@@ -3,150 +3,158 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingHorizontal="16dp"
-    android:paddingTop="16dp">
+    android:paddingHorizontal="16dp">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp">
-
-            <TextView
-                android:id="@+id/listingNameTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="Name"
-                android:textAlignment="center"
-                android:textSize="24sp" />
-        </RelativeLayout>
-
-        <!-- Image Section with Rounded Corners -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp">
-
-            <ImageView
-                android:id="@+id/listingImageView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="Image"
-                android:scaleType="centerCrop"
-                android:src="@drawable/image_placeholder" />
-
-            <Button
-                android:id="@+id/favButton"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/ic_favorite_red"
-                android:layout_gravity="right|top"
-                android:layout_marginEnd="8dp"/>
-
-        </androidx.cardview.widget.CardView>
-
-        <TextView
-            android:id="@+id/listingTypeTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Type" />
-
-        <TextView
-            android:id="@+id/listingPriceTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Price" />
-
-        <TextView
-            android:id="@+id/locationTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Location" />
-
-        <TextView
-            android:id="@+id/listingDescriptionTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Description" />
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="10dp"
-            android:orientation="horizontal">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingTop="16dp">
 
-            <TextView
-                android:id="@+id/listingSoldByTextView"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingEnd="5dp"
-                android:text="Sold by:" />
+                android:paddingBottom="16dp">
 
+                <TextView
+                    android:id="@+id/listingNameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Name"
+                    android:textAlignment="center"
+                    android:textSize="24sp" />
+            </RelativeLayout>
+
+            <!-- Image Section with Rounded Corners -->
             <androidx.cardview.widget.CardView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginBottom="16dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp">
 
                 <ImageView
-                    android:id="@+id/listingSellerImageView"
+                    android:id="@+id/listingImageView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:contentDescription="Seller Profile Image"
+                    android:contentDescription="Image"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_account_circle" />
+                    android:src="@drawable/image_placeholder" />
+
+                <ImageButton
+                    android:id="@+id/favButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="right|top"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:adjustViewBounds="true"
+                    android:background="@null"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_favorite_border" />
             </androidx.cardview.widget.CardView>
 
             <TextView
-                android:id="@+id/listingSellerTextView"
+                android:id="@+id/listingTypeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:paddingStart="5dp"
-                android:text="Seller" />
+                android:text="Type" />
+
+            <TextView
+                android:id="@+id/listingPriceTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Price" />
+
+            <TextView
+                android:id="@+id/locationTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Location" />
+
+            <TextView
+                android:id="@+id/listingDescriptionTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Description" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/listingSoldByTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingEnd="5dp"
+                    android:text="Sold by:" />
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:id="@+id/listingSellerImageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="Seller Profile Image"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_account_circle" />
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/listingSellerTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingStart="5dp"
+                    android:text="Seller" />
 
                 <!-- Seller Rating -->
                 <RatingBar
                     android:id="@+id/sellerRatingBar"
                     style="?android:attr/ratingBarStyleSmall"
                     android:layout_width="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
                     android:isIndicator="true"
                     android:numStars="5"
-                    android:stepSize="0.5"
-                    android:rating="0.0"/>
+                    android:rating="0.0"
+                    android:stepSize="0.5" />
 
-            <!-- Link to Rate Seller -->
-            <TextView
-                android:id="@+id/rateSellerTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Rate Seller"
-                android:textColor="@color/purple_500"
-                android:textSize="14sp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="8dp"
-                android:clickable="true"
-                android:focusable="true"/>
-
+                <!-- Link to Rate Listing -->
+                <TextView
+                    android:id="@+id/rateSellerTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="Rate Listing"
+                    android:textColor="@color/purple_500"
+                    android:textSize="14sp" />
             </LinearLayout>
-
         </LinearLayout>
+    </ScrollView>
 
 
     <!-- Fancy Chat Button -->

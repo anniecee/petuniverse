@@ -78,7 +78,7 @@
     <fragment
         android:id="@+id/ratingFragment"
         android:name="com.example.pet_universe.ui.rating.RatingFragment"
-        android:label="Rate Seller"
+        android:label="Rate Listing"
         tools:layout="@layout/fragment_rating">
         <argument
             android:name="toUserId"
@@ -148,7 +148,7 @@
     <fragment
         android:id="@+id/myRatingsFragment"
         android:name="com.example.pet_universe.ui.accountSettings.MyRatingsFragment"
-        android:label="My Ratings"
+        android:label="Your Ratings"
         tools:layout="@layout/fragment_my_ratings" />
 
 </navigation>

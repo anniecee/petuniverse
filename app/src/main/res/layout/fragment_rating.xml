@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/ratingFragment"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -10,9 +11,9 @@
         android:id="@+id/averageRatingTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="Average Rating: 0.0"
-        android:textSize="18sp"
-        android:layout_marginBottom="8dp"/>
+        android:textSize="18sp" />
 
 
     <RatingBar
@@ -20,46 +21,61 @@
         style="?android:attr/ratingBarStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:isIndicator="true"
         android:numStars="5"
-        android:stepSize="0.5"
         android:rating="0.0"
-        android:layout_marginBottom="16dp"/>
+        android:stepSize="0.5" />
 
     <!-- Label for User Rating -->
     <TextView
         android:id="@+id/submitRatingLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="Your Rating:"
-        android:textSize="16sp"
-        android:layout_marginBottom="8dp"/>
+        android:textSize="16sp" />
 
     <!-- RatingBar for Submitting Rating -->
     <RatingBar
         android:id="@+id/submitRatingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:numStars="5"
-        android:stepSize="1.0"
-        android:layout_marginBottom="16dp"/>
+        android:stepSize="1.0" />
 
     <!-- EditText for entering review -->
     <EditText
         android:id="@+id/reviewEditText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="140dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/rounded_edittext"
+        android:gravity="start|top"
         android:hint="Write your review here..."
         android:inputType="textMultiLine"
-        android:lines="4"
-        android:maxLines="6"
-        android:gravity="top"
-        android:layout_marginBottom="10dp"/>
+        android:overScrollMode="ifContentScrolls"
+        android:padding="12dp" />
 
-    <!-- Submit Button -->
-    <Button
-        android:id="@+id/submitRatingButton"
+    <TextView
+        android:id="@+id/reviewWarningText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Submit Rating"/>
+        android:layout_marginBottom="8dp"
+        android:drawableLeft="@drawable/ic_alert_circle"
+        android:drawablePadding="8dp"
+        android:text="Once you submit your rating, it cannot be edited. Please ensure that your rating is final before submitting."
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/submitRatingButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/purple_500"
+        android:padding="12dp"
+        android:text="Submit Rating"
+        android:textColor="@android:color/white"
+        app:cornerRadius="20dp" />
 </LinearLayout>

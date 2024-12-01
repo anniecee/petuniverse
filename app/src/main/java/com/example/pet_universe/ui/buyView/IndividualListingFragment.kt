@@ -108,7 +108,7 @@ class IndividualListingFragment : Fragment() {
 
                 val chatId = generateChatId(currentUserId, sellerId, listing.id)
 
-                // Fetch message counts to determine if "Rate Seller" should be shown
+                // Fetch message counts to determine if "Rate Listing" should be shown
                 individualListingViewModel.fetchMessageCounts(chatId, sellerId)
                 // Observe the canRateSeller LiveData
                 individualListingViewModel.canRateSeller.observe(viewLifecycleOwner) { canRate ->
@@ -119,7 +119,7 @@ class IndividualListingFragment : Fragment() {
                     }
                 }
 
-                // Navigate to RatingFragment when clicking "Rate Seller"
+                // Navigate to RatingFragment when clicking "Rate Listing"
                 binding.rateSellerTextView.setOnClickListener {
                     val action =
                         IndividualListingFragmentDirections.actionIndividualListingFragmentToRatingFragment(
