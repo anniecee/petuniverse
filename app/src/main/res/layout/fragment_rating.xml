@@ -1,0 +1,65 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ratingFragment"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+
+    <TextView
+        android:id="@+id/averageRatingTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Average Rating: 0.0"
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp"/>
+
+
+    <RatingBar
+        android:id="@+id/averageRatingBar"
+        style="?android:attr/ratingBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:isIndicator="true"
+        android:numStars="5"
+        android:stepSize="0.5"
+        android:rating="0.0"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Label for User Rating -->
+    <TextView
+        android:id="@+id/submitRatingLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Rating:"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- RatingBar for Submitting Rating -->
+    <RatingBar
+        android:id="@+id/submitRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:stepSize="1.0"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- EditText for entering review -->
+    <EditText
+        android:id="@+id/reviewEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Write your review here..."
+        android:inputType="textMultiLine"
+        android:lines="4"
+        android:maxLines="6"
+        android:gravity="top"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- Submit Button -->
+    <Button
+        android:id="@+id/submitRatingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit Rating"/>
+</LinearLayout>

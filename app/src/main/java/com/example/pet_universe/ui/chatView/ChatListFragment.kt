@@ -13,8 +13,8 @@ import com.example.pet_universe.database.ListingDatabase
 import com.example.pet_universe.database.ListingRepository
 import com.example.pet_universe.database.MessageRepository
 import com.example.pet_universe.databinding.FragmentChatListBinding
-import com.example.pet_universe.ui.chat.ChatViewModel
-import com.example.pet_universe.ui.chat.ChatViewModelFactory
+import com.example.pet_universe.ui.chatView.ChatViewModel
+import com.example.pet_universe.ui.chatView.ChatViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 
 class ChatListFragment : Fragment() {

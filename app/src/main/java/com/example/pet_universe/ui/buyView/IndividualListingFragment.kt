@@ -11,13 +11,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.example.pet_universe.R
-import com.example.pet_universe.database.Listing
 import com.example.pet_universe.database.ListingDatabase
+import com.example.pet_universe.database.MessageRepository
+import com.example.pet_universe.database.RatingRepository
+import com.example.pet_universe.database.Listing
 import com.example.pet_universe.database.ListingDatabaseDao
 import com.example.pet_universe.database.ListingRepository
 import com.example.pet_universe.database.ListingViewModel
 import com.example.pet_universe.database.ListingViewModelFactory
 import com.example.pet_universe.databinding.FragmentIndividualListingBinding
+import com.example.pet_universe.ui.rating.RatingViewModel
+import com.example.pet_universe.ui.rating.RatingViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -31,6 +35,10 @@ class IndividualListingFragment : Fragment() {
     private val listingsViewModel: ListingsViewModel by activityViewModels()
     private val firestore = FirebaseFirestore.getInstance()
 
+    private lateinit var ratingViewModel: RatingViewModel
+    private lateinit var individualListingViewModel: IndividualListingViewModel
+    private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+
     // Room database
     private lateinit var database: ListingDatabase
     private lateinit var listingDao: ListingDatabaseDao
@@ -38,7 +46,6 @@ class IndividualListingFragment : Fragment() {
     private lateinit var viewModelFactory: ListingViewModelFactory
     private lateinit var listingViewModel: ListingViewModel
 
-    private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
     private lateinit var favListRef: CollectionReference
 
     override fun onCreateView(
@@ -46,6 +53,18 @@ class IndividualListingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentIndividualListingBinding.inflate(inflater, container, false)
+
+        val database = ListingDatabase.getInstance(requireContext())
+        val ratingRepository = RatingRepository(database.ratingDao)
+        val factory = RatingViewModelFactory(ratingRepository)
+        ratingViewModel = ViewModelProvider(this, factory).get(RatingViewModel::class.java)
+
+        //This will be used to check if to show the give rating feature to the user or not
+        // meaning check to see if their is an interaction that happened between user or seller
+        val messageRepository = MessageRepository(database.messageDao)
+        val individualListingFactory = IndividualListingViewModelFactory(messageRepository)
+        individualListingViewModel = ViewModelProvider(this, individualListingFactory).get(IndividualListingViewModel::class.java)
+
         return binding.root
     }
 
@@ -65,10 +84,15 @@ class IndividualListingFragment : Fragment() {
 
             // for starting the chat
             if (sellerId == currentUserId) {
+                //rating
+                binding.sellerRatingBar.visibility = View.GONE
+                binding.rateSellerTextView.visibility = View.GONE
+
                 binding.listingSoldByTextView.visibility = View.GONE
                 binding.listingSellerImageView.visibility = View.GONE
                 binding.listingSellerTextView.visibility = View.GONE
                 binding.startChatButton.visibility = View.GONE
+
                 binding.editListingButton.setOnClickListener {
                     findNavController().navigate(R.id.navigation_seller)
                 }
@@ -76,11 +100,38 @@ class IndividualListingFragment : Fragment() {
                 lifecycleScope.launch {
                     val sellerName = fetchSellerName(sellerId) ?: "Seller"
                     binding.listingSellerTextView.text = "$sellerName"
+
+                    //for making the rating visible in the individual listing fragment
+                    val averageRating = ratingViewModel.getAverageRating(sellerId)
+                    binding.sellerRatingBar.rating = averageRating
+                }
+
+                val chatId = generateChatId(currentUserId, sellerId, listing.id)
+
+                // Fetch message counts to determine if "Rate Seller" should be shown
+                individualListingViewModel.fetchMessageCounts(chatId, sellerId)
+                // Observe the canRateSeller LiveData
+                individualListingViewModel.canRateSeller.observe(viewLifecycleOwner) { canRate ->
+                    if (canRate) {
+                        binding.rateSellerTextView.visibility = View.VISIBLE
+                    } else {
+                        binding.rateSellerTextView.visibility = View.GONE
+                    }
+                }
+
+                // Navigate to RatingFragment when clicking "Rate Seller"
+                binding.rateSellerTextView.setOnClickListener {
+                    val action =
+                        IndividualListingFragmentDirections.actionIndividualListingFragmentToRatingFragment(
+                            toUserId = sellerId,
+                            listingId = listing.id
+                        )
+                    findNavController().navigate(action)
                 }
 
                 binding.editListingButton.visibility = View.GONE
                 binding.startChatButton.setOnClickListener {
-                    val chatId = generateChatId(currentUserId, sellerId, listing.id)
+                  //  val chatId = generateChatId(currentUserId, sellerId, listing.id)
                     val action =
                         IndividualListingFragmentDirections.actionIndividualListingFragmentToChatFragment(
                             chatId = chatId,
@@ -150,6 +201,7 @@ class IndividualListingFragment : Fragment() {
             "id" to listing.id,
             "title" to listing.title,
             "description" to listing.description,
+            "category" to listing.category,
             "type" to listing.type,
             "price" to listing.price,
             "meetingLocation" to listing.meetingLocation,

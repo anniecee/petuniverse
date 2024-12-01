@@ -17,8 +17,8 @@ import com.example.pet_universe.database.ListingRepository
 import com.example.pet_universe.database.Message
 import com.example.pet_universe.database.MessageRepository
 import com.example.pet_universe.databinding.FragmentChatBinding
-import com.example.pet_universe.ui.chat.ChatViewModel
-import com.example.pet_universe.ui.chat.ChatViewModelFactory
+import com.example.pet_universe.ui.chatView.ChatViewModel
+import com.example.pet_universe.ui.chatView.ChatViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import java.util.Date
 

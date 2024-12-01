@@ -117,9 +117,37 @@
                 android:layout_marginTop="10dp"
                 android:paddingStart="5dp"
                 android:text="Seller" />
+
+                <!-- Seller Rating -->
+                <RatingBar
+                    android:id="@+id/sellerRatingBar"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_height="wrap_content"
+                    android:isIndicator="true"
+                    android:numStars="5"
+                    android:stepSize="0.5"
+                    android:rating="0.0"/>
+
+            <!-- Link to Rate Seller -->
+            <TextView
+                android:id="@+id/rateSellerTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rate Seller"
+                android:textColor="@color/purple_500"
+                android:textSize="14sp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="8dp"
+                android:clickable="true"
+                android:focusable="true"/>
+
+            </LinearLayout>
+
         </LinearLayout>
 
-    </LinearLayout>
 
     <!-- Fancy Chat Button -->
     <Button

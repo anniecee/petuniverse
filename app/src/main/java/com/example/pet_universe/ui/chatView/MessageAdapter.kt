@@ -1,4 +1,3 @@
-// MessageAdapter.kt
 package com.example.pet_universe.ui.chatView
 
 import android.view.LayoutInflater

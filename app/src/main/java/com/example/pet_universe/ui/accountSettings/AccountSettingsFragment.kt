@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.pet_universe.R
 import com.example.pet_universe.databinding.FragmentAccountsBinding
 import com.example.pet_universe.ui.profile.ProfileViewModel
@@ -91,6 +92,11 @@ class AccountSettingsFragment : Fragment() {
             val intent = Intent(requireContext(), ChangePasswordActivity::class.java)
             startActivity(intent)
         }
+
+        // Set up click listener for ratingTextView
+        binding.ratingTextView.setOnClickListener {
+            findNavController().navigate(R.id.action_navigation_accounts_to_myRatingsFragment)
+        }
     }
 
     private fun displayUsername() {
@@ -101,8 +107,8 @@ class AccountSettingsFragment : Fragment() {
                     val lastName = document.getString("lastName") ?: ""
                     binding.userNameTextView.text = "$firstName $lastName"
                 }
-                .addOnFailureListener {
-                    // Handle failure
+                .addOnFailureListener { e ->
+                    println("Error displaying the username: $e")
                 }
         }
     }
