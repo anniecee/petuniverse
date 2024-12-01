@@ -75,4 +75,8 @@ class ListingRepository(private val listingDatabaseDao: ListingDatabaseDao) {
             listingDatabaseDao.update(listing)
         }
     }
+
+    fun getFavoritesListings(): Flow<List<Listing>> {
+        return listingDatabaseDao.getFavoritesListings()
+    }
 }

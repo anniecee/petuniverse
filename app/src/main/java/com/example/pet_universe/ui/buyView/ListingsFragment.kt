@@ -102,6 +102,10 @@ class ListingsFragment : Fragment() {
         listingsViewModel.filteredListings.observe(viewLifecycleOwner) { filteredListings ->
             listingsAdapter.updateListings(filteredListings)
         }
+
+        binding.favButton.setOnClickListener {
+            findNavController().navigate(R.id.action_listingsFragment_to_favoritesFragment)
+        }
     }
 
     private fun setupSpinnerListeners() {

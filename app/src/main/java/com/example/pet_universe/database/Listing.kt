@@ -48,7 +48,10 @@ data class Listing(
     var meetingDateTime: Calendar = Calendar.getInstance(),
 
     @ColumnInfo(name = "is_sold")
-    var isSold: Boolean = false
+    var isSold: Boolean = false,
+
+    @ColumnInfo(name = "is_fav")
+    var isFav: Boolean = false
 
 )
 
