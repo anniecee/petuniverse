@@ -62,6 +62,30 @@
                 android:name="listingId"
                 app:argType="long" />
         </action>
+
+        <action
+            android:id="@+id/action_individualListingFragment_to_ratingFragment"
+            app:destination="@id/ratingFragment">
+            <argument
+                android:name="toUserId"
+                app:argType="string" />
+            <argument
+                android:name="listingId"
+                app:argType="long" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/ratingFragment"
+        android:name="com.example.pet_universe.ui.rating.RatingFragment"
+        android:label="Rate Seller"
+        tools:layout="@layout/fragment_rating">
+        <argument
+            android:name="toUserId"
+            app:argType="string" />
+        <argument
+            android:name="listingId"
+            app:argType="long" />
     </fragment>
 
     <fragment
@@ -79,6 +103,10 @@
     <action
         android:id="@+id/action_global_to_accountSettings"
         app:destination="@id/navigation_accounts" />
+
+    <action
+        android:id="@+id/action_navigation_accounts_to_myRatingsFragment"
+        app:destination="@id/myRatingsFragment" />
 
     <fragment
         android:id="@+id/chatListFragment"
@@ -116,5 +144,11 @@
             android:name="listingId"
             app:argType="long" />
     </fragment>
+
+    <fragment
+        android:id="@+id/myRatingsFragment"
+        android:name="com.example.pet_universe.ui.accountSettings.MyRatingsFragment"
+        android:label="My Ratings"
+        tools:layout="@layout/fragment_my_ratings" />
 
 </navigation>
