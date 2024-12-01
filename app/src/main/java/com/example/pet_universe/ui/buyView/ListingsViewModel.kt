@@ -23,6 +23,9 @@ class ListingsViewModel(application: Application) : AndroidViewModel(application
 
     private var currentListings: List<Listing> = listOf()
 
+    private var userLatitude: Double = 0.0
+    private var userLongitude: Double = 0.0
+
     init {
         _selectedType.value = "All"
         _selectedPriceRange.value = "All"
@@ -61,6 +64,27 @@ class ListingsViewModel(application: Application) : AndroidViewModel(application
     fun setSelectedLocation(location: String) {
         _selectedLocation.value = location
         applyFilters()
+    }
+
+    fun setUserLocation(latitude: Double, longitude: Double) {
+        userLatitude = latitude
+        userLongitude = longitude
+        applyFilters() // Reapply filters with new location
+    }
+
+    private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val r = 6371 // Earth's radius in kilometers
+
+        val latDistance = Math.toRadians(lat2 - lat1)
+        val lonDistance = Math.toRadians(lon2 - lon1)
+
+        val a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2)
+
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+
+        return r * c // Returns distance in kilometers
     }
 
     // For more robust search
@@ -183,8 +207,54 @@ class ListingsViewModel(application: Application) : AndroidViewModel(application
 
         // Location filter (when implemented)
         _selectedLocation.value?.let { location ->
-            if (location != "All") {
-                // TODO: Implement location filtering
+            when (location) {
+                "Within 10km" -> {
+                    filteredList = filteredList.filter { listing ->
+                        val distance = calculateDistance(
+                            userLatitude,
+                            userLongitude,
+                            listing.locationLatitude,
+                            listing.locationLongitude
+                        )
+                        distance <= 10
+                    }
+                }
+
+                "Within 25km" -> {
+                    filteredList = filteredList.filter { listing ->
+                        val distance = calculateDistance(
+                            userLatitude,
+                            userLongitude,
+                            listing.locationLatitude,
+                            listing.locationLongitude
+                        )
+                        distance <= 25
+                    }
+                }
+
+                "Within 50km" -> {
+                    filteredList = filteredList.filter { listing ->
+                        val distance = calculateDistance(
+                            userLatitude,
+                            userLongitude,
+                            listing.locationLatitude,
+                            listing.locationLongitude
+                        )
+                        distance <= 50
+                    }
+                }
+
+                "Within 100km" -> {
+                    filteredList = filteredList.filter { listing ->
+                        val distance = calculateDistance(
+                            userLatitude,
+                            userLongitude,
+                            listing.locationLatitude,
+                            listing.locationLongitude
+                        )
+                        distance <= 100
+                    }
+                }
             }
         }
 
