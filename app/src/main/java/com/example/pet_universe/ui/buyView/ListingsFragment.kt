@@ -1,5 +1,7 @@
 package com.example.pet_universe.ui.buyView
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -7,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
@@ -19,6 +22,8 @@ import com.example.pet_universe.database.ListingRepository
 import com.example.pet_universe.database.ListingViewModel
 import com.example.pet_universe.database.ListingViewModelFactory
 import com.example.pet_universe.databinding.FragmentListingsBinding
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ListingsFragment : Fragment() {
@@ -28,11 +33,18 @@ class ListingsFragment : Fragment() {
     private lateinit var repository: ListingRepository
     private lateinit var viewModelFactory: ListingViewModelFactory
     private lateinit var listingViewModel: ListingViewModel
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private var _binding: FragmentListingsBinding? = null
     private val binding get() = _binding!!
     private val buyViewModel: BuyViewModel by activityViewModels()
     private val listingsViewModel: ListingsViewModel by activityViewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        updateUserLocation()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -153,6 +165,20 @@ class ListingsFragment : Fragment() {
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
+    }
+
+    private fun updateUserLocation() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                location?.let {
+                    listingsViewModel.setUserLocation(it.latitude, it.longitude)
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {

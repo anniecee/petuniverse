@@ -20,6 +20,8 @@ firebaseAuthKtx = "23.1.0"
 firebaseStorageKtx = "21.0.1"
 firebaseAppcheckDebug = "18.0.0"
 firebaseAppcheckPlayintegrity = "18.0.0"
+playServicesMaps = "19.0.0"
+playServicesLocation = "21.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,6 +43,8 @@ firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx",
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
 firebase-appcheck-debug = { group = "com.google.firebase", name = "firebase-appcheck-debug", version.ref = "firebaseAppcheckDebug" }
 firebase-appcheck-playintegrity = { group = "com.google.firebase", name = "firebase-appcheck-playintegrity", version.ref = "firebaseAppcheckPlayintegrity" }
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

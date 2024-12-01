@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val NOTIFICATION_PERMISSION_CODE = 1001
+        private const val LOCATION_PERMISSION_CODE = 1002
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +59,6 @@ class MainActivity : AppCompatActivity() {
             // User is signed in, proceed with loading the main content
             loadMainLayout()
 
-            // Request notification permission for Android 13+
             requestNotificationPermission()
         } else {
             navigateToSignIn()
@@ -66,8 +66,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadMainLayout() {
-        val navController = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment).navController
-        val appBarConfiguration = AppBarConfiguration(setOf(R.id.navigation_buy, R.id.navigation_seller, R.id.navigation_accounts))
+        val navController =
+            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment).navController
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.navigation_buy,
+                R.id.navigation_seller,
+                R.id.navigation_accounts
+            )
+        )
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         // Set up action to ensure BuyFragment is loaded as default
@@ -77,18 +84,22 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(R.id.navigation_buy)
                     true
                 }
+
                 R.id.navigation_seller -> {
                     navController.navigate(R.id.navigation_seller)
                     true
                 }
+
                 R.id.navigation_accounts -> {
                     navController.navigate(R.id.navigation_accounts)
                     true
                 }
+
                 R.id.navigation_chat -> {
                     navController.navigate(R.id.chatListFragment)
                     true
                 }
+
                 else -> false
             }
         }
@@ -112,6 +123,47 @@ class MainActivity : AppCompatActivity() {
                     arrayOf(Manifest.permission.POST_NOTIFICATIONS),
                     NOTIFICATION_PERMISSION_CODE
                 )
+            } else {
+                // If notification permission is granted, proceed to location permission
+                requestLocationPermission()
+            }
+        } else {
+            // For older Android versions, proceed to location permission
+            requestLocationPermission()
+        }
+    }
+
+    private fun requestLocationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                LOCATION_PERMISSION_CODE
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            NOTIFICATION_PERMISSION_CODE -> {
+                // After handling notification permission, request location permission
+                requestLocationPermission()
+            }
+
+            LOCATION_PERMISSION_CODE -> {
+                // Optional: Handle location permission result if needed
             }
         }
     }

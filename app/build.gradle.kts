@@ -57,6 +57,10 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
 
+    // Maps and Location
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
+
     // Room components
     val room_version = "2.6.0"
     implementation("androidx.room:room-ktx:$room_version")
