@@ -37,7 +37,7 @@
         <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/ic_dollar_sign_black_24" />
+            android:src="@drawable/ic_favorite_black" />
 
         <TextView
             android:layout_width="wrap_content"

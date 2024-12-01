@@ -76,7 +76,7 @@
             android:layout_marginBottom="8dp"
             android:clickable="true"
             android:focusable="true"
-            android:text="My Rating"
+            android:text="Your Ratings"
             android:textSize="18sp" />
 
         <View
