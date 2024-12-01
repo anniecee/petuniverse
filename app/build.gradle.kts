@@ -60,6 +60,7 @@ dependencies {
     // Maps and Location
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
+    implementation ("io.grpc:grpc-okhttp:1.32.2")
 
     // Room components
     val room_version = "2.6.0"
