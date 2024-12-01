@@ -68,6 +68,10 @@ class EditListingActivity : AppCompatActivity() {
     // User
     private lateinit var userId: String
 
+    private var locationLatitude: Double = 0.0
+    private var locationLongitude: Double = 0.0
+    private lateinit var setLocationPinButton: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_seller_listing_detail)
@@ -126,6 +130,14 @@ class EditListingActivity : AppCompatActivity() {
                 finish()
             }
         }
+
+        setLocationPinButton = findViewById(R.id.setLocationPinButton)
+        setLocationPinButton.setOnClickListener {
+            val intent = Intent(this, MapPickerActivity::class.java)
+            intent.putExtra("latitude", locationLatitude)
+            intent.putExtra("longitude", locationLongitude)
+            mapPickerLauncher.launch(intent)
+        }
     }
 
     private fun setListingValues() {
@@ -155,6 +167,8 @@ class EditListingActivity : AppCompatActivity() {
             "Other" -> 3
             else -> 3
         })
+        locationLatitude = listing.locationLatitude
+        locationLongitude = listing.locationLongitude
     }
 
     private suspend fun saveListing() {
@@ -173,6 +187,8 @@ class EditListingActivity : AppCompatActivity() {
         listing.category = category
         listing.type = type
         listing.meetingLocation = location
+        listing.locationLatitude = locationLatitude
+        listing.locationLongitude = locationLongitude
 
         try {
             // Upload image if one is selected
@@ -198,6 +214,18 @@ class EditListingActivity : AppCompatActivity() {
         }
     }
 
+    private val mapPickerLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.let { data ->
+                locationLatitude = data.getDoubleExtra("latitude", 0.0)
+                locationLongitude = data.getDoubleExtra("longitude", 0.0)
+                Toast.makeText(this, "Location pin updated successfully!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     private fun updateListingInFirebase(listing: Listing) {
         val userListingRef = firestore.collection("users").document(userId).collection("listings")
             .document(listing.id.toString())
@@ -210,7 +238,9 @@ class EditListingActivity : AppCompatActivity() {
             "category" to listing.category,
             "type" to listing.type,
             "meetingLocation" to listing.meetingLocation,
-            "imageUrl" to listing.imageUrl
+            "imageUrl" to listing.imageUrl,
+            "locationLatitude" to listing.locationLatitude,
+            "locationLongitude" to listing.locationLongitude
         ) as Map<String, Any>
 
         userListingRef.update(updatedListing)

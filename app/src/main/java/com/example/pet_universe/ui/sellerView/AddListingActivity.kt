@@ -63,6 +63,9 @@ class AddListingActivity : AppCompatActivity() {
     private lateinit var sellButton: Button
     private lateinit var cancelButton: Button
     private lateinit var photoTextView: TextView
+    private var locationLatitude: Double = 0.0
+    private var locationLongitude: Double = 0.0
+    private lateinit var setLocationPinButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,6 +97,12 @@ class AddListingActivity : AppCompatActivity() {
         uploadPhotoButton = findViewById(R.id.uploadPhotoButton)
         sellButton = findViewById(R.id.sellButton)
         photoTextView = findViewById(R.id.photoTextView)
+        setLocationPinButton = findViewById(R.id.setLocationPinButton)
+        setLocationPinButton.setOnClickListener {
+            // Launch map activity for pin selection
+            val intent = Intent(this, MapPickerActivity::class.java)
+            mapPickerLauncher.launch(intent)
+        }
 
         // Set click listeners
         uploadPhotoButton.setOnClickListener { openGalleryForImage() }
@@ -114,6 +123,18 @@ class AddListingActivity : AppCompatActivity() {
         cancelButton = findViewById(R.id.cancelButton)
         cancelButton.setOnClickListener {
             finish()
+        }
+    }
+
+    private val mapPickerLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.let { data ->
+                locationLatitude = data.getDoubleExtra("latitude", 0.0)
+                locationLongitude = data.getDoubleExtra("longitude", 0.0)
+                Toast.makeText(this, "Location pin set successfully!", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -155,7 +176,9 @@ class AddListingActivity : AppCompatActivity() {
             category = categorySpinner.selectedItem.toString(),
             type = typeSpinner.selectedItem.toString(),
             meetingLocation = locationEditText.text.toString(),
-            sellerId = auth.currentUser?.uid
+            sellerId = auth.currentUser?.uid,
+            locationLatitude = locationLatitude,
+            locationLongitude = locationLongitude
         )
 
         val success = saveListingToFirestore(listing, imageByteArray)
@@ -217,7 +240,9 @@ class AddListingActivity : AppCompatActivity() {
             "type" to listing.type,
             "meetingLocation" to listing.meetingLocation,
             "sellerId" to listing.sellerId,
-            "imageUrl" to imageUrl
+            "imageUrl" to imageUrl,
+            "locationLatitude" to listing.locationLatitude,
+            "locationLongitude" to listing.locationLongitude
         )
         return firestoreRef.set(listingMap)
     }

@@ -47,6 +47,12 @@ data class Listing(
     @ColumnInfo(name = "meeting_date_time")
     var meetingDateTime: Calendar = Calendar.getInstance(),
 
+    @ColumnInfo(name = "location_latitude")
+    var locationLatitude: Double = 0.0,
+
+    @ColumnInfo(name = "location_longitude")
+    var locationLongitude: Double = 0.0,
+
     @ColumnInfo(name = "is_sold")
     var isSold: Boolean = false,
 

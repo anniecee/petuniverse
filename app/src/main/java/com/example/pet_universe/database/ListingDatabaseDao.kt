@@ -33,17 +33,41 @@ interface ListingDatabaseDao {
     @Query("SELECT * FROM listing_table WHERE id = :listingId LIMIT 1")
     fun getListingById(listingId: Long): Listing?
 
-    @Query("UPDATE listing_table SET title = :title, price = :price, description = :description, meeting_location = :meetingLocation, category = :category, imageUrl = :imageUrl, type = :type, is_fav = :isFav WHERE id = :id")
-    suspend fun updateListing(id: Long, title: String, price: Int, description: String, meetingLocation: String, category: String, imageUrl: String, type: String, isFav: Boolean)
+    @Query("UPDATE listing_table SET title = :title, price = :price, description = :description, meeting_location = :meetingLocation, category = :category, imageUrl = :imageUrl, type = :type, is_fav = :isFav, location_latitude = :locationLatitude, location_longitude = :locationLongitude WHERE id = :id")
+    suspend fun updateListing(
+        id: Long,
+        title: String,
+        price: Int,
+        description: String,
+        meetingLocation: String,
+        category: String,
+        imageUrl: String,
+        type: String,
+        isFav: Boolean,
+        locationLatitude: Double,
+        locationLongitude: Double
+    )
 
     @Query("SELECT * FROM listing_table")
     fun getAllListings(): Flow<List<Listing>>
 
     suspend fun update(listing: Listing) {
-        println("Executing update query: UPDATE listing_table SET title = '${listing.title}', price = ${listing.price}, description = '${listing.description}', meeting_location = '${listing.meetingLocation}', category = '${listing.category}', imageUrls = '${listing.imageUrl}', type = '${listing.type}', isFav = '${listing.isFav}' WHERE id = ${listing.id}")
-        updateListing(listing.id, listing.title, listing.price, listing.description, listing.meetingLocation, listing.category, listing.imageUrl, listing.type, listing.isFav)
+        println("Executing update query: UPDATE listing_table SET title = '${listing.title}', price = ${listing.price}, description = '${listing.description}', meeting_location = '${listing.meetingLocation}', category = '${listing.category}', imageUrls = '${listing.imageUrl}', type = '${listing.type}', isFav = '${listing.isFav}', locationLatitude = '${listing.locationLatitude}', locationLongitude = '${listing.locationLongitude}' WHERE id = ${listing.id}")
+        updateListing(
+            listing.id,
+            listing.title,
+            listing.price,
+            listing.description,
+            listing.meetingLocation,
+            listing.category,
+            listing.imageUrl,
+            listing.type,
+            listing.isFav,
+            listing.locationLatitude,
+            listing.locationLongitude
+        )
     }
 
-    @Query ("SELECT * FROM listing_table WHERE is_fav = 1")
+    @Query("SELECT * FROM listing_table WHERE is_fav = 1")
     fun getFavoritesListings(): Flow<List<Listing>>
 }

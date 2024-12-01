@@ -11,24 +11,30 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.example.pet_universe.R
-import com.example.pet_universe.database.ListingDatabase
-import com.example.pet_universe.database.MessageRepository
-import com.example.pet_universe.database.RatingRepository
 import com.example.pet_universe.database.Listing
+import com.example.pet_universe.database.ListingDatabase
 import com.example.pet_universe.database.ListingDatabaseDao
 import com.example.pet_universe.database.ListingRepository
 import com.example.pet_universe.database.ListingViewModel
 import com.example.pet_universe.database.ListingViewModelFactory
+import com.example.pet_universe.database.MessageRepository
+import com.example.pet_universe.database.RatingRepository
 import com.example.pet_universe.databinding.FragmentIndividualListingBinding
 import com.example.pet_universe.ui.rating.RatingViewModel
 import com.example.pet_universe.ui.rating.RatingViewModelFactory
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class IndividualListingFragment : Fragment() {
+class IndividualListingFragment : Fragment(), OnMapReadyCallback {
 
     private var _binding: FragmentIndividualListingBinding? = null
     private val binding get() = _binding!!
@@ -48,6 +54,9 @@ class IndividualListingFragment : Fragment() {
 
     private lateinit var favListRef: CollectionReference
 
+    private var mapView: MapView? = null
+    private var googleMap: GoogleMap? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -64,6 +73,11 @@ class IndividualListingFragment : Fragment() {
         val messageRepository = MessageRepository(database.messageDao)
         val individualListingFactory = IndividualListingViewModelFactory(messageRepository)
         individualListingViewModel = ViewModelProvider(this, individualListingFactory).get(IndividualListingViewModel::class.java)
+
+        // Initialize MapView
+        mapView = binding.mapView
+        mapView?.onCreate(savedInstanceState)
+        mapView?.getMapAsync(this)
 
         return binding.root
     }
@@ -92,6 +106,7 @@ class IndividualListingFragment : Fragment() {
                 binding.listingSellerImageView.visibility = View.GONE
                 binding.listingSellerTextView.visibility = View.GONE
                 binding.startChatButton.visibility = View.GONE
+                binding.listingSellerInfo.visibility = View.GONE
 
                 binding.editListingButton.setOnClickListener {
                     findNavController().navigate(R.id.navigation_seller)
@@ -207,6 +222,8 @@ class IndividualListingFragment : Fragment() {
             "meetingLocation" to listing.meetingLocation,
             "sellerId" to listing.sellerId,
             "imageUrl" to listing.imageUrl,
+            "locationLatitude" to listing.locationLatitude,
+            "locationLongitude" to listing.locationLongitude
         )
 
         docRef.set(favListing)
@@ -230,6 +247,47 @@ class IndividualListingFragment : Fragment() {
     // Function to generate chatId
     private fun generateChatId(userId1: String, userId2: String, listingId: Long): String {
         return if (userId1 < userId2) "${userId1}_${userId2}_${listingId}" else "${userId2}_${userId1}_${listingId}"
+    }
+
+    override fun onMapReady(map: GoogleMap) {
+        googleMap = map
+        listingsViewModel.selectedListing.value?.let { listing ->
+            if (listing.locationLatitude != null && listing.locationLongitude != null) {
+                updateMapLocation(listing.locationLatitude, listing.locationLongitude)
+            }
+        }
+    }
+
+    private fun updateMapLocation(latitude: Double, longitude: Double) {
+        val location = LatLng(latitude, longitude)
+        googleMap?.apply {
+            clear()
+            addMarker(MarkerOptions()
+                .position(location)
+                .title("Meeting Location"))
+            moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15f))
+        }
+    }
+
+    // Add MapView lifecycle methods
+    override fun onResume() {
+        super.onResume()
+        mapView?.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mapView?.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mapView?.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView?.onLowMemory()
     }
 
     override fun onDestroyView() {
