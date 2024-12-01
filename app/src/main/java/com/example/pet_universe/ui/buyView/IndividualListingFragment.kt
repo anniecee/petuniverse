@@ -150,6 +150,7 @@ class IndividualListingFragment : Fragment() {
             "id" to listing.id,
             "title" to listing.title,
             "description" to listing.description,
+            "category" to listing.category,
             "type" to listing.type,
             "price" to listing.price,
             "meetingLocation" to listing.meetingLocation,

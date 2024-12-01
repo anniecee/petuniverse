@@ -1,5 +1,7 @@
 package com.example.pet_universe.ui.buyView
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -80,9 +82,12 @@ class FavoritesFragment: Fragment() {
 
         userId = auth.currentUser!!.uid
 
-        // Fetch favorites from Firestore
-        fetchFavorites()
-        observeListingsFromRoom()
+        // Fetch favorites based on internet availability
+        if (isInternetAvailable()) {
+            fetchFavoritesFromFirebase()
+        } else {
+            observeListingsFromRoom()
+        }
 
         recyclerAdapter.onItemClick = { listing ->
             listingsViewModel.selectListing(listing)
@@ -90,42 +95,37 @@ class FavoritesFragment: Fragment() {
         }
     }
 
-    private fun fetchFavorites() {
-        // Fetch favorites from Firestore
+    private fun fetchFavoritesFromFirebase() {
         firestore.collection("users/$userId/favorites")
             .get()
             .addOnSuccessListener { documents ->
+                favoritesList.clear()
                 for (document in documents) {
                     val listing = document.toObject(Listing::class.java)
-
-                    // Check if any listing in favoritesList has the same id as the current listing,
-                    // if not, add the listing to favoritesList
-                    if (!favoritesList.any { it.id == listing.id }) {
-                        favoritesList.add(listing)
-                    }
+                    listing.isFav = true // Mark as favorite for Room since there's no isFav in Firestore's listing
+                    favoritesList.add(listing)
+                    listingViewModel.insert(listing) // Save to Room database
                 }
-                recyclerAdapter.notifyDataSetChanged()
+
+                recyclerAdapter.notifyDataSetChanged() // Notify adapter of data changes
+
+                // If favoritesList is empty, show empty state view
+                if (favoritesList.isEmpty()) {
+                    binding.favRecyclerView.visibility = View.GONE
+                    binding.emptyStateView.visibility = View.VISIBLE
+                } else {
+                    binding.favRecyclerView.visibility = View.VISIBLE
+                    binding.emptyStateView.visibility = View.GONE
+                }
             }
             .addOnFailureListener { exception ->
                 // Handle any errors
+                observeListingsFromRoom() // Fallback to Room database if Firebase fetch fails
             }
     }
 
     private fun observeListingsFromRoom() {
         lifecycleScope.launch {
-//            listingViewModel.getActiveListingsBySellerId(userId)
-//                .observe(viewLifecycleOwner) { listings ->
-//                    if (listings.isEmpty()) {
-//                        binding.favRecyclerView.visibility = View.GONE
-//                        binding.emptyStateView.visibility = View.VISIBLE
-//                    } else {
-//                        binding.favRecyclerView.visibility = View.VISIBLE
-//                        binding.emptyStateView.visibility = View.GONE
-//                        favoritesList.clear()
-//                        favoritesList.addAll(listings.filter { it.isFav })
-//                        recyclerAdapter.notifyDataSetChanged()
-//                    }
-//                }
             listingViewModel.getFavoritesListings().observe(viewLifecycleOwner) { listings ->
                 if (listings.isEmpty()) {
                     binding.favRecyclerView.visibility = View.GONE
@@ -141,9 +141,18 @@ class FavoritesFragment: Fragment() {
         }
     }
 
+    private fun isInternetAvailable(): Boolean {
+        val connectivityManager = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork = connectivityManager.activeNetworkInfo
+        return activeNetwork != null && activeNetwork.isConnected
+    }
+
     override fun onResume() {
         super.onResume()
-        fetchFavorites()
-        observeListingsFromRoom()
+        if (isInternetAvailable()) {
+            fetchFavoritesFromFirebase()
+        } else {
+            observeListingsFromRoom()
+        }
     }
 }
