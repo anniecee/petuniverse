@@ -140,6 +140,16 @@ class ListingViewModel(private val repository: ListingRepository) : ViewModel() 
                     existingListings.any { localListing -> localListing.id == firebaseListing.id }
                 }
 
+                // Find the listings that need to be updated
+                val listingsToUpdate = firebaseListings.filter { firebaseListing ->
+                    existingListings.any { localListing ->
+                        localListing.id == firebaseListing.id && isListingChanged(
+                            localListing,
+                            firebaseListing
+                        )
+                    }
+                }
+
                 // Delete listings that don't exist in firebase anymore
                 listingsToRemove.forEach { repository.delete(it.id) }
 
@@ -147,18 +157,32 @@ class ListingViewModel(private val repository: ListingRepository) : ViewModel() 
                 if (listingsToAdd.isNotEmpty()) {
                     repository.insertListings(listingsToAdd)
                     println("Saved ${listingsToAdd.size} $category listings to local database")
-                } else {
-                    println("No new $category listings to save")
                 }
 
-                // Log current database state
-//                val updatedListings = repository.getAllListings().first()
-//                println("Total listings after update: ${updatedListings.size}")
-//                println("Listings in $category: ${updatedListings.filter { it.category == category }.size}")
+                // Update existing listings
+                if (listingsToUpdate.isNotEmpty()) {
+                    listingsToUpdate.forEach { updatedListing ->
+                        repository.update(updatedListing)
+                    }
+                    println("Updated ${listingsToUpdate.size} $category listings in local database")
+                }
             } catch (e: Exception) {
                 println("Error saving $category listings to local database: $e")
             }
         }
+    }
+
+    // Helper function to check if a listing has changed
+    private fun isListingChanged(localListing: Listing, firebaseListing: Listing): Boolean {
+        return localListing.category != firebaseListing.category ||
+                localListing.description != firebaseListing.description ||
+                localListing.imageUrl != firebaseListing.imageUrl ||
+                localListing.locationLatitude != firebaseListing.locationLatitude ||
+                localListing.locationLongitude != firebaseListing.locationLongitude ||
+                localListing.meetingLocation != firebaseListing.meetingLocation ||
+                localListing.price != firebaseListing.price ||
+                localListing.title != firebaseListing.title ||
+                localListing.type != firebaseListing.type
     }
 
     fun deleteAll() {
