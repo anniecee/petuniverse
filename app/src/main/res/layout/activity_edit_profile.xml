@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="First name:"
+            android:text="First Name:"
             android:textSize="17sp" />
 
         <EditText
@@ -50,7 +50,7 @@
             android:layout_marginBottom="16dp"
             android:background="@drawable/rounded_edittext"
             android:ellipsize="end"
-            android:hint="First name *"
+            android:hint="First Name *"
             android:padding="12dp"
             android:singleLine="true" />
 
@@ -58,7 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="Last name:"
+            android:text="Last Name:"
             android:textSize="17sp" />
 
         <EditText
@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:background="@drawable/rounded_edittext"
-            android:hint="Last name *"
+            android:hint="Last Name *"
             android:inputType="text"
             android:padding="12dp" />
 
@@ -80,10 +80,22 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/cancelButton"
+                android:id="@+id/saveButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/purple_500"
+                android:padding="12dp"
+                android:text="Update"
+                android:textColor="@android:color/white"
+                app:cornerRadius="20dp" />
+
+            <Button
+                android:id="@+id/cancelButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/purple_500"
                 android:padding="12dp"
@@ -91,17 +103,6 @@
                 android:textColor="@android:color/white"
                 app:cornerRadius="20dp" />
 
-            <Button
-                android:id="@+id/saveButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/purple_500"
-                android:padding="12dp"
-                android:text="Update"
-                android:textColor="@android:color/white"
-                app:cornerRadius="20dp" />
         </LinearLayout>
 
     </LinearLayout>
