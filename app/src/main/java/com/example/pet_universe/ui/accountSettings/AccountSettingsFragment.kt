@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -73,6 +74,28 @@ class AccountSettingsFragment : Fragment() {
                         }
                         profileViewModel.handleUserLogout() // Call handleUserLogout to reset the userInitial when logging out
                         navigateToSignIn()  // Redirect to sign-in
+                    }
+                    .setNegativeButton("No") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .show()
+            } else {
+                navigateToSignIn() // Navigate to sign-in if user is not signed in
+            }
+        }
+
+        binding.deleteAccountButton.setOnClickListener {
+            if (auth.currentUser != null) {
+                // Show confirmation dialog before account deletion
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Delete Account")
+                    .setMessage("Are you sure you want to permanently delete your account?")
+                    .setPositiveButton("Yes") { _, _ ->
+                        val user = FirebaseAuth.getInstance().currentUser
+                        user?.delete()?.addOnSuccessListener {
+                            Toast.makeText(activity,"Account Deleted Successfully!",Toast.LENGTH_SHORT).show();
+                            startActivity(Intent(requireContext(), SignInActivity::class.java))
+                        }
                     }
                     .setNegativeButton("No") { dialog, _ ->
                         dialog.dismiss()

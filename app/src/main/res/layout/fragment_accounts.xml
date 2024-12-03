@@ -85,8 +85,25 @@
             android:layout_marginBottom="16dp"
             android:background="#CCCCCC" />
 
-        <!-- Sign Out Button -->
         <TextView
+            android:id="@+id/deleteAccountButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="Delete Account"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="18sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="16dp"
+            android:background="#CCCCCC" />
+
+        <!-- Sign Out Button -->
+        <Button
             android:id="@+id/signInOutButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -94,7 +111,8 @@
             android:clickable="true"
             android:focusable="true"
             android:text="Sign Out"
-            android:textColor="@android:color/holo_red_dark"
+            android:textColor="@android:color/white"
             android:textSize="18sp" />
+        
     </LinearLayout>
 </ScrollView>
