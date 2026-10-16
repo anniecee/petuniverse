@@ -78,6 +78,14 @@ With tools to browse, search, communicate, and manage accounts, PetUniverse deli
 -   **Databases**: Room (local), Firebase (online)
 -   **Features**: LiveData, Firebase Authentication, Navigation Component
 
+## Getting Started
+
+1. Open the project in Android Studio.
+2. Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com) and add your `google-services.json` to the `app/` directory.
+3. Build and run on an emulator or a physical device.
+
+----------
+
 ## Demo
 ![Login page](https://i.imgur.com/FeH1LJD.png)
 ![enter image description here](https://imgur.com/NzNl2jh.png)
